@@ -1,12 +1,22 @@
 services:
-  api:
+  # api:
+  #   build:
+  #     context: ./api
+  #   container_name: api
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./api:/app
+  #   env_file:
+  #     - ".env"
+  agent:
     build:
-      context: ./api
-    container_name: api
+      context: ./agent
+    container_name: agent
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
-      - ./api:/app
+      - ./agent:/app
     env_file:
       - ".env"
   

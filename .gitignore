@@ -1,4 +1,5 @@
-notes.txt
+notes*.txt
 .venv
 __pycache__
 .env
+outputs/
