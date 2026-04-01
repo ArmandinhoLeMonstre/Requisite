@@ -16,7 +16,7 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - ./agent:/app
+      - ./agent:/code
     env_file:
       - ".env"
   
