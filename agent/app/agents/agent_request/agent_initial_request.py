@@ -25,7 +25,7 @@ while True:
 						Do not change values that are not null""",
         input=input_list,
         text={"format": {"type": "json_schema", "name": "request_params", "strict": True, "schema": {
-            "type": "object_type",
+            "type": "object",
             "properties": {
                 "user_id": {"type": ["number", "null"]},
                 "object_type": {"type": ["string", "null"]},
