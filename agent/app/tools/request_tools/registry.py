@@ -1,7 +1,9 @@
-from app.tools.budget_tool import check_budget
-from app.tools.policy_tools import get_material_type
+from app.tools.request_tools.call_inventory_agent import call_inventory_agent
+from app.tools.request_tools.call_amazon_agent import call_amazon_agent
+from app.tools.request_tools.call_email_agent import call_email_agent
 
 TOOL_REGISTRY = {
-    "check_budget": check_budget,
-	"get_material_type": get_material_type
+    "call_inventory_agent": call_inventory_agent,
+	"call_amazon_agent": call_amazon_agent,
+	"call_email_agent": call_email_agent
 }

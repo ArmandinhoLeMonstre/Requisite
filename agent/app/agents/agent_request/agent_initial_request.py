@@ -1,8 +1,8 @@
 from openai import OpenAI
 import os
 import json
-from app.tools.registry import TOOL_REGISTRY
-from app.tools.definitions import TOOLS
+from app.tools.request_tools.registry import TOOL_REGISTRY
+from app.tools.request_tools.definitions import TOOLS
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -14,52 +14,65 @@ input_list = [
     {"role": "user", "content": "Can I get a new keyboard ?"}
 ]
 
-parsed = {'user_id': None, 'object_type': None, 'purpose': None}
-
 while True:
-    response = client.responses.create(
-        model="gpt-4o-mini",
-        instructions=f"""You need to fill the text part with values from the input. 
-						If you are uncertain, keep null. 
-						This is the current state : {parsed}. 
-						Do not change values that are not null""",
-        input=input_list,
-        text={"format": {"type": "json_schema", "name": "request_params", "strict": True, "schema": {
-            "type": "object",
-            "properties": {
-                "user_id": {"type": ["number", "null"]},
-                "object_type": {"type": ["string", "null"]},
-                "purpose": {"type": ["string", "null"]}
-            },
-            "required": ["user_id", "object_type", "purpose"],
-            "additionalProperties": False
-        }}}
-    )
+	response = client.responses.create(
+		model="gpt-4o-mini",
+		instructions = f"""You are an agent orchestrator responsible for helping users submit formal acquisition requests to their manager.
 
-    input_list += response.output
-    print(f'response output : {response.output}')
-    parsed = json.loads(response.output[0].content[0].text)
-    print(f"Current state: {parsed}")
+		Your goal is to guide the user through the process of building a complete, persuasive request to obtain approval for a specific object or resource.
 
-    if all(value is not None for value in parsed.values()):
-        break
+		## Your responsibilities:
+		1. **Clarify the request** – Ask what object/resource the user wants to acquire if not already specified.
+		2. **Gather justification** – Help the user articulate *why* they need it (business case, urgency, impact).
+		3. **Identify constraints** – Understand budget, timeline, and any alternatives already considered.
+		4. **Draft the request** – Produce a clear, professional request addressed to the manager.
+		5. **Refine if needed** – Adjust tone, detail level, or format based on user feedback.
 
-    # missing = [key for key, value in parsed.items() if value is None]
-    missing = []
-    for key,value in parsed.items():
-        if value is None:
-            missing.append(key)
+		## Available tools (sub-agents):
+		You have access to 3 specialized agents. Use them at the right moment in the workflow:
 
-    question_response = client.responses.create(
-        model="gpt-4o-mini",
-        instructions="You are a helpful assistant. Ask the user for the missing information in a natural, friendly way.",
-        input=input_list + [
-            {"role": "user", "content": f"The following fields are missing: {missing}. Ask the user for them."}
-        ]
-    )
+		- **inventory_agent** – Call this FIRST to check if the requested object already exists 
+		in stock. If it does, inform the user and stop — no request needed.
+		
+		- **amazon_agent** – Call this to find pricing, product references, and availability 
+		for the requested object. Use its output to strengthen the request with concrete data 
+		(price, link, delivery time).
+		
+		- **email_agent** – Call this LAST, only after the user has confirmed the draft, 
+		to format and send the final request to the manager.
 
-    question = question_response.output[0].content[0].text
-    print(f"Assistant: {question}")
-    user_answer = input("You: ")
+		## Recommended workflow:
+		inventory_agent → (If not in stock) amazon_agent → draft request → user confirms → email_agent
 
-    input_list.append({"role": "user", "content": user_answer})
+		## Rules:
+		- Always check inventory before doing anything else.
+		- Never send the email without explicit user confirmation of the draft.
+		- Ask one clarifying question at a time if information is missing.
+		- Adapt the formality level to the user's context (startup vs. corporate, etc.).
+		- If amazon_agent returns multiple options, present them to the user and let them choose.
+
+		""",
+		tools=TOOLS,
+		input=input_list
+	)
+	input_list += response.output
+	print(response.output)
+
+	for item in response.output:
+		if item.type == "message":
+			print(f"Assistant: {item.content[0].text}")
+			user_answer = input("You: ")
+			input_list.append({"role": "user", "content": user_answer})
+			break
+
+		elif item.type == "function_call":
+			func = TOOL_REGISTRY.get(item.name)
+			parsed = json.loads(item.arguments)
+			print(parsed)
+			tool_result = func(**parsed)
+			input_list.append({
+				"type": "function_call_output",
+				"call_id": item.call_id,
+				"output": json.dumps(tool_result)
+			})
+
