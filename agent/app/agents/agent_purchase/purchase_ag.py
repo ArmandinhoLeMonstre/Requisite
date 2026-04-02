@@ -1,32 +1,14 @@
-import os
-import serpapi
+
 import json
 from openai import OpenAI
 from app.tools.purchase_tools.definitions import tools
+from app.tools.purchase_tools.functions import get_product_info
+from app.tools.purchase_tools.registry import TOOL_REGISTRY
 
 op_client = OpenAI()
 
 # cafe asin : B01N2KFHRS
 budget = 80
-
-def get_product(asin):
-	serp_client = serpapi.Client(api_key = os.getenv("SERPAPI_API_KEY"))
-	try:
-		results = serp_client.search({
-			"engine" : "amazon",
-			"k" : asin,
-		})
-	except Exception as e:
-		return str(e)
-	try:
-		product = {
-			"price": results["organic_results"][0]["price"],
-			"link": results["organic_results"][0]["link"],
-			"thumbnail": results["organic_results"][0]["thumbnail"]
-		}
-	except:
-		return "Index error in 'results['organic_results'][0]'"
-	return json.dumps(product)
 
 # def get_amz_product(data):
 data = {
@@ -47,14 +29,14 @@ input_list += response.output
 
 for item in response.output:
 	if item.type == "function_call":
-		if item.name == "get_product":
-			asin = json.loads(item.arguments)["asin"]
-			product = get_product(asin)
-			input_list.append({
-				"type": "function_call_output",
-				"call_id": item.call_id,
-				"output": product,
-			})
+		func = TOOL_REGISTRY.get(item.name)
+		asin = json.loads(item.arguments)["asin"]
+		product = func(asin)
+		input_list.append({
+			"type": "function_call_output",
+			"call_id": item.call_id,
+			"output": product,
+		})
 	
 response = op_client.responses.create(
 	model= "gpt-4o-mini",

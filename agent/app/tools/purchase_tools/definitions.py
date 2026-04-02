@@ -1,7 +1,7 @@
 tools = [
     {
         "type": "function",
-        "name": "get_product",
+        "name": "get_product_info",
         "description": "Get the price, link and thumbnail of an amazon product using its ASIN thanks to serpAPI",
         "parameters": {
             "type": "object",
