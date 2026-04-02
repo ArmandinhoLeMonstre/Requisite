@@ -1,6 +1,6 @@
-from app.tools.purchase_tools.functions import get_product_info
+from app.tools.purchase_tools.functions import get_amazon_product
 
 
 TOOL_REGISTRY = {
-    "get_product_info": get_product_info,
+    "get_amazon_product": get_amazon_product,
 }

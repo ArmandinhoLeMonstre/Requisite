@@ -1,17 +1,17 @@
 tools = [
     {
         "type": "function",
-        "name": "get_product_info",
-        "description": "Get the price, link and thumbnail of an amazon product using its ASIN thanks to serpAPI",
+        "name": "get_amazon_product",
+        "description": "Use SerpAPI to look for amazon products on Amazon US website, gives back multiple amazon articles",
         "parameters": {
             "type": "object",
             "properties": {
-                "asin": {
+                "product_info": {
                     "type": "string",
-                    "description": "an ASIN e.g. B01N2KFHRS",
+                    "description": "a product to look for in an amazon seach bar e.g. wireless azerty keyboard",
                 },
             },
-            "required": ["asin"],
+            "required": ["product_info"],
         },
     },
 ]
