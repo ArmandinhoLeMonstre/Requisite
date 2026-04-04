@@ -6,18 +6,12 @@ TOOLS = [
 		"parameters": {
 			"type": "object",
 			"properties": {
-				"request": {
-					"type": "object",
-					"description": "The current inventory where you can look for available objects",
-					"properties": {
-						"user_id": {"type": "number"},
-						"object_type": {"type": "string"},
-						"purpose":  {"type": "string"}
-					},
-					"required": ["user_id", "object_type", "purpose"]
+				"object_type": {
+					"type": "string",
+					"description": "The type of the actual object in one word"
 				}
 			},
-        "required": ["request"]
+        "required": ["object_type"]
     	}
     },
 ]
