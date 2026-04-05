@@ -1,8 +1,8 @@
 tools = [
     {
         "type": "function",
-        "name": "get_amazon_product",
-        "description": "Use SerpAPI to look for amazon products on Amazon US website, gives back multiple amazon articles",
+        "name": "get_amz_product_list",
+        "description": "Use SerpAPI to look for amazon products on Amazon US website, gives back a list of amazon articles",
         "parameters": {
             "type": "object",
             "properties": {

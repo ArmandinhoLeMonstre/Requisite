@@ -1,10 +1,9 @@
 
 import json
-from openai import OpenAI
 from app.tools.purchase_tools.definitions import tools
-from app.tools.purchase_tools.registry import TOOL_REGISTRY
+from app.tools.purchase_tools.registry import *
+from app.tools.purchase_tools.functions import get_match_list, op_client
 
-op_client = OpenAI()
 
 SYSTEM_PROMPT = """You are an Amazon product search agent.
 					You will receive a product specifications and you must search for matching products, the products must have all the specifications.
@@ -15,7 +14,7 @@ SYSTEM_PROMPT = """You are an Amazon product search agent.
 						"results": [
 							{
 								"name": string,
-								"price": float,
+								"price": string,
 								"link": string,
 								"description": string,
 								"thumbnail": string
@@ -34,7 +33,7 @@ def call_amz_agent(data):
 		},
 		{
 			"role": "user",
-			"content": str(data)
+			"content": json.dumps(data)
 		}
 	]
 
@@ -55,16 +54,18 @@ def call_amz_agent(data):
 
 	for item in response.output:
 		if item.type == "function_call":
-			func = TOOL_REGISTRY.get(item.name)
-			if func is None:
-				return {"found": False, "results": None, "error": f"Unknown tool: {item.name}"}
-			product_info = json.loads(item.arguments)["product_info"]
-			products = func(product_info)
-			input_list.append({
-				"type": "function_call_output",
-				"call_id": item.call_id,
-				"output": str(products),
-			})
+			if item.name == "get_amz_product_list":
+				func = TOOL_REGISTRY.get(item.name)
+				if func is None:
+					return {"found": False, "results": None, "error": f"Unknown tool: {item.name}"}
+				product = json.loads(item.arguments)[PARAM_REGISTRY.get(item.name)]
+				result = func(product)
+				result = get_match_list(data, result)
+				input_list.append({
+					"type": "function_call_output",
+					"call_id": item.call_id,
+					"output": str(result),
+				})
 
 	try:
 		response = op_client.responses.create(
@@ -84,5 +85,5 @@ def call_amz_agent(data):
 		return {"found": False, "results": None, "error": "Invalid JSON returned by model"}
 
 
-# data = {"object_type":"keyboard","object_specs":"apple Wireless AZERTY",  "budget": "400"}
-# print(Call_amzAgent(data))
+# data = {"object_type":"keyboard","object_specs":"apple Wireless black",  "budget": "120"}
+# print(call_amz_agent(data))
