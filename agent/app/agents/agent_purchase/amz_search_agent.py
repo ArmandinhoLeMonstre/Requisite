@@ -1,7 +1,7 @@
 
 import json
 from app.tools.purchase_tools.definitions import tools
-from app.tools.purchase_tools.registry import *
+from app.tools.purchase_tools.registry import TOOL_REGISTRY, PARAM_REGISTRY
 from app.tools.purchase_tools.functions import get_match_list, op_client
 
 

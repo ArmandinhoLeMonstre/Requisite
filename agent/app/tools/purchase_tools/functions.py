@@ -14,7 +14,7 @@ def get_product_detail(asin):
 			"json_restrictor" : "product_results.{price}, about_item[]"
 		})
 	except Exception as e:
-		return str(e)
+		return {"result": False, "error": str(e)}
 	return result
 
 def	product_match(specification, product):
@@ -37,14 +37,21 @@ def	product_match(specification, product):
 			input= input_list,
 		)
 	except Exception as e:
-		return str(e)
-	return json.loads(response.output_text)
+		return {"result": False, "error": str(e)}
+	
+	try:
+		return json.loads(response.output_text)
+	except json.JSONDecodeError:
+		return {"result": False, "error": "Invalid JSON returned by model"}
 	
 def get_match_list(specification: dict, product_list):
 	product_list = product_list.as_dict()
 	matches=[]
 	for item in product_list["organic_results"]:
-		if product_match(specification, get_product_detail(item["asin"]))["result"]:
+		details = get_product_detail(item["asin"])
+		if isinstance(details, dict) and "error" in details:
+			continue
+		if product_match(specification, details)["result"]:
 			matches.append(item)
 		if len(matches) == 3:
 			break
