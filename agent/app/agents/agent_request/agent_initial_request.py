@@ -51,6 +51,13 @@ while True:
 		- Adapt the formality level to the user's context (startup vs. corporate, etc.).
 		- If amazon_agent returns multiple options, present them to the user and let them choose.
 
+		## Error handling:
+		- If a sub-agent returns "success": false, immediately read the "error_code" and "action" fields.
+		- Always follow the instruction in the "action" field — it tells you exactly what to do next.
+		- Never ignore a failed response or assume the workflow can continue as normal.
+		- If there is no "action" field, inform the user something went wrong and ask how they want to proceed.
+
+
 		""",
 		tools=TOOLS,
 		input=input_list
