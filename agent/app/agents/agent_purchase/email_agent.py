@@ -3,29 +3,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from openai import OpenAI
 
-data = {
-    "employee": {
-        "name": "Ricardo",
-        "department": "Marketing",
-        "email": "ricardo@company.com"
-    },
-    "manager": {
-        "name": "Sophie",
-        "email": "sophie@company.com"
-    },
-    "ticket": {
-        "id": "#4821",
-        "reason": "Keyboard broke, keys are no longer registering",
-        "created_at": "2026-04-05"
-    },
-    "product": {
-        "name": "Logitech MK470",
-        "source": "amazon",
-        "price": 65,
-        "link": "https://amazon.com/..."
-    }
-}
-
 op_client = OpenAI()
 
 SMTP_HOST = os.getenv("SMTP_HOST")
@@ -41,6 +18,7 @@ SYSTEM_PROMPT = """You are an email composition agent.
                 - The product details (name, price, source, link if available)
                 - The ticket ID
                 You must return ONLY a valid JSON object, no explanation, no markdown, no backticks.
+				The email is sent by an AI so it doesn't need to be signed
                 The JSON must follow this exact structure:
                 {
                     "subject": string,
@@ -96,3 +74,28 @@ def call_email_agent(data):
 		return {"sent": True, "to": data['manager']["email"],}
 	else:
 		return {"sent": False, "error": result}
+	
+data = {
+    "employee": {
+        "name": "Ricardo",
+        "department": "Marketing",
+        "email": "rafael.nascimento@outlook.be"
+    },
+    "manager": {
+        "name": "Asa",
+        "email": "rafael.nascimento@outlook.be"
+    },
+    "ticket": {
+        "id": "#4821",
+        "reason": "Keyboard broke, keys are no longer registering",
+        "created_at": "2026-04-05"
+    },
+    "product": {
+        "name": "Logitech MK470",
+        "source": "amazon",
+        "price": 65,
+        "link": "https://amazon.com/..."
+    }
+}
+
+print(call_email_agent(data))
