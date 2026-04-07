@@ -1,2 +1,0 @@
-Input before loop:
-[{'role': 'user', 'content': 'Can I get a new keyboard ? Also, what is my budget ? My id is 1'}, ResponseOutputMessage(id='msg_06c3836ac05e129a0069c9579c8134819490c4e49dc0e81841', content=[ResponseOutputText(annotations=[], text='{"user_id":1,"object":"keyboard","purpose":"request a new keyboard"}', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')]

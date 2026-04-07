@@ -1,7 +1,10 @@
-from app.tools.budget_tool import check_budget
-from app.tools.policy_tools import get_material_type
+from app.tools.purchase_tools.functions import get_amz_product_list
+
 
 TOOL_REGISTRY = {
-    "check_budget": check_budget,
-	"get_material_type": get_material_type
+    "get_amz_product_list": get_amz_product_list,
+}
+
+PARAM_REGISTRY = {
+	"get_amz_product_list": "product_info",
 }

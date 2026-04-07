@@ -1,0 +1,21 @@
+```python
+```
+
+Input before loop:
+[{'role': 'user', 'content': 'What is my remaining budget ? My id is 1'}, ResponseFunctionToolCall(arguments='{"employee_id":1}', call_id='call_gKOI3nK98qAirzVd5cPgtrta', name='check_budget', type='function_call', id='fc_0a61a013d63946470069c69f5c7e808195adf1de0490a62753', status='completed')]
+Final input:
+[{'role': 'user', 'content': 'What is my remaining budget ? My id is 1'}, ResponseFunctionToolCall(arguments='{"employee_id":1}', call_id='call_gKOI3nK98qAirzVd5cPgtrta', name='check_budget', type='function_call', id='fc_0a61a013d63946470069c69f5c7e808195adf1de0490a62753', status='completed'), {'type': 'function_call_output', 'call_id': 'call_gKOI3nK98qAirzVd5cPgtrta', 'output': '{"budget": {"remaining": 150}}'}]
+
+Input before loop:
+[{'role': 'user', 'content': 'Can I get a new keyboard ? My id is 1'}, ResponseFunctionToolCall(arguments='{"employee_id":1,"object":"keyboard"}', call_id='call_kE9dDGxAXeNEd3FM2vjG2g2y', name='get_material_type', type='function_call', id='fc_07060b024528f6720069c69fa674008195850d670ea1fb78c9', status='completed')]
+Final input:
+[{'role': 'user', 'content': 'Can I get a new keyboard ? My id is 1'}, ResponseFunctionToolCall(arguments='{"employee_id":1,"object":"keyboard"}', call_id='call_kE9dDGxAXeNEd3FM2vjG2g2y', name='get_material_type', type='function_call', id='fc_07060b024528f6720069c69fa674008195850d670ea1fb78c9', status='completed'), {'type': 'function_call_output', 'call_id': 'call_kE9dDGxAXeNEd3FM2vjG2g2y', 'output': '{"budget": "hardware"}'}]
+
+[{'role': 'user', 'content': 'Can I get a new keyboard ? Also, what is my budget ? My id is 1'}, 
+ResponseOutputMessage(id='msg_043c36f1247389a20069c6ba15b7fc819583092bdbfde9594d', content=[ResponseOutputText(annotations=[], text='{"user_id":1,"object":"keyboard","purpose":"request for a new keyboard"}', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')]
+
+Input before loop:
+[{'role': 'user', 'content': 'Can I get a new keyboard ? Also, what is my budget ? My id is 1'}, 
+ResponseOutputMessage(id='msg_0fd8a2169ff20c1f0069c941e66a808195921fefc6f24b5699', 
+content=[ResponseOutputText(annotations=[], text='{"user_id":1,"object":"keyboard","purpose":"request for a new keyboard"}', 
+type='output_text', logprobs=[])], role='assistant', status='completed', type='message')]
