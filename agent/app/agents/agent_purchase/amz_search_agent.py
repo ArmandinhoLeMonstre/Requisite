@@ -25,7 +25,7 @@ SYSTEM_PROMPT = """You are an Amazon product search agent.
 					If no product with the exact specifications is found, return found : false and results : null in the structure
 					if you receive an error send it back with the format 'error: explanation'."""
 
-def call_amz_agent(data):
+def call_amazon_agent(data):
 	input_list = [
 		{
 			"role" : "system",
@@ -86,4 +86,4 @@ def call_amz_agent(data):
 
 
 # data = {"object_type":"keyboard","object_specs":"apple Wireless black",  "budget": "120"}
-# print(call_amz_agent(data))
+# print(call_amazon_agent(data))

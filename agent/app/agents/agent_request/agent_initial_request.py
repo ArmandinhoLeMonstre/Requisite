@@ -101,7 +101,7 @@ while True:
 			try:
 				tool_result = func(**parsed)
 			except Exception as e:
-				print(f"Error in tool")
+				print(f"Error in tool : {e}")
 				# log -> print({"error": f"tool {item.name} has raised an error : {e}"})
 				# return {
 				# 	"success": False,
