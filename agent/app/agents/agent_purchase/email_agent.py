@@ -41,7 +41,8 @@ def send_email(to_send: str, subject: str, body: str):
 	except Exception as e:
 		return str(e)
 
-def call_email_agent(data):
+def call_email_agent(data, product):
+	final_data = data | product
 	input_list = [
 		{
 			"role":"system",
@@ -49,7 +50,7 @@ def call_email_agent(data):
 		},
 		{
 			"role": "user",
-			"content": json.dumps(data),
+			"content": json.dumps(final_data),
 		}
 	]
 
@@ -83,19 +84,20 @@ def call_email_agent(data):
 #     },
 #     "manager": {
 #         "name": "Asa",
-#         "email": "rafael.nascimento@outlook.be"
+#         "email": "armandeuarmand@gmail.com"
 #     },
 #     "ticket": {
 #         "id": "#4821",
 #         "reason": "Keyboard broke, keys are no longer registering",
 #         "created_at": "2026-04-05"
-#     },
-#     "product": {
-#         "name": "Logitech MK470",
-#         "source": "amazon",
-#         "price": 65,
-#         "link": "https://amazon.com/..."
 #     }
 # }
 
-# print(call_email_agent(data))
+# product =  {
+# 	"name": "Logitech MK470",
+# 	"source": "amazon",
+# 	"price": 65,
+# 	"link": "https://amazon.com/..."
+# }
+
+# print(call_email_agent(data, product))

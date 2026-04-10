@@ -44,16 +44,76 @@ TOOLS = [
         "parameters": {
             "type": "object",
             "properties": {
-                "object_type": {
-                    "type": "string",
-                    "description": "The type of the actual object in one word",
+                "data": {
+                    "type": "object",
+                    "description": "The request data to draft an email",
+					"properties": {
+						"employee" : {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"department": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								},
+							},
+							"required": ["name", "department", "email"]
+						},
+						"manager": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								},
+							},
+							"required": ["name", "email"]
+						},
+						"ticket": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"reason": {
+									"type": "string"
+								},
+								"created_at": {
+									"type": "string"
+								},
+							},
+							"required": ["id", "reason", "created_at"]
+						}
+					},
+					"required": ["employee", "manager", "ticket"]
                 },
-				"object_specs": {
-					"type": "string",
-					"description": "The specs of the actual object"
+				"product": {
+					"type": "object",
+					"description": "The actual product that the user wants",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"source": {
+							"type": "string"
+						},
+						"price": {
+							"type": "number"
+						},
+						"link": {
+							"type": "string"
+						}
+					},
+					"required": ["name", "source", "price", "link"]
 				}
             },
-            "required": ["object_type", "object_specs"],
+            "required": ["data", "product"],
         },
     },
 ]

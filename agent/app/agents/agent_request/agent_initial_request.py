@@ -11,7 +11,33 @@ client = OpenAI(
   api_key=openai_api_key
 )
 
+data = {
+    "employee": {
+        "name": "Ricardo",
+        "department": "Marketing",
+        "email": "rafael.nascimento@outlook.be"
+    },
+    "manager": {
+        "name": "Armand",
+        "email": "armandeuarmand@gmail.com"
+    },
+    "ticket": {
+        "id": "#4821",
+        "reason": "Need approvisionnement",
+        "created_at": "08/04/2026"
+    }
+}
+
 input_list = [
+	{
+        "role": "system",
+        "content": f"""Here is the current request context. Use this data when calling the email_agent.
+        Always pass the complete and updated data to the email_agent when calling it.
+        
+        {json.dumps(data, indent=2)}
+        """
+    },
+
     {"role": "user", "content": "Can I get a new keyboard ?"}
 ]
 
@@ -40,11 +66,12 @@ while True:
 			for the requested object. Use its output to strengthen the request with concrete data 
 			(price, link, delivery time).
 			
-			- **email_agent** – Call this LAST, only after the user has confirmed the draft, 
+			- **email_agent** – Call this LAST, only after the user has confirmed the product.
+			Use {data} for the first parameter of the tool call, and based on what the user's chooses, send it as the product parameter
 			to format and send the final request to the manager.
 
 			## Recommended workflow:
-			inventory_agent → (If not in stock) amazon_agent → draft request → user confirms → email_agent
+			inventory_agent → (If not in stock) amazon_agent →  user confirms → email_agent
 
 			## Rules:
 			- Always check inventory before doing anything else.
