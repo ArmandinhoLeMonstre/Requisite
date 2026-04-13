@@ -6,5 +6,5 @@ router = APIRouter(prefix="/agents")
 
 @router.post("/")
 def call_agents_orchestrator(orchestrator_request: OrchestratorRequest):
-	# orchestrator_service.send_request_to_orchestrator(orchestrator_request)
+	orchestrator_service.send_request_to_orchestrator(orchestrator_request)
 	return {"Hello": "World"}
