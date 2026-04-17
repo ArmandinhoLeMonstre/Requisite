@@ -54,7 +54,10 @@ def call_orchestrator_agent(client: OpenAI, data: dict, req_input_list: list):
 				# print(state)
 				# return_reponse.append(item.model_dump())
 				return_reponse.append(response.output)
-				return return_reponse
+				return {
+					"message": item.content[0].text,
+					"input_list": return_reponse
+				}
 				# user_answer = input("You: ")
 				# input_list.append({"role": "user", "content": user_answer})
 				# break

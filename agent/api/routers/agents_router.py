@@ -12,5 +12,5 @@ router = APIRouter(prefix="/agents")
 def call_agents_orchestrator(req: OrchestratorRequest, db: Annotated[Session, Depends(get_db)]):
 	existing_input_list = db_service.retrieve_input_list(db, req.ticket_id)
 	result = orchestrator_service.send_request_to_orchestrator(req, existing_input_list)
-	db_service.save_input_list(db, req.ticket_id, result)
-	return {"Hello": "World"}
+	db_service.save_input_list(db, req.ticket_id, result.get("history"))
+	return {"message": result.get("message")}

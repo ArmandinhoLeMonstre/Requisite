@@ -5,7 +5,6 @@ import api.services.formatter_service as formatter_service
 import os
 import json
 
-
 def send_request_to_orchestrator(req: OrchestratorRequest, existing_input_list: list):
 	openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -37,7 +36,12 @@ def send_request_to_orchestrator(req: OrchestratorRequest, existing_input_list: 
 
 	orchestrator_response = call_orchestrator_agent(client, data, req_input_list)
 
-	new_input = formatter_service.format_orchestrator_message(orchestrator_response)
+	new_input = formatter_service.format_orchestrator_message(orchestrator_response.get("input_list"))
 	req_input_list.extend(new_input)
 
-	return (json.dumps(req_input_list))
+	updated_input_list = json.dumps(req_input_list)
+
+	return ({
+		"history": updated_input_list,
+		"message": orchestrator_response.get("message")
+	})
