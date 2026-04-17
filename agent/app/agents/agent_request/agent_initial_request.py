@@ -19,30 +19,10 @@ def call_orchestrator_agent(client: OpenAI, data: dict, req_input_list: list):
 			{json.dumps(data, indent=2)}
 			"""
 		},
-
 	]
+
 	if req_input_list is not None:
 		input_list.extend(req_input_list)
-	# input_list.append({"role": "assistant", "content": "What type of keyboard are you looking for? Do you have any specific preferences like brand, mechanical or membrane, wired or wireless, or any special features?"})
-	# input_list.append({"role": "user", "content": "Qwerty Wireless"})
-	# input_list.append({"role": "assistant", "content": "Do you have a preference for any specific brand or additional features, such as backlighting or extra function keys? Also, how many units do you need?"})
-	# input_list.append({"role": "user", "content": "No"})
-# 	input_list.append({'arguments': '{"object_type":"keyboard","object_specs":"Qwerty Wireless"}', 'call_id': 'call_JcwkeFeTugj2PmP0j6bgc23C', 'name': 'call_inventory_agent', 'type': 'function_call', 'id': 'fc_0158da19f2b3d9ad0069dd176c9a488197a68236edd7ff751e', 'status': 'completed'})
-# 	input_list.append({"type": "function_call_output", 'call_id': 'call_JcwkeFeTugj2PmP0j6bgc23C', "output": json.dumps({"success": "true", "data": "[\n    {\n        \"asin\": \"B0DL6L189W\",\n        \"title\": \"Magic Keyboard with Touch ID and Numeric Keypad for Mac Models with Apple Silicon - US English - Black Keys\",\n        \"object_specs\": \"QWERTY Wireless NUMERIC_KEYPAD APPLE\",\n        \"available\": 1,\n        \"match_score\": 10,\n        \"match_reason\": \"Fully wireless QWERTY keyboard with additional features.\"\n    },\n    {\n        \"asin\": \"B0DL6LV7Q6\",\n        \"title\": \"Magic Keyboard - US English , Bluetooth\",\n        \"object_specs\": \"QWERTY Wireless APPLE\",\n        \"available\": 1,\n        \"match_score\": 9,\n        \"match_reason\": \"Wireless QWERTY keyboard but lacks numeric keypad.\"\n    },\n    {\n        \"asin\": \"B003ELVLKU\",\n        \"title\": \"K120 Wired Keyboard for Windows, USB Plug-and-Play, Full-Size, Spill-Resistant, Curved Space Bar, Compatible with PC, Laptop - Black\",\n        \"object_specs\": \"QWERTY Wired LOGITECH\",\n        \"available\": 1,\n        \"match_score\": 0,\n        \"match_reason\": \"Wired keyboard, does not meet wireless requirement.\"\n    }\n]"})})
-# 	input_list.append({"role": "assistant", "content": """Assistant: I found a couple of wireless QWERTY keyboards in stock:
-
-# 1. **Magic Keyboard with Touch ID and Numeric Keypad for Mac Models**
-#    - **Specs:** QWERTY Wireless, Numeric Keypad
-#    - **Available:** 1 unit
-#    - **ASIN:** B0DL6L189W
-
-# 2. **Magic Keyboard - US English, Bluetooth**
-#    - **Specs:** QWERTY Wireless
-#    - **Available:** 1 unit (does not have a numeric keypad)
-#    - **ASIN:** B0DL6LV7Q6
-
-# Would you like to go with one of these options? If yes, please specify which one."""})
-# 	input_list.append({"role": "user", "content": "First one, make a request to the manager"})
 
 	prompt = get_orchestrator_prompt(data)
 

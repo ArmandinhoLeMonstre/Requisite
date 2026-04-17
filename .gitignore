@@ -4,3 +4,4 @@ __pycache__
 .env
 agent/outputs/
 test.py
+test.db

@@ -9,8 +9,8 @@ from api.database import get_db
 router = APIRouter(prefix="/agents")
 
 @router.post("/")
-def call_agents_orchestrator(orchestrator_request: OrchestratorRequest, db: Annotated[Session, Depends(get_db)]):
-	existing_input_list = db_service.retrieve_input_list(db, 3)
-	result = orchestrator_service.send_request_to_orchestrator(orchestrator_request, existing_input_list)
-	db_service.save_input_list(db, 3, result)
+def call_agents_orchestrator(req: OrchestratorRequest, db: Annotated[Session, Depends(get_db)]):
+	existing_input_list = db_service.retrieve_input_list(db, req.ticket_id)
+	result = orchestrator_service.send_request_to_orchestrator(req, existing_input_list)
+	db_service.save_input_list(db, req.ticket_id, result)
 	return {"Hello": "World"}

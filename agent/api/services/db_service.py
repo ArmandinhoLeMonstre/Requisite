@@ -17,9 +17,6 @@ def save_input_list(db, ticket_id, new_input_list):
 
 	db.execute(stmt)
 	db.commit()
-	# db.add(to_add_input)
-	# db.commit()
-	# db.refresh(to_add_input)
 
 	return 0
 
@@ -29,7 +26,7 @@ def retrieve_input_list(db, ticket_id):
 	existing_input_list = result.scalars().first()
 	if existing_input_list is None:
 		return None
-	#print(existing_input_list.data)
-	x = json.loads(existing_input_list.data)
-	# print(type(x))
-	return x
+
+	restored_input_list = json.loads(existing_input_list.data)
+
+	return restored_input_list
