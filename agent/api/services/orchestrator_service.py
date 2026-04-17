@@ -5,12 +5,12 @@ import api.services.formatter_service as formatter_service
 import os
 import json
 
-def send_request_to_orchestrator(req: OrchestratorRequest, existing_input_list: list):
-	openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(
+	api_key=openai_api_key
+)
 
-	client = OpenAI(
-		api_key=openai_api_key
-	)
+def send_request_to_orchestrator(req: OrchestratorRequest, existing_input_list: list):
 
 	data = {
 		"employee": {

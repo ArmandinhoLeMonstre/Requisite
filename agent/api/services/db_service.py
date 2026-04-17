@@ -3,8 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.dialects.sqlite import insert
 import json
 
-def save_input_list(db, ticket_id, new_input_list):
-
+def save_input_list(db, ticket_id: int, new_input_list: str):
 	stmt = insert(InputList).values(
 	    id=ticket_id, data=new_input_list
 	)
@@ -20,7 +19,7 @@ def save_input_list(db, ticket_id, new_input_list):
 
 	return 0
 
-def retrieve_input_list(db, ticket_id):
+def retrieve_input_list(db, ticket_id: int):
 	stmt = select(InputList).where(InputList.id == ticket_id)
 	result = db.execute(stmt)
 	existing_input_list = result.scalars().first()
