@@ -1,5 +1,7 @@
 from api.schemas.agents_requests_schemas import OrchestratorRequest
-from app.agents.agent_request.agent_initial_request import call_orchestrator_agent
+from app.agents.orchestrator.request_orchestrator_agent import call_orchestrator_agent
+from app.agents_exceptions import OrchestratorError
+from fastapi import HTTPException, status
 from openai import OpenAI
 import api.services.formatter_service as formatter_service
 import os
@@ -34,7 +36,10 @@ def send_request_to_orchestrator(req: OrchestratorRequest, existing_input_list: 
 
 	req_input_list.extend([{"role": "user", "content": req.user_message}])
 
-	orchestrator_response = call_orchestrator_agent(client, data, req_input_list)
+	try:
+		orchestrator_response = call_orchestrator_agent(client, data, req_input_list)
+	except OrchestratorError as e:
+		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 	new_input = formatter_service.format_orchestrator_message(orchestrator_response.get("input_list"))
 	req_input_list.extend(new_input)
