@@ -12,7 +12,6 @@ class Ticket(Base):
 	created_at: Mapped['datetime'] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 	user: Mapped['User'] = relationship(back_populates='tickets')
-	datetime.utcnow
 
 	def __repr__(self):
 		return f"Ticker(id={self.id}, status={self.status})"
