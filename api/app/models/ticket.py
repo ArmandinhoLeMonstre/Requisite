@@ -1,17 +1,21 @@
 from app.database import Mapped, mapped_column, String, ForeignKey, relationship, Base
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, Uuid
 from datetime import datetime, timezone
 from sqlalchemy import Enum as SAEnum
 import enum
-
+import uuid
 
 class TickerStatus(enum.Enum):
 	completed= "completed"
+	opened= "opened"
 	waiting_for_approval= "waiting_for_approval"
+	approved= "approved"
+	refused= "refused"
+
 
 class Ticket(Base):
 	__tablename__ = 'tickets'
-	id: Mapped['int'] = mapped_column(primary_key=True)
+	id: Mapped['uuid.UUID'] = mapped_column(Uuid, primary_key=True, default= uuid.uuid4)
 	status: Mapped['str'] = mapped_column(SAEnum(TickerStatus))
 	description: Mapped['str'] = mapped_column(String(100))
 	user_id: Mapped['int'] = mapped_column(ForeignKey('users.id'))
