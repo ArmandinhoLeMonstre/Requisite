@@ -1,4 +1,4 @@
-from api.app.database import Mapped, mapped_column, Base, ForeignKey, String
+from app.database import Mapped, mapped_column, Base, ForeignKey, String
 from sqlalchemy import DateTime, Text
 from datetime import datetime, timezone
 

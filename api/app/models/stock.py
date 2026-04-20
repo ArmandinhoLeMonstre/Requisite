@@ -1,4 +1,4 @@
-from api.app.database import Mapped, mapped_column, String, Base
+from app.database import Mapped, mapped_column, String, Base
 
 
 class Stock(Base):

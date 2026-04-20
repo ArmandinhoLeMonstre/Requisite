@@ -1,4 +1,4 @@
-from api.app.database import Mapped, mapped_column, String, ForeignKey, relationship, Optional, Base
+from app.database import Mapped, mapped_column, String, ForeignKey, relationship, Optional, Base
 from sqlalchemy import Enum as SAEnum
 import enum
 
