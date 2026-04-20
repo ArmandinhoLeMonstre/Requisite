@@ -11,4 +11,3 @@ class Input(Base):
 
 	def __repr__(self):
 		return f"Input(id={self.id}, message={self.message}, ticket_id={self.ticket_id})"
-

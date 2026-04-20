@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from contextlib import asynccontextmanager
 from starlette.exceptions import HTTPException as StarletteHTTPException # fastapi is built on top of scarlette, when a user goes to a rout that doesnt exist, it is managed by scarlette. Some cases are not handled by fastapi, so with this we make sure cover everything
 from fastapi.responses import  JSONResponse # Manually return JSONresponse from our exception handler
@@ -11,7 +11,7 @@ app = FastAPI()
 def root():
     return {"Petit", "Zeub"}
 
-@app.exception_handlers(StarletteHTTPException)
+@app.exception_handlers(StarletteHTTPException) #handling HTTP error
 def general_http_exception_handler(request: Request, exception: StarletteHTTPException):
     message = (
         exception.detail
@@ -23,4 +23,12 @@ def general_http_exception_handler(request: Request, exception: StarletteHTTPExc
         return JSONResponse(
             status_code=exception.status_code,
             content={"detail": message},
+        )
+    
+@app.exception_handler(RequestValidationError) #handling Validation error, it's always 422 errors
+def validation_exception_handler(request: Request, exception: RequestValidationError):
+    if request.url.path.startswith("/api"):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            content={"detail": exception.errors()},
         )
