@@ -1,11 +1,11 @@
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound, DatabaseError
 from app.models.user import User
 from app.init_db import engine, Session, select
-from app.schemas.user_schemas import RequestUser
+from app.schemas.user_schemas import UserCreate
 from fastapi import HTTPException
 
 
-def create_user(user: RequestUser, db: Session):
+def create_user(user: UserCreate, db: Session):
 	existing = db.scalars(select(User).where((User.name == user.name) | (User.email == user.email))).first()
 	if existing:
 		if existing.name == user.name:
