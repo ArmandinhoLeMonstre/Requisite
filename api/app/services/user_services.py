@@ -66,3 +66,17 @@ def update_user_group(user_id: int, new_group: int, db: Session):
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
 	return user
+
+def delete_user(user_id:int, db:Session):
+	try:
+		user = db.scalars(select(User).where(User.id == user_id)).one()
+	except NoResultFound:
+		raise HTTPException(status_code=404, detail="User not found")
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+
+	try:
+		db.delete(user)
+		db.commit()
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")	
