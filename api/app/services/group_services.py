@@ -15,16 +15,20 @@ def create_group(group: GroupCreate, db: Session):
 		raise HTTPException(status_code=404, detail="User not found")
 	if manager.role != UserRole.manager:
 		raise HTTPException(status_code=403, detail="User is not a manager")
+	
 	group_stmt = Group(
 		code= ''.join(random.choices(string.ascii_uppercase + string.digits, k=6)),
 		manager_id= group.manager_id
 	)
+
 	try:
+		manager.group = group_stmt
 		db.add(group_stmt)
 		db.commit()
 		db.refresh(group_stmt)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
 	return (group_stmt)
 
 

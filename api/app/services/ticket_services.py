@@ -7,16 +7,16 @@ from app.schemas.ticket_schemas import TicketCreate
 from fastapi import HTTPException
 
 def create_ticket(ticket: TicketCreate, db: Session):
+	try:
+		user = db.scalars(select(User).where(User.id == ticket.user_id)).one()
+	except SQLAlchemyError:
+		raise HTTPException(status_code=404, detail="User not found")
+	
 	ticket_stmt = Ticket(
 		status= ticket.status,
 		description= ticket.description,
 		user_id= ticket.user_id,
 	)
-
-	try:
-		user = db.scalars(select(User).where(User.id == ticket.user_id)).one()
-	except SQLAlchemyError:
-		raise HTTPException(status_code=404, detail="User not found")
 	
 	try:
 		db.add(ticket_stmt)
