@@ -1,4 +1,6 @@
-from app.database import Mapped, mapped_column, String, Base
+from app.database import Base
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String
 
 
 class Stock(Base):

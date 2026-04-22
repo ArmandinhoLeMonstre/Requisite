@@ -1,4 +1,6 @@
-from app.database import Mapped, mapped_column, String, ForeignKey, relationship, Base
+from app.database import Base
+from sqlalchemy import String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import DateTime, Uuid
 from datetime import datetime, UTC
 from sqlalchemy import Enum as SAEnum

@@ -1,5 +1,6 @@
-from app.database import Mapped, mapped_column, ForeignKey, relationship, Base, String
-
+from app.database import Base
+from sqlalchemy import String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class Group(Base):
 	__tablename__ = "groups"

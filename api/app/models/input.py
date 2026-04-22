@@ -1,5 +1,6 @@
-from app.database import Mapped, mapped_column, Base, ForeignKey, String
-from sqlalchemy import DateTime, Text
+from app.database import Base
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import DateTime, Text, ForeignKey
 from datetime import datetime, UTC
 
 class Input(Base):
