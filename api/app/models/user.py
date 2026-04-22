@@ -10,8 +10,8 @@ class UserRole(enum.Enum):
 class User(Base):
 	__tablename__ = 'users'
 	id: Mapped['int'] = mapped_column(primary_key=True)
-	name: Mapped['str'] = mapped_column(String(40), unique=True)
-	email: Mapped['str'] = mapped_column(String(50), unique=True)
+	name: Mapped['str'] = mapped_column(String(50), unique=True)
+	email: Mapped['str'] = mapped_column(String(120), unique=True)
 	role: Mapped['str'] = mapped_column(SAEnum(UserRole))
 	hashed_password: Mapped['str'] = mapped_column(String(100))
 	group_id: Mapped[Optional['int']] = mapped_column(ForeignKey("groups.id"))
