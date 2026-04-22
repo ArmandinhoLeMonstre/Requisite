@@ -1,6 +1,0 @@
-notes*.txt
-.venv
-__pycache__
-.env
-agent/outputs/
-test.py
