@@ -10,14 +10,14 @@ class UserRole(enum.Enum):
 class User(Base):
 	__tablename__ = 'users'
 	id: Mapped['int'] = mapped_column(primary_key=True)
-	name: Mapped['str'] = mapped_column(String(40))
-	email: Mapped['str'] = mapped_column(String(50))
+	name: Mapped['str'] = mapped_column(String(40), unique=True)
+	email: Mapped['str'] = mapped_column(String(50), unique=True)
 	role: Mapped['str'] = mapped_column(SAEnum(UserRole))
 	hashed_password: Mapped['str'] = mapped_column(String(100))
 	group_id: Mapped[Optional['int']] = mapped_column(ForeignKey("groups.id"))
 
 	tickets: Mapped[list["Ticket"]] = relationship(back_populates='user')
-	group: Mapped[Optional['Group']] = relationship(back_populates='users')
+	group: Mapped[Optional['Group']] = relationship(back_populates='users', foreign_keys=[group_id])
 
 	def __repr__(self):
 		return f"User(id={self.id}, name={self.name}, email={self.email})"
