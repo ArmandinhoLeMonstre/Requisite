@@ -12,6 +12,9 @@ def create_ticket(ticket: TicketCreate, db: Session):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=404, detail="User not found")
 	
+	if user.group_id is None:
+		raise HTTPException(status_code=403, detail="User is not in a group")
+	
 	ticket_stmt = Ticket(
 		status= ticket.status,
 		description= ticket.description,
