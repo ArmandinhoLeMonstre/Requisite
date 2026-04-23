@@ -16,7 +16,7 @@ class User(Base):
 	name: Mapped['str'] = mapped_column(String(50), unique=True)
 	email: Mapped['str'] = mapped_column(String(120), unique=True)
 	role: Mapped['str'] = mapped_column(SAEnum(UserRole))
-	hashed_password: Mapped['str'] = mapped_column(String(100))
+	hash_password: Mapped['str'] = mapped_column(String(200))
 	group_id: Mapped[Optional['int']] = mapped_column(ForeignKey("groups.id"))
 
 	tickets: Mapped[list["Ticket"]] = relationship(back_populates='user')

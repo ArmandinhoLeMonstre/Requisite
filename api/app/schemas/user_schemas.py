@@ -12,7 +12,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-	hashed_password: str
+	password: str = Field(min_length=4)
 
 
 class UserUpdate(UserBase):
@@ -24,8 +24,20 @@ class UserUpdate(UserBase):
 	group_id: int | None = Field(default=None)
 
 
-class UserResponse(UserBase):
+class UserPublic(BaseModel):
 	model_config = ConfigDict(from_attributes=True)
 
 	id: int
+	name: str
+	role: UserRole
+	group_id: int
 	tickets: list[TicketResponse]
+
+
+class UserPrivate(UserPublic):
+	email: EmailStr
+
+
+class Token(BaseModel):
+	access_token: str
+	tocket_type: str	
