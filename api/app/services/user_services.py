@@ -2,7 +2,7 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound, DatabaseError
 from app.models.user import User
 from app.models.group import Group
 from app.init_db import engine, Session, select
-from app.schemas.user_schemas import UserCreate
+from app.schemas.user_schemas import UserCreate, UserUpdate
 from fastapi import HTTPException
 
 
@@ -42,24 +42,41 @@ def select_user(id: int, db: Session):
 
 	return(user)
 
-def update_user_group(user_id: int, new_group: int, db: Session):
+def patch_user(user_id: int, new_data: UserUpdate, db: Session):
+	REGISTRY = {
+		"name": User.name,
+		"email": User.email,
+	}
+
 	try:
 		user = db.scalars(select(User).where(User.id == user_id)).one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
-	
-	try:
-		db.scalars(select(Group).where(Group.id == new_group)).one()
-	except NoResultFound:
-		raise HTTPException(status_code=404, detail="Group not found")
-	except SQLAlchemyError:
-		raise HTTPException(status_code=500, detail="Error with Database server")
 
-	user.group_id = new_group
+	update_data = new_data.model_dump(exclude_unset=True)
+
+	for key, value in update_data.items():
+		if key == "group_id":
+			try:
+				db.scalars(select(Group).where(Group.id == value)).one()
+			except NoResultFound:
+				raise HTTPException(status_code=404, detail="Group not found")
+			except SQLAlchemyError:
+				raise HTTPException(status_code=500, detail="Error with Database server")
+		elif key == "name" or key == "email":
+			try:
+				existing = db.scalars(select(User).where((REGISTRY.get(key) == value) & (User.id != user_id))).first()
+			except SQLAlchemyError:
+				raise HTTPException(status_code=500, detail="Error with Database server")
+			if existing:
+				if key == "name":
+					raise HTTPException(status_code=400, detail="Name already exists")
+				raise HTTPException(status_code=400, detail="Email already exists")
+		setattr(user, key, value)
+
 	try:
-		db.add(user)
 		db.commit()
 		db.refresh(user)
 	except SQLAlchemyError:
