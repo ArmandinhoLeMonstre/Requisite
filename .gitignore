@@ -5,3 +5,4 @@ __pycache__
 agent/outputs/
 test.py
 test.db
+.ruff_cache
