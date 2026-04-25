@@ -1,6 +1,6 @@
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
-from sqlalchemy import func
-from app.init_db import Session, select
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.models.group import Group

@@ -9,10 +9,8 @@ from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPri
 from app.services.user_services import create_user, select_user, patch_user, delete_user, get_current_user
 from app.services.token_services import log_for_access_token
 
-from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
-from app.auth import hash_password, oauth2_scheme, verify_password, create_access_token, verify_access_token
-from app.config import settings
+from app.auth import oauth2_scheme
 
 router = APIRouter()
 
