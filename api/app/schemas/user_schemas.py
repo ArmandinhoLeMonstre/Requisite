@@ -40,4 +40,4 @@ class UserPrivate(UserPublic):
 
 class Token(BaseModel):
 	access_token: str
-	tocket_type: str	
+	token_type: str	
