@@ -6,7 +6,7 @@ from app.init_db import get_db
 from sqlalchemy.orm import Session
 
 from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, Token
-from app.services.user_services import create_user, select_user, patch_user, delete_user
+from app.services.user_services import create_user, select_user, patch_user, delete_user, get_current_user
 from app.services.token_services import log_for_access_token
 
 from datetime import timedelta
@@ -27,6 +27,10 @@ def login_for_access_token(
     db: Annotated[Session, Depends(get_db)],
 ):
     return log_for_access_token(form_data, db)
+
+@router.get("/me", response_model=UserPrivate)
+def current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]):
+    return get_current_user(token, db)
 
 @router.get("/{user_id}", response_model=UserPublic)
 def get_user(user_id: int, db:Annotated[Session, Depends(get_db)]):

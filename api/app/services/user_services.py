@@ -1,11 +1,14 @@
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func
+from app.init_db import Session, select
+
 from app.models.user import User
 from app.models.group import Group
-from app.init_db import Session, select
 from app.schemas.user_schemas import UserCreate, UserUpdate
-from fastapi import HTTPException
-from app.auth import hash_password
+
+from fastapi import HTTPException, status
+
+from app.auth import hash_password, verify_access_token
 
 
 def create_user(user: UserCreate, db: Session):
@@ -99,3 +102,34 @@ def delete_user(user_id:int, db:Session):
 		db.commit()
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")	
+
+def get_current_user(token: str, db: Session):
+	user_id = verify_access_token(token)
+	if user_id is None:
+		raise HTTPException(
+			status_code=status.HTTP_401_UNAUTHORIZED,
+			detail="Invalid or expired token",
+			headers={"WWW-Authenticate": "Bearer"},
+		)
+	
+	try:
+		user_id_int = int(user_id)
+	except (TypeError, ValueError):
+		raise HTTPException(
+			status_code=status.HTTP_401_UNAUTHORIZED,
+			detail="Invalid or expired token",
+			headers={"WWW-Authenticate": "Bearer"},
+		)
+	
+	try:
+		user = db.scalars(select(User).where(User.id == user_id_int)).one()
+	except NoResultFound:
+		raise HTTPException(
+			status_code=status.HTTP_401_UNAUTHORIZED,
+			detail="User not found",
+			headers={"WWW-Authenticate": "Bearer"},
+		)
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+
+	return user
