@@ -1,14 +1,16 @@
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+from app.init_db import get_db
 
 from app.models.user import User
 from app.models.group import Group
-from app.schemas.user_schemas import UserCreate, UserUpdate
+from app.schemas.user_schemas import UserCreate, UserUpdate, UserRole
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from typing import Annotated
 
-from app.auth import hash_password, verify_access_token
+from app.auth import hash_password, verify_access_token, oauth2_scheme
 
 
 def create_user(user: UserCreate, db: Session):
@@ -37,7 +39,13 @@ def create_user(user: UserCreate, db: Session):
 
 	return new_user
 
-def select_user(id: int, db: Session):
+def select_user(current_user: User, user_id: int, db: Session):
+	if current_user.id == user_id:
+		return current_user
+	
+	if current_user.role != UserRole.manager:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to see this ticket")
+
 	try:
 		user = db.scalars(select(User).where(User.id == id)).one()
 	except NoResultFound:
@@ -47,11 +55,14 @@ def select_user(id: int, db: Session):
 
 	return(user)
 
-def patch_user(user_id: int, new_data: UserUpdate, db: Session):
+def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Session):
 	REGISTRY = {
 		"name": func.lower(User.name),
 		"email": func.lower(User.email),
 	}
+
+	if current_user.role != UserRole.manager and current_user.id != user_id:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this user")
 
 	try:
 		user = db.scalars(select(User).where(User.id == user_id)).one()
@@ -89,7 +100,10 @@ def patch_user(user_id: int, new_data: UserUpdate, db: Session):
 	
 	return user
 
-def delete_user(user_id:int, db:Session):
+def delete_user(current_user: User, user_id:int, db:Session):
+	if current_user.role != UserRole.manager:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this account")
+
 	try:
 		user = db.scalars(select(User).where(User.id == user_id)).one()
 	except NoResultFound:
@@ -103,7 +117,7 @@ def delete_user(user_id:int, db:Session):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")	
 
-def get_current_user(token: str, db: Session):
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]):
 	user_id = verify_access_token(token)
 	if user_id is None:
 		raise HTTPException(
@@ -133,3 +147,5 @@ def get_current_user(token: str, db: Session):
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	return user
+
+CurrentUser = Annotated[User, Depends(get_current_user)]

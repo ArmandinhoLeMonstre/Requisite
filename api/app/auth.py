@@ -7,6 +7,7 @@ from pwdlib import PasswordHash
 
 from app.config import settings
 
+
 password_hash = PasswordHash.recommended()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/users/token")
@@ -49,4 +50,3 @@ def verify_access_token(token: str) -> str | None:
 		return None
 	else:
 		return payload.get("sub")
-

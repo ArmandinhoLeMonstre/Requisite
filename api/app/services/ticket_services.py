@@ -1,24 +1,22 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
-from app.models.user import User
+from fastapi import HTTPException, status
+
 from app.init_db import engine, select
+
+from app.models.user import User
 from app.models.ticket import TicketStatus, Ticket, uuid
 from app.schemas.ticket_schemas import TicketCreate
-from fastapi import HTTPException
 
-def create_ticket(ticket: TicketCreate, db: Session):
-	try:
-		user = db.scalars(select(User).where(User.id == ticket.user_id)).one()
-	except SQLAlchemyError:
-		raise HTTPException(status_code=404, detail="User not found")
-	
+
+def create_ticket(ticket: TicketCreate, user: User,  db: Session):
 	if user.group_id is None:
 		raise HTTPException(status_code=403, detail="User is not in a group")
 	
 	ticket_stmt = Ticket(
 		status= ticket.status,
 		description= ticket.description,
-		user_id= ticket.user_id,
+		user_id= user.id,
 	)
 	
 	try:
@@ -31,12 +29,18 @@ def create_ticket(ticket: TicketCreate, db: Session):
 	return ticket_stmt
 
 
-def select_ticket(ticket_id: uuid.UUID, db: Session):
+def select_ticket(ticket_id: uuid.UUID, user: User, db: Session):
 	try:
 		ticket = db.scalars(select(Ticket).where(Ticket.id == ticket_id)).one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="Ticket not found")
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	if user.id != ticket.user_id:
+		raise HTTPException(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail="Not authorized to see this ticket"
+		)
 	
 	return ticket
