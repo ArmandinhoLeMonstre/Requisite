@@ -1,14 +1,10 @@
-from app.database import Base
+from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import DateTime, Text, ForeignKey
-from datetime import datetime, UTC
+from sqlalchemy.dialects.postgresql import JSONB
+from app.database import Base
 
-class Input(Base):
-	__tablename__ = 'inputs'
-	id: Mapped['int'] = mapped_column(primary_key=True)
-	message: Mapped['str'] = mapped_column(Text)
-	ticket_id: Mapped['int'] = mapped_column(ForeignKey('tickets.id'))
-	created_at: Mapped['datetime'] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+class InputList(Base):
+	__tablename__ = "input_list"
 
-	def __repr__(self):
-		return f"Input(id={self.id}, message={self.message}, ticket_id={self.ticket_id})"
+	id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+	data: Mapped[dict] = mapped_column(JSONB)

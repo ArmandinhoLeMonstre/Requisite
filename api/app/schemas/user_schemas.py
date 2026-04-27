@@ -30,7 +30,7 @@ class UserPublic(BaseModel):
 	id: int
 	name: str
 	role: UserRole
-	group_id: int
+	group_id: int | None = None
 	tickets: list[TicketResponse]
 
 

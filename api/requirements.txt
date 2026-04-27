@@ -11,3 +11,5 @@ httpx==0.28.1
 pwdlib[argon2]==0.3.0
 pyjwt==2.12.1
 pydantic-settings==2.14.0
+openai==2.31.0
+serpapi==1.0.2
