@@ -10,14 +10,15 @@ import uuid
 from app.schemas.ticket_schemas import TicketCreate, TicketResponse
 from app.services.ticket_services import create_ticket, select_ticket
 from app.services.user_services import CurrentUser
+from app.services.chat_services import new_message
 
 
 router = APIRouter()
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=TicketResponse)
-def post_new_ticket(request: TicketCreate,current_user: CurrentUser, db:Annotated[Session, Depends(get_db)]):
-    return create_ticket(request, CurrentUser, db)
+def post_new_ticket(request: TicketCreate, current_user: CurrentUser, db:Annotated[Session, Depends(get_db)]):
+    return create_ticket(request, current_user, db)
 
 @router.get("/{ticket_id}", response_model=TicketResponse)
 def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annotated[Session, Depends(get_db)]):
