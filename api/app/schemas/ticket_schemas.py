@@ -20,7 +20,6 @@ class TicketResponse(TicketBase):
 	description: str | None = Field(min_length=1, max_length=200)
 	user_id: int
 	id: uuid.UUID
-	chats: list[ChatResponse]
 	created_at: datetime
 
 
