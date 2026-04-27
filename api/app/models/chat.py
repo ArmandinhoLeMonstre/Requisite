@@ -8,11 +8,11 @@ import uuid
 
 
 class Sender(enum.Enum):
-	User = "user"
+	user = "user"
 	agent = "agent"
 
 class Chat(Base):
-	__tablename__ = 'inputs'
+	__tablename__ = 'chats'
 	id: Mapped['int'] = mapped_column(primary_key=True)
 	ticket_id: Mapped['uuid.UUID'] = mapped_column(ForeignKey('tickets.id'))
 	sender: Mapped['str'] = mapped_column(SAEnum(Sender))

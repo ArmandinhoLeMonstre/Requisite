@@ -3,13 +3,13 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from fastapi import HTTPException, status
 from sqlalchemy import select
 
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.models.ticket import TicketStatus, Ticket, uuid
 from app.schemas.ticket_schemas import TicketCreate
 from app.services.chat_services import new_message, Sender
 
-def create_ticket(ticket: TicketCreate, current_user: User,  db: Session):
-	if current_user.group_id is None:
+def create_ticket(current_user: User,  db: Session):
+	if current_user.group_id is None and current_user.role != UserRole.manager:
 		raise HTTPException(status_code=403, detail="User is not in a group")
 	
 	ticket_stmt = Ticket(
@@ -23,7 +23,6 @@ def create_ticket(ticket: TicketCreate, current_user: User,  db: Session):
 		db.refresh(ticket_stmt)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
-	new_message(Sender.User, db, ticket_stmt, ticket.message)
 	return ticket_stmt
 
 

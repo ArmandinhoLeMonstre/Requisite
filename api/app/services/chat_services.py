@@ -7,15 +7,15 @@ from fastapi import HTTPException, status
 from app.models.chat import Chat, Sender
 from app.models.ticket import Ticket
 from app.models.user import User
-from app.schemas.chat_schemas import ChatResponse
+from app.schemas.chat_schemas import ChatResponse, ChatRequest
 from app.services.user_services import CurrentUser
 
 
-def new_message(sending: Sender, db: Session, ticket: Ticket, msg: str):
+def new_message(chat: ChatRequest, db: Session, ticket: Ticket):
 	chat = Chat(
 		ticket_id= ticket.id,
-		sender= sending,
-		message= msg,
+		sender= chat.sender,
+		message= chat.message,
 	)
 
 	try:

@@ -10,7 +10,7 @@ class TicketBase(BaseModel):
 
 
 class TicketCreate(TicketBase):
-	message: str
+	pass
 
 
 class TicketResponse(TicketBase):
@@ -22,3 +22,9 @@ class TicketResponse(TicketBase):
 	id: uuid.UUID
 	chats: list[ChatResponse]
 	created_at: datetime
+
+
+class TicketChats(TicketBase):
+	id: uuid.UUID
+	user_id: int
+	chats: list[ChatResponse]
