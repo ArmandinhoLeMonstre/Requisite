@@ -21,6 +21,7 @@ class User(Base):
 
 	tickets: Mapped[list["Ticket"]] = relationship(back_populates='user')
 	group: Mapped[Optional['Group']] = relationship(back_populates='users', foreign_keys=[group_id])
+	groups: Mapped[list['Group']] = relationship(back_populates='manager', foreign_keys="[Group.manager_id]")
 
 	def __repr__(self):
 		return f"User(id={self.id}, name={self.name}, email={self.email})"

@@ -11,7 +11,7 @@ import random
 import string
 
 
-def create_group(group: GroupCreate, current_user: User, db: Session):
+def create_group(current_user: User, db: Session):
 	if current_user.role != UserRole.manager:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not a manager")
 	
@@ -21,7 +21,6 @@ def create_group(group: GroupCreate, current_user: User, db: Session):
 	)
 
 	try:
-		current_user.group = group_stmt
 		db.add(group_stmt)
 		db.commit()
 		db.refresh(group_stmt)
@@ -53,6 +52,10 @@ def join_group(current_user: User, code: str, db: Session):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
-	current_user.group = group
+	current_user.group_id = group.id
 
+	try:
+		db.commit()
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
 	return group

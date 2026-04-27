@@ -3,7 +3,7 @@ from app.schemas.user_schemas import UserPublic
 
 
 class GroupBase(BaseModel):
-	manager_id: int
+	pass
 
 
 class GroupCreate(GroupBase):
@@ -15,5 +15,6 @@ class GroupResponse(GroupBase):
 
 	id: int
 	code: str
+	manager_id: int
 	users: list["UserPublic"]
 	

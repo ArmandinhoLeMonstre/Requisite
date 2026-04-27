@@ -13,8 +13,8 @@ from app.services.user_services import CurrentUser
 router = APIRouter()
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=GroupResponse)
-def post_new_group(group: GroupCreate, current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]):
-    return create_group(group, current_user, db)
+def post_new_group(current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]):
+    return create_group(current_user, db)
 
 @router.get("/{group_id}", response_model=GroupResponse)
 def get_group(group_id: int, current_user: CurrentUser,  db: Annotated[Session, Depends(get_db)]):
