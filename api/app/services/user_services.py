@@ -44,13 +44,16 @@ def select_user(current_user: User, user_id: int, db: Session):
 		return current_user
 	
 	if current_user.role != UserRole.manager:
-		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to see this ticket")
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to see this user")
 
 	try:
-		user = db.scalars(select(User).where(User.id == id)).one()
+		user = db.scalars(select(User).where(User.id == user_id)).one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
-	except SQLAlchemyError:
+	except SQLAlchemyError as e:
+		print("============================")
+		print(e)
+		print("============================")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	return(user)

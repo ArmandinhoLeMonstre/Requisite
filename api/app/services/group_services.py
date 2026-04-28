@@ -16,7 +16,7 @@ def create_group(current_user: User, db: Session):
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not a manager")
 	
 	group_stmt = Group(
-		code= ''.join(random.choices(string.ascii_uppercase + string.digits, k=6)),
+		code= ''.join(random.choices(string.ascii_uppercase + string.digits, k=5)),
 		manager_id= current_user.id
 	)
 
