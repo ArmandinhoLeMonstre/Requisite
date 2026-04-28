@@ -30,7 +30,7 @@ def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annotated[Se
     return select_ticket(ticket_id, current_user, db)
 
 @router.post("/{ticket_id}", response_model=TicketResponse)
-def get_ticket(current_user: CurrentUser,
+def add_chat_to_ticket(current_user: CurrentUser,
                ticket_id: uuid.UUID,
                chat: ChatRequest,
                db: Annotated[Session, Depends(get_db)]):
