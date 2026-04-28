@@ -37,6 +37,15 @@ class UserPrivate(UserPublic):
 	email: EmailStr
 
 
+class UserGroup(BaseModel):
+	model_config = ConfigDict(from_attributes=True)
+
+	id: int
+	name: str
+	role: UserRole
+	group_id: Optional[int] = None
+
+
 class Token(BaseModel):
 	access_token: str
 	token_type: str	

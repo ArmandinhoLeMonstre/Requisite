@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from app.schemas.user_schemas import UserPublic
+from app.schemas.user_schemas import UserGroup
 
 
 class GroupBase(BaseModel):
@@ -16,5 +16,5 @@ class GroupResponse(GroupBase):
 	id: int
 	code: str
 	manager_id: int
-	users: list["UserPublic"]
+	users: list["UserGroup"]
 	
