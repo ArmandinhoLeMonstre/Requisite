@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from app.models.user import UserRole
+from app.models.user_model import UserRole
 from typing import Optional
 from app.schemas.ticket_schemas import TicketResponse
 

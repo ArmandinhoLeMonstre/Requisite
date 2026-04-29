@@ -4,9 +4,9 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 
 from fastapi import HTTPException, status
 
-from app.models.chat import Chat, Sender
-from app.models.ticket import Ticket
-from app.models.user import User
+from app.models.chat_model import Chat, Sender
+from app.models.ticket_model import Ticket
+from app.models.user_model import User
 from app.schemas.chat_schemas import ChatResponse, ChatRequest
 from app.services.user_services import CurrentUser
 

@@ -1,4 +1,4 @@
-from app.models.input import InputList
+from app.models.input_model import InputList
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 import json

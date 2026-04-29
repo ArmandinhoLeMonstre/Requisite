@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from app.models.chat import Sender
+from app.models.chat_model import Sender
 
 
 class ChatBase(BaseModel):

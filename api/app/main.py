@@ -3,14 +3,14 @@ from starlette.exceptions import HTTPException as StarletteHTTPException # fasta
 from fastapi.responses import  JSONResponse # Manually return JSONresponse from our exception handler
 from fastapi.exceptions import RequestValidationError # Handling validation error ex: someone passes a 'hello' when a int is expected (I think fastapi handles it by itself, thanks to this we can do i manually)
 
-from app.routers import groups, tickets, users, agents_router
+from app.routers import agents_router, groups_router, tickets_router, users_router
 
 app = FastAPI()
 
 
-app.include_router(users.router, prefix="/api/users", tags=["users"])
-app.include_router(tickets.router, prefix="/api/tickets", tags=["tickets"])
-app.include_router(groups.router, prefix="/api/groups", tags=["groups"])
+app.include_router(users_router.router, prefix="/api/users", tags=["users"])
+app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"])
+app.include_router(groups_router.router, prefix="/api/groups", tags=["groups"])
 app.include_router(agents_router.router, prefix="/api/agents", tags=["agents"])
 
 @app.get("/")

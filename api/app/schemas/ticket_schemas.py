@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
-from app.models.ticket import TicketStatus
+from app.models.ticket_model import TicketStatus
 from app.schemas.chat_schemas import ChatResponse
 import uuid
 

@@ -3,8 +3,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from app.init_db import get_db
 
-from app.models.user import User
-from app.models.group import Group
+from app.models.user_model import User
+from app.models.group_model import Group
 from app.schemas.user_schemas import UserCreate, UserUpdate, UserRole
 
 from fastapi import HTTPException, status, Depends

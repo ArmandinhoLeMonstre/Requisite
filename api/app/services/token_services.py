@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func, select
 
-from app.models.user import User
+from app.models.user_model import User
 from app.schemas.user_schemas import Token
 from app.auth import hash_password, verify_password, create_access_token
 from app.config import settings

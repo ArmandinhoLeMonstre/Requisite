@@ -12,7 +12,7 @@ from app.schemas.chat_schemas import ChatRequest
 from app.services.ticket_services import create_ticket, select_ticket
 from app.services.user_services import CurrentUser
 from app.services.chat_services import new_message
-from app.models.chat import Sender
+from app.models.chat_model import Sender
 
 
 router = APIRouter()

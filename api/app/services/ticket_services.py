@@ -3,8 +3,8 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from fastapi import HTTPException, status
 from sqlalchemy import select
 
-from app.models.user import User, UserRole
-from app.models.ticket import TicketStatus, Ticket, uuid
+from app.models.user_model import User, UserRole
+from app.models.ticket_model import TicketStatus, Ticket, uuid
 from app.schemas.ticket_schemas import TicketCreate
 from app.services.chat_services import new_message, Sender
 

@@ -2,8 +2,8 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.group import Group
-from app.models.user import User, UserRole
+from app.models.group_model import Group
+from app.models.user_model import User, UserRole
 from app.schemas.group_schemas import GroupCreate
 from fastapi import HTTPException, status
 
