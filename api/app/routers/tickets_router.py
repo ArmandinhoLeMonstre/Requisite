@@ -9,11 +9,14 @@ import uuid
 
 from app.schemas.ticket_schemas import TicketResponse, TicketChats
 from app.schemas.chat_schemas import ChatRequest
+from app.schemas.agents_requests_schemas import OrchestratorResponse
+
 from app.services.ticket_services import create_ticket, select_ticket
 from app.services.user_services import CurrentUser
 from app.services.chat_services import new_message
-from app.models.chat_model import Sender
+from app.services.orchestrator_service import create_data, call_agents_orchestrator
 
+from app.models.chat_model import Sender
 
 router = APIRouter()
 
@@ -29,14 +32,18 @@ def post_new_ticket(message: str, current_user: CurrentUser, db:Annotated[Sessio
 def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annotated[Session, Depends(get_db)]):
     return select_ticket(ticket_id, current_user, db)
 
-@router.post("/{ticket_id}", response_model=TicketResponse)
+@router.post("/{ticket_id}", response_model=OrchestratorResponse)
 def add_chat_to_ticket(current_user: CurrentUser,
                ticket_id: uuid.UUID,
                chat: ChatRequest,
                db: Annotated[Session, Depends(get_db)]):
     ticket = select_ticket(ticket_id, current_user, db)
-    new_message(chat, db, ticket)
-    return ticket
+    msg = new_message(chat, db, ticket)
+    data = create_data(current_user, db, ticket, msg.message)
+    rep = call_agents_orchestrator(data, db, msg.message)
+    ag_msg = ChatRequest(sender="agent", message= rep.orchestrator_message)
+    new_message(ag_msg, db, ticket)
+    return rep
 
 @router.get("{ticket_id}/chats", response_model= TicketChats)
 def get_chats(current_user: CurrentUser,
