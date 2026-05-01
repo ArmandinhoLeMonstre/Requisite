@@ -1,5 +1,5 @@
 from app.schemas.agents_requests_schemas import OrchestratorRequest
-from app.agents_app.agents.orchestrator.request_orchestrator_agent import call_orchestrator_agent
+from app.agents_app.agents.orchestrator_agent import call_orchestrator_agent
 from app.agents_app.agents_exceptions import OrchestratorError
 from fastapi import HTTPException, status
 from openai import OpenAI

@@ -4,7 +4,7 @@ import json
 from json import JSONDecodeError
 from app.agents_app.tools.request_tools.registry import TOOL_REGISTRY
 from app.agents_app.tools.request_tools.definitions import TOOLS
-from app.agents_app.agents.orchestrator.prompt_orchestrator import get_orchestrator_prompt
+from app.agents_app.agents.orchestrator_prompt import get_orchestrator_prompt
 
 def call_orchestrator_agent(client: OpenAI, data: dict, req_input_list: list):
 
