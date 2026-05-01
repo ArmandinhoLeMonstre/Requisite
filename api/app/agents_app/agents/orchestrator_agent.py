@@ -5,8 +5,9 @@ from json import JSONDecodeError
 from app.agents_app.tools.request_tools.registry import TOOL_REGISTRY
 from app.agents_app.tools.request_tools.definitions import TOOLS
 from app.agents_app.agents.orchestrator_prompt import get_orchestrator_prompt
+from app.schemas.agents_requests_schemas import OrchestratorData
 
-def call_orchestrator_agent(client: OpenAI, data: dict, req_input_list: list):
+def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_list: list):
 
 	return_reponse = []
 
@@ -16,7 +17,7 @@ def call_orchestrator_agent(client: OpenAI, data: dict, req_input_list: list):
 			"content": f"""Here is the current request context. Use this data when calling the email_agent.
 			Always pass the complete and updated data to the email_agent when calling it.
 			
-			{json.dumps(data, indent=2)}
+			{json.dumps(data.model_dump(mode='json'), indent=2)}
 			"""
 		},
 	]
