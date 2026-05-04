@@ -4,7 +4,7 @@ from app.config import settings
 
 
 sqlite_url = settings.database_url
-engine = create_engine(sqlite_url, echo=True)
+engine = create_engine(sqlite_url, echo=False)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

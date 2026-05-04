@@ -41,16 +41,15 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 			raise OrchestratorError(message=str(e))
 		input_list += response.output
 
+		return_flag = True
+
 		for item in response.output:
 			if item.type == "message":
 				print(f"Assistant: {item.content[0].text}")
 				return_reponse.append(response.output)
-				return {
-					"message": item.content[0].text,
-					"input_list": return_reponse
-				}
 
 			elif item.type == "function_call":
+				return_flag = False
 				return_reponse.append(response.output)
 				func = TOOL_REGISTRY.get(item.name)
 				if not func:
@@ -81,3 +80,8 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 					"call_id": item.call_id,
 					"output": json.dumps(tool_result)
 				})
+		if return_flag is True:
+			return {
+					"message": item.content[0].text,
+					"input_list": return_reponse
+				}
