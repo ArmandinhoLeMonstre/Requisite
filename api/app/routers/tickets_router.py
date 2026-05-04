@@ -21,16 +21,10 @@ from app.models.chat_model import Sender
 router = APIRouter()
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=OrchestratorResponse)
-def post_new_ticket(message: str, current_user: CurrentUser, db:Annotated[Session, Depends(get_db)]):
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=TicketResponse)
+def post_new_ticket(current_user: CurrentUser, db:Annotated[Session, Depends(get_db)]):
     ticket = create_ticket(current_user, db)
-    user_chat = ChatRequest(sender= Sender.user, message= message)
-    msg = new_message(user_chat, db, ticket)
-    data = create_data(current_user, db, ticket, msg.message)
-    rep = call_agents_orchestrator(data, db, msg.message)
-    ag_msg = ChatRequest(sender="agent", message= rep.orchestrator_message)
-    new_message(ag_msg, db, ticket)
-    return rep
+    return ticket
 
 @router.get("/{ticket_id}", response_model=TicketResponse)
 def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annotated[Session, Depends(get_db)]):
