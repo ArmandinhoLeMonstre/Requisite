@@ -51,9 +51,6 @@ def select_user(current_user: User, user_id: int, db: Session):
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
 	except SQLAlchemyError as e:
-		print("============================")
-		print(e)
-		print("============================")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	return(user)
