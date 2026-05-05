@@ -7,7 +7,13 @@ from app.agents_app.tools.request_tools.definitions import TOOLS
 from app.agents_app.agents.orchestrator_prompt import get_orchestrator_prompt
 from app.schemas.agents_requests_schemas import OrchestratorData
 
+from app.logger import logger
+
 def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_list: list):
+	log = logger.bind(ticket_id=data.ticket_id)
+	orchestrator_log = log.bind(agent="orchestrator")
+
+	orchestrator_log.info("orchestrator.started")
 
 	return_reponse = []
 
@@ -57,10 +63,18 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 				try:
 					parsed = json.loads(item.arguments)
 				except JSONDecodeError as e:
+					orchestrator_log.error(
+						"orchestrator.parse_error",
+						error=str(e),
+						raw_arguments=item.arguments
+					)
 					raise OrchestratorError(message=f"Failed to parse tool arguments as JSON: {e}. Raw arguments: {item.arguments}")
-					# log -> print (f"Couldn't load arguments for function_call correctly : {e}")
 				try:
 					tool_result = func(**parsed)
+					
+					success = tool_result.get("success")
+					if success is False:
+						print("false")
 				except Exception as e:
 					#Ici, il y a un pb, faudra regler et revisiter les json d'erreur des agents etc...
 					print(f"Error in tool : {e}")
@@ -81,6 +95,7 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 					"output": json.dumps(tool_result)
 				})
 		if return_flag is True:
+			orchestrator_log.info("orchestrator.completed")
 			return {
 					"message": item.content[0].text,
 					"input_list": return_reponse

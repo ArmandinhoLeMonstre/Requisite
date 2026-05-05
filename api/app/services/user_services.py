@@ -12,6 +12,8 @@ from typing import Annotated
 
 from app.auth import hash_password, verify_access_token, oauth2_scheme
 
+from app.logger import logger
+
 
 def create_user(user: UserCreate, db: Session):
 	try:
@@ -20,6 +22,7 @@ def create_user(user: UserCreate, db: Session):
 		raise HTTPException(status_code=500, detail="Error with database")
 	if existing:
 		if existing.name == user.name:
+			logger.warning("user.create.conflict", field="name", value=user.name)
 			raise HTTPException(status_code=400, detail="Name already exists")
 		raise HTTPException(status_code=400, detail="Email already exists")
 	
@@ -36,6 +39,8 @@ def create_user(user: UserCreate, db: Session):
 		db.refresh(new_user)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	logger.info("user.created", user_id=new_user.id, name=new_user.name, email=new_user.email, role=new_user.role)
 
 	return new_user
 

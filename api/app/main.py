@@ -2,8 +2,14 @@ from fastapi import FastAPI, Request, status, HTTPException, Depends
 from starlette.exceptions import HTTPException as StarletteHTTPException # fastapi is built on top of scarlette, when a user goes to a rout that doesnt exist, it is managed by scarlette. Some cases are not handled by fastapi, so with this we make sure cover everything
 from fastapi.responses import  JSONResponse # Manually return JSONresponse from our exception handler
 from fastapi.exceptions import RequestValidationError # Handling validation error ex: someone passes a 'hello' when a int is expected (I think fastapi handles it by itself, thanks to this we can do i manually)
-
+from contextlib import asynccontextmanager
 from app.routers import agents_router, groups_router, tickets_router, users_router
+from app.logger import setup_logger
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    setup_logger()
+    yield
 
 app = FastAPI()
 

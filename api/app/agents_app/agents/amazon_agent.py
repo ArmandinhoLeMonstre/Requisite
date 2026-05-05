@@ -50,11 +50,21 @@ def call_amazon_agent(object_type: str, object_specs: str):
 			input = input_list,
 		)
 	except Exception as e:
-		return str(e)
+		return {
+			"success": False,
+			"error_code": "API_ERROR",
+			"message": "API call to openAI failed",
+			"action": "Stop process"
+		}
 	
 	tool_was_called = any(item.type == "function_call" for item in response.output)
 	if not tool_was_called:
-		return {"found": False, "results": None, "error": "Model did not call the search tool"}
+		return {
+			"success": False,
+			"error_code": "TOOL_ERROR",
+			"message": "Failed to tool call",
+			"action": "Stop process"
+		}
 
 	input_list += response.output
 

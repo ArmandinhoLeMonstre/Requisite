@@ -13,6 +13,7 @@ import app.services.db_service as db_service
 import app.services.formatter_service as formatter_service
 import os
 import json
+from app.logger import logger
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(
