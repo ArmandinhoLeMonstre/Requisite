@@ -10,7 +10,7 @@ function Sidebar({ tickets, onTicketClick }) {
           tickets.map((ticket) => (
             <button
               key={ticket.id}
-              onClick={() => onTicketClick(ticket)}
+              onClick={() => onTicketClick(ticket.id)}
               className="w-full text-left text-gray-300 hover:bg-gray-700 rounded px-5 py-2"
             >
               {ticket.title}

@@ -1,24 +1,28 @@
+import { useState } from "react";
+import MessageInput from "./MessageInput";
+import MessageList from "./MessageList";
 
-function ChatWindow({activeTicket}) {
-	return (
-	<div className="flex-1 flex flex-col-reverse">
-		{ activeTicket ? (
-			<div className="flex-1">
-				<p className="align-middle">{activeTicket.title}</p>
-			</div>
-		) : (
-			<div className="flex-1">
-				<p>Select a ticket or start a new one</p>
-			</div>
-		)}
-        {/* <div className="flex-col-reverse p-5 border rounded-3xl">
-          <p className="text-gray-400 text-lg">chat...</p>
+function ChatWindow({ activeTicket, addMessage }) {
+  const [inputMessage, setInputMessage] = useState("");
+  
+  return (
+    <div className="flex-1 flex ">
+      {activeTicket ? (
+        <div className="flex-1">
+          <MessageList listMessage={activeTicket.messages} />
+          <MessageInput
+            inputMessage={inputMessage}
+            setInputMessage={setInputMessage}
+            addMessage={addMessage}
+          />
         </div>
-		<div className="flex-1 ">
-			<p className="text-black text-lg"> salut</p>
-		</div> */}
-      </div>
-	);
+      ) : (
+        <div className="flex-1">
+          <p>Select a ticket or start a new one</p>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default ChatWindow
+export default ChatWindow;
