@@ -10,6 +10,7 @@ from app.models.user_model import User
 from app.schemas.chat_schemas import ChatResponse, ChatRequest
 from app.services.user_services import CurrentUser
 
+from app.logger import logger
 
 def new_message(chat: ChatRequest, db: Session, ticket: Ticket):
 	chat = Chat(
@@ -26,4 +27,6 @@ def new_message(chat: ChatRequest, db: Session, ticket: Ticket):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
+	logger.info("chat.added", ticket_id=ticket.id)
+
 	return chat

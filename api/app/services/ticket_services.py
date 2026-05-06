@@ -8,6 +8,8 @@ from app.models.ticket_model import TicketStatus, Ticket, uuid
 from app.schemas.ticket_schemas import TicketCreate
 from app.services.chat_services import new_message, Sender
 
+from app.logger import logger
+
 def create_ticket(current_user: User,  db: Session):
 	if current_user.group_id is None and current_user.role != UserRole.manager:
 		raise HTTPException(status_code=403, detail="User is not in a group")
@@ -23,6 +25,9 @@ def create_ticket(current_user: User,  db: Session):
 		db.refresh(ticket_stmt)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	logger.info("ticket.created", user_id=current_user.id, ticket_id=ticket_stmt.id)
+
 	return ticket_stmt
 
 
@@ -39,5 +44,7 @@ def select_ticket(ticket_id: uuid.UUID, user: User, db: Session):
 			status_code=status.HTTP_403_FORBIDDEN,
 			detail="Not authorized to see this ticket"
 		)
+	
+	logger.info("ticket.seen", user_id=user.id, ticket_id=ticket_id)
 	
 	return ticket

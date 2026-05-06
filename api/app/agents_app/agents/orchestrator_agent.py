@@ -59,7 +59,13 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 				return_reponse.append(response.output)
 				func = TOOL_REGISTRY.get(item.name)
 				if not func:
+					orchestrator_log.error(
+						"orchestrator.func_error",
+						error=str(e),
+						raw_arguments=item.name
+					)
 					raise OrchestratorError(message="The orchestrator tried to call a tool that is not available in the registry.")
+				orchestrator_log.info("orchestrator.tool_called", tool_name=item.name)
 				try:
 					parsed = json.loads(item.arguments)
 				except JSONDecodeError as e:
@@ -75,6 +81,8 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 					success = tool_result.get("success")
 					if success is False:
 						print("false")
+						# ici, je veux log ppurquoi  success false, donc refractor tous les retuns d'agents
+						# pour log l'erreur exacte. Donc avoir msg + action
 				except Exception as e:
 					#Ici, il y a un pb, faudra regler et revisiter les json d'erreur des agents etc...
 					print(f"Error in tool : {e}")

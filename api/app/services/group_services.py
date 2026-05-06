@@ -10,6 +10,7 @@ from fastapi import HTTPException, status
 import random
 import string
 
+from app.logger import logger
 
 def create_group(current_user: User, db: Session):
 	if current_user.role != UserRole.manager:
@@ -26,7 +27,9 @@ def create_group(current_user: User, db: Session):
 		db.refresh(group_stmt)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
-	
+
+	logger.info("group.created", user_id=current_user.id, name=current_user.name, role=current_user.role)
+
 	return (group_stmt)
 
 
@@ -58,4 +61,7 @@ def join_group(current_user: User, code: str, db: Session):
 		db.commit()
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	logger.info("group.joined", user_id=current_user.id, name=current_user.name, role=current_user.role)
+
 	return group

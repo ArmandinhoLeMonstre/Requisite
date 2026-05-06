@@ -18,7 +18,8 @@ from app.logger import logger
 def create_user(user: UserCreate, db: Session):
 	try:
 		existing = db.scalars(select(User).where((func.lower(User.name) == user.name.lower()) | (func.lower(User.email) == user.email.lower()))).first()
-	except SQLAlchemyError:
+	except SQLAlchemyError as e:
+		logger.error("user.create.error", error=str(e), step="check_existing")
 		raise HTTPException(status_code=500, detail="Error with database")
 	if existing:
 		if existing.name == user.name:
@@ -38,6 +39,7 @@ def create_user(user: UserCreate, db: Session):
 		db.commit()
 		db.refresh(new_user)
 	except SQLAlchemyError:
+		logger.error("user.create.error", error=str(e), step="add_user_in_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
 	logger.info("user.created", user_id=new_user.id, name=new_user.name, email=new_user.email, role=new_user.role)
@@ -56,9 +58,7 @@ def select_user(current_user: User, user_id: int, db: Session):
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
 	except SQLAlchemyError as e:
-		print("============================")
-		print(e)
-		print("============================")
+		logger.error("user.select.error", error=str(e), step="find_user_in_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	return(user)

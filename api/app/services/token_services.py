@@ -12,12 +12,13 @@ from app.config import settings
 
 from datetime import timedelta
 
-
+from app.logger import logger
 
 def log_for_access_token(form_data: OAuth2PasswordRequestForm, db: Session):
 	try:
 		user = db.scalars(select(User).where(func.lower(User.email) == form_data.username.lower())).first()
-	except SQLAlchemyError:
+	except SQLAlchemyError as e:
+		logger.error("token.create.error", error=str(e), step="check_user_exists")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
 	if not user or not verify_password(form_data.password, user.hashed_password):
@@ -32,6 +33,8 @@ def log_for_access_token(form_data: OAuth2PasswordRequestForm, db: Session):
 		data={"sub": str(user.id)},
 		expires_delta=access_token_expires,
 	)
+
+	logger.info("token.created", user_id=user.id)
 	
 	return Token(
 		access_token=access_token,
