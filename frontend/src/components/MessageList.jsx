@@ -31,7 +31,7 @@ useEffect(() => {
       ) : (
         <p className="text-gray-500 text-sm">No messages yet</p>
       )}
-	  <div ref={bottomPanelRef}> </div>
+	  <div ref={bottomPanelRef}/>
     </div>
   );
 }

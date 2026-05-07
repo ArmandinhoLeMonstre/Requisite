@@ -8,7 +8,7 @@ function MessageInput({ inputMessage, setInputMessage, addMessage }) {
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && inputMessage && inputMessage.trim() !== "") {
               addMessage(inputMessage);
               setInputMessage("");
             }
