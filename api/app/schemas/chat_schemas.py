@@ -10,4 +10,4 @@ class ChatRequest(ChatBase):
 	pass
 
 class ChatResponse(ChatBase):
-	pass
+	id: int

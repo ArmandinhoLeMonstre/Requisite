@@ -47,7 +47,7 @@ def add_chat_to_ticket(current_user: CurrentUser,
     new_message(ag_msg, db, ticket)
     return rep
 
-@router.get("{ticket_id}/chats", response_model= TicketChats)
+@router.get("/{ticket_id}/chats", response_model= TicketChats)
 def get_chats(current_user: CurrentUser,
               ticket_id: uuid.UUID,
               db: Annotated[Session, Depends(get_db)]):
