@@ -9,7 +9,7 @@ function ChatWindow({ activeTicket, addMessage }) {
     <div className="flex-1 flex flex-col bg-gray-950 overflow-hidden">
       {activeTicket ? (
         <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto overflow-hidden">
-          <MessageList listMessage={activeTicket.messages} />
+          <MessageList listMessage={activeTicket.chats} />
           <MessageInput
             inputMessage={inputMessage}
             setInputMessage={setInputMessage}
