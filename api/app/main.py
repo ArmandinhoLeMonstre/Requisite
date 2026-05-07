@@ -2,11 +2,19 @@ from fastapi import FastAPI, Request, status, HTTPException, Depends
 from starlette.exceptions import HTTPException as StarletteHTTPException # fastapi is built on top of scarlette, when a user goes to a rout that doesnt exist, it is managed by scarlette. Some cases are not handled by fastapi, so with this we make sure cover everything
 from fastapi.responses import  JSONResponse # Manually return JSONresponse from our exception handler
 from fastapi.exceptions import RequestValidationError # Handling validation error ex: someone passes a 'hello' when a int is expected (I think fastapi handles it by itself, thanks to this we can do i manually)
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import agents_router, groups_router, tickets_router, users_router
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # your Vite dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(users_router.router, prefix="/api/users", tags=["users"])
 app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"])
