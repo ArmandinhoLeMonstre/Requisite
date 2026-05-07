@@ -44,7 +44,7 @@ def select_ticket(ticket_id: uuid.UUID, user: User, db: Session):
 
 def get_tickets(user: User, db: Session):
 	try:
-		tickets = db.scalars(select(Tickets).where(Ticket.user_id == user.id)).all()
+		tickets = db.scalars(select(Ticket).where(Ticket.user_id == user.id)).all()
 	except SQLAlchemyError:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with database server")
 	
