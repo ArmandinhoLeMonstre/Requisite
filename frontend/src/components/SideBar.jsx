@@ -1,8 +1,8 @@
 function Sidebar({ tickets, onTicketClick }) {
 
   return (
-    <div className="w-64 bg-gray-900 flex flex-col">
-      <div className="p-4 border-b border-gray-700">
+    <div className="w-64 bg-gray-900 flex flex-col border-r border-r-gray-400">
+      <div className="p-4 border-b border-gray-400">
         <h1 className="text-lg font-semibold text-white">My Tickets</h1>
       </div>
       <div className="flex-1 overflow-y-auto p-2">
@@ -11,7 +11,7 @@ function Sidebar({ tickets, onTicketClick }) {
             <button
               key={ticket.id}
               onClick={() => onTicketClick(ticket.id)}
-              className="w-full text-left text-gray-300 hover:bg-gray-700 rounded px-5 py-2"
+              className="w-full text-sm text-left text-gray-200 hover:bg-gray-700 rounded px-1 py-1"
             >
               {ticket.title}
             </button>

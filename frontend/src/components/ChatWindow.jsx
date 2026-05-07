@@ -4,11 +4,11 @@ import MessageList from "./MessageList";
 
 function ChatWindow({ activeTicket, addMessage }) {
   const [inputMessage, setInputMessage] = useState("");
-  
+
   return (
-    <div className="flex-1 flex ">
+    <div className="flex-1 flex flex-col bg-gray-950 overflow-hidden">
       {activeTicket ? (
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto overflow-hidden">
           <MessageList listMessage={activeTicket.messages} />
           <MessageInput
             inputMessage={inputMessage}
@@ -17,8 +17,8 @@ function ChatWindow({ activeTicket, addMessage }) {
           />
         </div>
       ) : (
-        <div className="flex-1">
-          <p>Select a ticket or start a new one</p>
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500">Select a ticket or start a new one</p>
         </div>
       )}
     </div>
