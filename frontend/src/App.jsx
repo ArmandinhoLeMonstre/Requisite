@@ -3,11 +3,14 @@ import Sidebar from "./components/SideBar";
 import ChatWindow from "./components/ChatWindow";
 import { getChats, createTicket, getTickets, sendMessage } from "./api/client";
 
-
-localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzc4MTg0MzAwfQ.RzXQL47EJ-YW3FlzTwk8u_eBpzDB-oY1KSW6v0mAHIk") 
+localStorage.setItem(
+  "token",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzc4MjExNTg5fQ.Co4vpxQnIbv4pH54_2manLsyXBYEUbTx9LnI_0ycu8g",
+);
 // localStorage.removeItem('token')
 
 function App() {
+  const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
   const [ticketInfo, setTicketInfo] = useState(null);
   const [activeTicketId, setActiveTicketId] = useState(null);
@@ -29,7 +32,7 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!activeTicket) return
+        if (!activeTicket) return;
         const data = await getChats(activeTicket.id);
         setTicketInfo(data);
       } catch (error) {
@@ -39,15 +42,35 @@ function App() {
     fetchData();
   }, [activeTicket]);
 
-  function addMessage(message) {
-    sendMessage(activeTicket.id, message)
+  async function addMessage(message) {
+    setTicketInfo({
+      ...ticketInfo,
+      chats: [
+        ...ticketInfo.chats,
+        { sender: "user", message, id: ticketInfo.chats.length + 1 },
+      ],
+    });
+    setLoading(true);
+    try {
+      await sendMessage(activeTicket.id, message);
+      const data = await getChats(activeTicket.id);
+      setTicketInfo(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
       <Sidebar tickets={tickets} onTicketClick={setActiveTicketId} />
       {activeTicket ? (
-        <ChatWindow activeTicket={ticketInfo} addMessage={addMessage} />
+        <ChatWindow
+          activeTicket={ticketInfo}
+          addMessage={addMessage}
+          loading={loading}
+        />
       ) : (
         <ChatWindow activeTicket={null} addMessage={addMessage} />
       )}

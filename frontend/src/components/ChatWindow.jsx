@@ -2,7 +2,7 @@ import { useState } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 
-function ChatWindow({ activeTicket, addMessage }) {
+function ChatWindow({ activeTicket, addMessage, loading }) {
   const [inputMessage, setInputMessage] = useState("");
 
   return (
@@ -14,6 +14,7 @@ function ChatWindow({ activeTicket, addMessage }) {
             inputMessage={inputMessage}
             setInputMessage={setInputMessage}
             addMessage={addMessage}
+            loading={loading}
           />
         </div>
       ) : (
