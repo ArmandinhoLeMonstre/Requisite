@@ -11,7 +11,7 @@ from app.schemas.ticket_schemas import TicketResponse, TicketChats
 from app.schemas.chat_schemas import ChatRequest
 from app.schemas.agents_requests_schemas import OrchestratorResponse
 
-from app.services.ticket_services import create_ticket, select_ticket
+from app.services.ticket_services import create_ticket, select_ticket, get_tickets
 from app.services.user_services import CurrentUser
 from app.services.chat_services import new_message
 from app.services.orchestrator_service import create_data, call_agents_orchestrator
@@ -25,6 +25,10 @@ router = APIRouter()
 def post_new_ticket(current_user: CurrentUser, db:Annotated[Session, Depends(get_db)]):
     ticket = create_ticket(current_user, db)
     return ticket
+
+@router.get("", response_model=list[TicketResponse])
+def get_tickets_from_user(current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]):
+    return get_tickets(current_user, db)
 
 @router.get("/{ticket_id}", response_model=TicketResponse)
 def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annotated[Session, Depends(get_db)]):
@@ -43,7 +47,7 @@ def add_chat_to_ticket(current_user: CurrentUser,
     new_message(ag_msg, db, ticket)
     return rep
 
-@router.get("{ticket_id}/chats", response_model= TicketChats)
+@router.get("/{ticket_id}/chats", response_model= TicketChats)
 def get_chats(current_user: CurrentUser,
               ticket_id: uuid.UUID,
               db: Annotated[Session, Depends(get_db)]):

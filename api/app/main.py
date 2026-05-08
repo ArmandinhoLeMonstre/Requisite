@@ -3,6 +3,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException # fasta
 from fastapi.responses import  JSONResponse # Manually return JSONresponse from our exception handler
 from fastapi.exceptions import RequestValidationError # Handling validation error ex: someone passes a 'hello' when a int is expected (I think fastapi handles it by itself, thanks to this we can do i manually)
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.routers import agents_router, groups_router, tickets_router, users_router
 from app.logger import setup_logger
 
@@ -13,6 +15,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # your Vite dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(users_router.router, prefix="/api/users", tags=["users"])
 app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"])
