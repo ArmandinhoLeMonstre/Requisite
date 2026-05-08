@@ -24,14 +24,9 @@ def create_ticket(current_user: User,  db: Session):
 		db.commit()
 		db.refresh(ticket_stmt)
 	except SQLAlchemyError:
-<<<<<<< HEAD
-		raise HTTPException(status_code=500, detail="Error with Database server")
-	
-	logger.info("ticket.created", user_id=current_user.id, ticket_id=ticket_stmt.id)
-
-=======
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with Database server")
->>>>>>> feature/frontend
+
+	logger.info("ticket.created", user_id=current_user.id, ticket_id=ticket_stmt.id)
 	return ticket_stmt
 
 
