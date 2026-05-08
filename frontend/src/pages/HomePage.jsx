@@ -3,12 +3,6 @@ import Sidebar from "../components/SideBar";
 import ChatWindow from "../components/ChatWindow";
 import { getChats, getTickets, sendMessage } from "../api/client";
 
-localStorage.setItem(
-  "token",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzc4MjExNTg5fQ.Co4vpxQnIbv4pH54_2manLsyXBYEUbTx9LnI_0ycu8g",
-);
-// localStorage.removeItem('token')
-
 export function HomePage() {
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
