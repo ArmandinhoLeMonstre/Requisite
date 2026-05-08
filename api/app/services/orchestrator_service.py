@@ -69,7 +69,7 @@ def call_agents_orchestrator(data: OrchestratorData, db: Session, message: str):
 	existing_input_list = db_service.retrieve_input_list(db, data.ticket_id)
 
 	result = send_request_to_orchestrator(message, existing_input_list, data)
-
+	print(result.get("history"))
 	db_service.save_input_list(db, data.ticket_id, result.get("history"))
 
 	response = OrchestratorResponse(

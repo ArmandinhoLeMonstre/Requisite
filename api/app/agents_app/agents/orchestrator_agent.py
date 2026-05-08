@@ -50,13 +50,14 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 		return_flag = True
 
 		for item in response.output:
+			print(item)
 			if item.type == "message":
 				print(f"Assistant: {item.content[0].text}")
-				return_reponse.append(response.output)
+				return_reponse.append([item])
 
 			elif item.type == "function_call":
 				return_flag = False
-				return_reponse.append(response.output)
+				return_reponse.append([item])
 				func = TOOL_REGISTRY.get(item.name)
 				if not func:
 					orchestrator_log.error(

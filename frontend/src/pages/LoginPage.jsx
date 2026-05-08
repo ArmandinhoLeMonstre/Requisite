@@ -10,8 +10,7 @@ export const LoginPage = () => {
   async function handleLogin() {
     try {
       const res = await createToken(email, password);
-      localStorage.setItem("token", res.access_token);
-      console.log(res.access_token);
+      localStorage.setItem("token", res.access_token)
       navigate("/chat");
     } catch (error) {
       console.error(error);

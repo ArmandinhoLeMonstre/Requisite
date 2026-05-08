@@ -3,6 +3,7 @@ function MessageInput({ inputMessage, setInputMessage, addMessage, loading }) {
     <div className=" m-3.5">
       <div className="flex items-center gap-2 bg-gray-800 rounded-3xl px-4 py-3">
         <input
+          autoFocus
           type="text"
           placeholder="Write a message..."
           disabled={loading}
@@ -22,10 +23,7 @@ function MessageInput({ inputMessage, setInputMessage, addMessage, loading }) {
         />
         <button
           onClick={() => {
-             if (
-              inputMessage &&
-              inputMessage.trim() !== ""
-            ) {
+            if (inputMessage && inputMessage.trim() !== "") {
               addMessage(inputMessage);
               setInputMessage("");
             }
