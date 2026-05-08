@@ -16,8 +16,6 @@ export const RegisterPage = () => {
       body: JSON.stringify({ name, email, role, password }),
     });
 
-    const data = await res.json();
-
     if (res.status === 201) {
       navigate("/login");
     }
