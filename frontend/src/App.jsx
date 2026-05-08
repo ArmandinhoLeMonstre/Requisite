@@ -26,6 +26,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      /> */}
     </Routes>
   );
 }

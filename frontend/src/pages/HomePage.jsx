@@ -3,6 +3,9 @@ import Sidebar from "../components/SideBar";
 import ChatWindow from "../components/ChatWindow";
 import { getChats, getTickets, sendMessage } from "../api/client";
 
+// localStorage.setItem("token", "fflajsl;fkajsf;laksjf;laksdjfa;lskfjl;sdkfjaslkf");
+// localStorage.removeItem("token")
+
 export function HomePage() {
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);

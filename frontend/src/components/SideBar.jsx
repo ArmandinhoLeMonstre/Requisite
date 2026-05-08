@@ -1,4 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 function Sidebar({ tickets, onTicketClick }) {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    navigate("/login");
+  }
 
   return (
     <div className="w-64 bg-gray-900 flex flex-col border-r border-r-gray-400">
@@ -19,6 +27,14 @@ function Sidebar({ tickets, onTicketClick }) {
         ) : (
           <p className="text-gray-500 text-md p-2">No tickets yet</p>
         )}
+      </div>
+      <div className="mx-3 mb-2">
+        <button
+          onClick={handleLogout}
+          className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm w-full"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
