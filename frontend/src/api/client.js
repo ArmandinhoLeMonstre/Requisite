@@ -70,11 +70,25 @@ export async function getTickets() {
 
 export async function createToken(email, password) {
   const formData = new FormData();
-  formData.append("username", email)
-  formData.append("password", password)
+  formData.append("username", email);
+  formData.append("password", password);
+  
   try {
-    const response = await api.post("/users/token", formData)
-    return response.data
+    const response = await api.post("/users/token", formData);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function createUser(name, email, role, password) {
+  const header = authHeaders();
+  const body = { name, email, role, password };
+
+  try {
+    const response = await api.post("/users", body, { headers: header });
+    return response.data;
   } catch (error) {
     console.error(error);
     throw error;
@@ -85,10 +99,10 @@ export async function getMe() {
   const header = authHeaders();
 
   try {
-    const response = await api.get("/users/me", {headers: header});
-    return response.data
+    const response = await api.get("/users/me", { headers: header });
+    return response.data;
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
