@@ -16,7 +16,7 @@ export const LoginPage = () => {
       navigate("/chat");
     } catch (error) {
       if (error.status === 401) {
-        setLoginError(true);
+        setLoginError(error.response.data.detail);
       }
       console.error(error);
       return;
@@ -28,7 +28,6 @@ export const LoginPage = () => {
       setLoginLock(email.trim() === "" || password.trim() === "");
     }
     setLock();
-    console.log(LoginLock, email, password);
   }, [email, password]);
 
   function handleRegisterNav() {
@@ -47,7 +46,7 @@ export const LoginPage = () => {
         {loginError && (
           <div>
             <p className="text-red-500 text-center text-sm">
-              Incorrect email or password
+              {loginError}
             </p>
           </div>
         )}

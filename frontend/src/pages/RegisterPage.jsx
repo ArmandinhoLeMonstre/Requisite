@@ -1,30 +1,42 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createUser } from "../api/client";
 
 export const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [registerLock, setRegisterLock] = useState(false);
+  const [errorMessage, setErrorMessage] = useState([]);
+  const [errorCheck, setErrorCheck] = useState(false);
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
   async function handleRegister() {
-    const res = await fetch("http://localhost:8080/api/users", {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ name, email, role, password }),
-    });
-
-    if (res.status === 201) {
+    try {
+      await createUser(name, email, role, password);
       navigate("/login");
+    } catch (error) {
+      if (error.status === 400) {
+        setErrorMessage([error.response.data.detail]);
+      } else if (error.status === 422) {
+        setErrorMessage(error.response.data.detail[0].msg);
+      }
+      console.error(error);
     }
   }
 
   function handleLoginNav() {
     navigate("/login");
   }
+
+  useEffect(() => {
+    async function setError() {
+      errorMessage.length === 0 ? setErrorCheck(false) : setErrorCheck(true);
+    }
+    setError();
+  }, [errorMessage]);
 
   useEffect(() => {
     async function setLock() {
@@ -36,12 +48,16 @@ export const RegisterPage = () => {
       );
     }
     setLock();
-    console.log(registerLock, email, password);
   }, [name, email, role, password]);
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <div className="bg-gray-950 py-20 px-5 flex flex-col rounded-2xl gap-3 w-80 shadow-md border border-gray-500">
+        {errorCheck && (
+          <div>
+            <p className="text-red-500 text-center text-sm">{errorMessage}</p>
+          </div>
+        )}
         <div className="flex flex-col">
           <label className="text-white text-sm">Name</label>
           <input
