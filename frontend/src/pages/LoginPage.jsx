@@ -1,22 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createToken } from "../api/client";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState(false);
+  const [LoginLock, setLoginLock] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogin() {
     try {
       const res = await createToken(email, password);
-      localStorage.setItem("token", res.access_token)
+      localStorage.setItem("token", res.access_token);
       navigate("/chat");
     } catch (error) {
+      if (error.status === 401) {
+        setLoginError(true);
+      }
       console.error(error);
       return;
     }
   }
+
+  useEffect(() => {
+    async function setLock() {
+      setLoginLock(email.trim() === "" || password.trim() === "");
+    }
+    setLock();
+    console.log(LoginLock, email, password);
+  }, [email, password]);
 
   function handleRegisterNav() {
     navigate("/register");
@@ -27,10 +40,25 @@ export const LoginPage = () => {
       <div className="flex-col-reverse  border border-white mb-40">
         <h1 className="text-white text-6xl">REQUISITE</h1>
       </div>
-      <div className="bg-gray-950 py-18 px-5 flex flex-col rounded-2xl gap-3 w-80 shadow-md border border-gray-500">
+      <div className="bg-gray-950 pb-18 pt-10 px-5 flex flex-col rounded-2xl gap-3 w-80 shadow-md border border-gray-500">
+        <div>
+          <h1 className="text-white text-center text-3xl pb-8">Sign in</h1>
+        </div>
+        {loginError && (
+          <div>
+            <p className="text-red-500 text-center text-sm">
+              Incorrect email or password
+            </p>
+          </div>
+        )}
         <div className="flex flex-col text-white">
           <label className=" text-sm">Email</label>
           <input
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !LoginLock) {
+                handleLogin();
+              }
+            }}
             autoFocus
             placeholder="email@example.com"
             type="email"
@@ -42,6 +70,11 @@ export const LoginPage = () => {
         <div className="flex flex-col text-white">
           <label className="text-sm">Password</label>
           <input
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !LoginLock) {
+                handleLogin();
+              }
+            }}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -50,8 +83,9 @@ export const LoginPage = () => {
         </div>
         <div className="flex min-w-full">
           <button
+            disabled={LoginLock}
             onClick={handleLogin}
-            className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm w-full"
+            className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm w-full disabled:bg-gray-950 disabled:border disabled:border-gray-500"
           >
             Submit
           </button>
