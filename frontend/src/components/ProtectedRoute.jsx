@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { getMe } from "../api/client";
 
 export const ProtectedRoute = ({ children }) => {
   const [isValid, setIsValid] = useState(null);
-
+  
   useEffect(() => {
     async function checkToken() {
       const token = localStorage.getItem("token");
@@ -13,16 +14,13 @@ export const ProtectedRoute = ({ children }) => {
         return;
       }
 
-      const res = await fetch("http://localhost:8080/api/users/me", {
-        headers: { "Authorization": `Bearer ${token}` },
-      });
+      const res = await getMe()
 
       if (res.status === 401) {
         localStorage.removeItem("token"); // clean up the expired token
         setIsValid(false);
         return;
       }
-
       setIsValid(true);
     }
 

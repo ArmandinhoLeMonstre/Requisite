@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getMe } from "../api/client";
 
 export const MePage = () => {
 	const [user, setUser] = useState(null);
@@ -14,16 +15,14 @@ export const MePage = () => {
 				return ;
 			}
 
-			const res = await fetch("http://localhost:8080/api/users/me", {
-				headers: { "Authorization": `Bearer ${token}` },
-			});
+			const res = await getMe()
 
 			if (res.status === 401) {
 				localStorage.removeItem("token");
 				navigate("/login");
 			}
 
-			const data = await res.json();
+			const data = await res.data;
 			setUser(data);
 		}
 		loadUser();
