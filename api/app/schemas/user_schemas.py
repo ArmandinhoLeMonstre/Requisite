@@ -1,6 +1,6 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from app.models.user_model import UserRole
-from typing import Optional
+from typing import Optional, Annotated
 from app.schemas.ticket_schemas import TicketResponse
 
 
@@ -11,9 +11,16 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-	password: str = Field(min_length=4)
+	password: str = Field()
 
+	@field_validator('password')
+	@classmethod
+	def validate_password(cls, v):
+		if len(v) < 4:
+			raise ValueError('Password Incorrect')
+		return v
 
+	
 class UserUpdate(UserBase):
 	model_config = ConfigDict(from_attributes=True, )
 

@@ -42,6 +42,6 @@ def general_http_exception_handler(request: Request, exception: StarletteHTTPExc
 
     return JSONResponse(status_code=exception.status_code, content={"detail": message}) 
     
-@app.exception_handler(RequestValidationError) #handling Validation error, it's always 422 errors
-def validation_exception_handler(request: Request, exception: RequestValidationError):
-    return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, content={"detail": exception.errors()})
+# @app.exception_handler(RequestValidationError) #handling Validation error, it's always 422 errors
+# def validation_exception_handler(request: Request, exception: RequestValidationError):
+#     return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, content={"detail": exception.errors()})
