@@ -125,7 +125,7 @@ export const RegisterPage = () => {
         <div className="flex justify-end">
           <button
             onClick={handleLoginNav}
-            className="text-gray-500 underline hover:text-gray-400 underline text-sm px-2"
+            className="text-gray-500 hover:text-gray-400 underline text-sm px-2"
           >
             Login
           </button>

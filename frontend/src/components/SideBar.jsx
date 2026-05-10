@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Sidebar({ tickets }) {
-	const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -31,33 +31,33 @@ function Sidebar({ tickets }) {
         )}
       </div>
       <div className="mx-3 mb-2">
-		{menuOpen && (
-			<div className="absolute bottom-12 left-0 bg-white rounded-xl overflow-hidden">
-				<button
-				onClick={() => navigate("/me")}
-				className="w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 text-left"
-				>
-					Profile
-				</button>
-				<hr />
-				<button
-					onClick={handleLogout}
-					className="w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 text-left"
-				>
-					Logout
-				</button>
-			</div>
-		)}
-		<div
-			onClick={() => setMenuOpen(!menuOpen)}
-			className="flex items-center gap-3 cursor-pointer hover:bg-gray-700 rounded-lg p-2"
-		>
-		  <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-medium">
-		  U
-		  </div>
-		  <span className="text-white text-sm">User</span>
-
-		</div>
+        {menuOpen && (
+          <div className="flex flex-col absolute bottom-17 w-62 left-2 bg-gray-500 rounded-xl overflow-hidden border border-white">
+            <button
+              onClick={() => navigate("/me")}
+              className="w-full px-4 py-3 text-sm text-white hover:bg-gray-50 text-left"
+            >
+              Profile
+            </button>
+            <hr />
+            <button
+              onClick={handleLogout}
+              className="w-full px-4 py-3 text-sm text-white hover:bg-gray-50 text-left"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+          <hr className="text-gray-500 pb-1"/>
+        <div
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex items-center gap-3 cursor-pointer hover:bg-gray-700 rounded-lg p-2 "
+        >
+          <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-medium">
+            U
+          </div>
+          <span className="text-white text-sm">User</span>
+        </div>
       </div>
     </div>
   );

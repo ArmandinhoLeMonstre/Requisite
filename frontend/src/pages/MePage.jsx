@@ -17,7 +17,7 @@ export const MePage = () => {
 
       try {
         const res = await getMe();
-		const data = await res.data;
+        const data = await res.data;
         setUser(data);
       } catch (error) {
         if (error.status === 401) {
@@ -25,7 +25,6 @@ export const MePage = () => {
           navigate("/login");
         }
       }
-
     }
     loadUser();
   }, []);
@@ -34,30 +33,30 @@ export const MePage = () => {
 
   return (
     <div className="flex-1 flex items-center justify-center border border-white">
-		<div className="bg-white rounded-2xl shadow-sm border w-full max-w-lg p-8 flex flex-col gap-4">
-			<h1 className="text-xl font-semibold text-gray-400">My profile</h1>
+      <div className="bg-white rounded-2xl shadow-sm border w-full max-w-lg p-8 flex flex-col gap-4">
+        <h1 className="text-xl font-semibold text-gray-400">My profile</h1>
 
-			<hr />
+        <hr />
 
-			<div className="flex justify-between items-center">
-				<span className="text-gray-500 text-sm">Name</span>
-				<span className="text-gray-900 text-sm">{user.name}</span>
-			</div>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-500 text-sm">Name</span>
+          <span className="text-gray-900 text-sm">{user.name}</span>
+        </div>
 
-			<hr />
+        <hr />
 
-			<div className="flex justify-between items-center">
-				<span className="text-gray-500 text-sm">Email</span>
-				<span className="text-gray-900 text-sm">{user.email}</span>
-			</div>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-500 text-sm">Email</span>
+          <span className="text-gray-900 text-sm">{user.email}</span>
+        </div>
 
-			<hr />
+        <hr />
 
-			<div className="flex justify-between items-center">
-				<span className="text-gray-500 text-sm">Role</span>
-				<span className="text-gray-900 text-sm">{user.role}</span>
-			</div>
-		</div>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-500 text-sm">Role</span>
+          <span className="text-gray-900 text-sm">{user.role}</span>
+        </div>
+      </div>
     </div>
   );
 };
