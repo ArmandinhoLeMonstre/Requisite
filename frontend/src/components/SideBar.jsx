@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-function Sidebar({ tickets, onTicketClick }) {
+function Sidebar({ tickets }) {
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -18,7 +18,7 @@ function Sidebar({ tickets, onTicketClick }) {
           tickets.map((ticket) => (
             <button
               key={ticket.id}
-              onClick={() => onTicketClick(ticket.id)}
+              onClick={() => navigate(`/ticket/${ticket.id}`)}
               className="w-full text-sm text-left text-gray-200 hover:bg-gray-700 rounded px-1 py-1"
             >
               {ticket.id}

@@ -1,9 +1,12 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import { MePage } from "./pages/MePage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ChatLayout } from "./components/ChatLayout";
+import { TicketPage } from "./pages/TicketPage";
+import { NewTicketPage } from "./pages/NewTicketPage";
 
 function App() {
   return (
@@ -11,29 +14,17 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route
-        path="/chat"
         element={
           <ProtectedRoute>
-            <HomePage />
+            <ChatLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/me"
-        element={
-          <ProtectedRoute>
-            <MePage />
-          </ProtectedRoute>
-        }
-      />
-      {/* <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      /> */}
+      >
+        <Route path="/new" element={<NewTicketPage />} />
+        <Route path="/ticket/:ticketId" element={<TicketPage />} />
+        <Route path="/me" element={<MePage />} />
+        <Route path="/" element={<Navigate to="/new" replace />} />
+      </Route>
     </Routes>
   );
 }

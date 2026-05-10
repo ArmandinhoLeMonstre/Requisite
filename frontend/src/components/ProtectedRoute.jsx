@@ -4,7 +4,7 @@ import { getMe } from "../api/client";
 
 export const ProtectedRoute = ({ children }) => {
   const [isValid, setIsValid] = useState(null);
-  
+
   useEffect(() => {
     async function checkToken() {
       const token = localStorage.getItem("token");
@@ -14,14 +14,15 @@ export const ProtectedRoute = ({ children }) => {
         return;
       }
 
-      const res = await getMe()
-
-      if (res.status === 401) {
-        localStorage.removeItem("token"); // clean up the expired token
-        setIsValid(false);
-        return;
+      try {
+        await getMe();
+        setIsValid(true);
+      } catch (error) {
+        if (error.status === 401) {
+          localStorage.removeItem("token");
+          setIsValid(false);
+        }
       }
-      setIsValid(true);
     }
 
     checkToken();

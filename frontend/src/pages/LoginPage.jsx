@@ -13,7 +13,7 @@ export const LoginPage = () => {
     try {
       const res = await createToken(email, password);
       localStorage.setItem("token", res.access_token);
-      navigate("/chat");
+      navigate("/new");
     } catch (error) {
       if (error.status === 401) {
         setLoginError(error.response.data.detail);
