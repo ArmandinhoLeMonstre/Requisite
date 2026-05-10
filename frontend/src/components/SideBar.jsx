@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Sidebar({ tickets }) {
+	const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -29,12 +31,33 @@ function Sidebar({ tickets }) {
         )}
       </div>
       <div className="mx-3 mb-2">
-        <button
-          onClick={handleLogout}
-          className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm w-full"
-        >
-          Logout
-        </button>
+		{menuOpen && (
+			<div className="absolute bottom-12 left-0 bg-white rounded-xl overflow-hidden">
+				<button
+				onClick={() => navigate("/me")}
+				className="w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 text-left"
+				>
+					Profile
+				</button>
+				<hr />
+				<button
+					onClick={handleLogout}
+					className="w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 text-left"
+				>
+					Logout
+				</button>
+			</div>
+		)}
+		<div
+			onClick={() => setMenuOpen(!menuOpen)}
+			className="flex items-center gap-3 cursor-pointer hover:bg-gray-700 rounded-lg p-2"
+		>
+		  <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-medium">
+		  U
+		  </div>
+		  <span className="text-white text-sm">User</span>
+
+		</div>
       </div>
     </div>
   );
