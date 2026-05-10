@@ -26,7 +26,6 @@ app.add_middleware(
 app.include_router(users_router.router, prefix="/api/users", tags=["users"])
 app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"])
 app.include_router(groups_router.router, prefix="/api/groups", tags=["groups"])
-app.include_router(agents_router.router, prefix="/api/agents", tags=["agents"])
 
 @app.get("/")
 def root():
