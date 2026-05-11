@@ -23,7 +23,7 @@ class Ticket(Base):
 	created_at: Mapped['datetime'] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
 	user: Mapped['User'] = relationship(back_populates='tickets')
-	chats: Mapped[list['Chat']] = relationship(back_populates='ticket', foreign_keys="[Chat.ticket_id]")
+	chats: Mapped[list['Chat']] = relationship(back_populates='ticket', foreign_keys="[Chat.ticket_id]", order_by="Chat.created_at")
 
 	def __repr__(self):
 		return f"Ticket(id={self.id}, status={self.status})"
