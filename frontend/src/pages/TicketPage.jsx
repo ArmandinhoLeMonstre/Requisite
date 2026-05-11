@@ -1,21 +1,29 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import ChatWindow from "../components/ChatWindow";
 import { getChats, sendMessage } from "../api/client";
 
 export function TicketPage() {
   const { ticketId } = useParams();
   const [loading, setLoading] = useState(false);
-  const [ticketInfo, setTicketInfo] = useState(null);
+  const { state } = useLocation();
+  const hasRun = useRef(false)
+  const [ticketInfo, setTicketInfo] = useState(
+    state?.firstMessage
+      ? { chats: [{ sender: "user", message: state.firstMessage, id: 0 }] }
+      : null,
+  );
 
-  async function addMessage(message) {
-    setTicketInfo({
-      ...ticketInfo,
-      chats: [
-        ...ticketInfo.chats,
-        { sender: "user", message, id: ticketInfo.chats.length + 1 },
-      ],
-    });
+  async function addMessage(message, optimistic = true) {
+    if (optimistic) {
+      setTicketInfo({
+        ...ticketInfo,
+        chats: [
+          ...ticketInfo.chats,
+          { sender: "user", message, id: ticketInfo.chats.length + 1 },
+        ],
+      });
+    }
     setLoading(true);
     try {
       await sendMessage(ticketId, message);
@@ -28,6 +36,13 @@ export function TicketPage() {
     }
   }
 
+useEffect(() => {
+  if (state?.firstMessage && !hasRun.current) {
+    hasRun.current = true
+    addMessage(state.firstMessage, false)
+  }
+}, [])
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -37,7 +52,9 @@ export function TicketPage() {
         console.error("Failed to load ticket infos", error);
       }
     }
-    fetchData();
+    if (!state?.firstMessage) {
+      fetchData();
+    }
   }, [ticketId]);
 
   return (

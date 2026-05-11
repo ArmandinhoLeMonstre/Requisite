@@ -6,22 +6,23 @@ import { Outlet } from "react-router-dom";
 export function ChatLayout() {
   const [tickets, setTickets] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await getTickets();
-        setTickets(data);
-      } catch (error) {
-        console.error("Failed to load tickets:", error);
-      }
+  async function refreshTickets() {
+    try {
+      const data = await getTickets();
+      setTickets(data);
+    } catch (error) {
+      console.error("Failes to load tickets: ", error);
     }
-    fetchData();
+  }
+
+  useEffect(() => {
+      refreshTickets();
   }, []);
 
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
       <Sidebar tickets={tickets} />
-      <Outlet />
+      <Outlet context={{ refreshTickets }}/>
     </div>
   );
 }
