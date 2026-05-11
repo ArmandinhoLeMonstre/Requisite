@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
-from app.init_db import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.database import get_db
 
 from app.models.user_model import User
 from app.models.group_model import Group
@@ -15,9 +15,13 @@ from app.auth import hash_password, verify_access_token, oauth2_scheme
 from app.logger import logger
 
 
-def create_user(user: UserCreate, db: Session):
+async def create_user(user: UserCreate, db: AsyncSession):
 	try:
-		existing = db.scalars(select(User).where((func.lower(User.name) == user.name.lower()) | (func.lower(User.email) == user.email.lower()))).first()
+		result = await db.scalars(select(User).where(
+			(func.lower(User.name) == user.name.lower()) |
+			(func.lower(User.email) == user.email.lower())
+		))
+		existing = result.first()
 	except SQLAlchemyError as e:
 		logger.error("user.create.error", error=str(e), step="check_existing")
 		raise HTTPException(status_code=500, detail="Error with database")
@@ -36,8 +40,8 @@ def create_user(user: UserCreate, db: Session):
 
 	try:
 		db.add(new_user)
-		db.commit()
-		db.refresh(new_user)
+		await db.commit()
+		await db.refresh(new_user)
 	except SQLAlchemyError:
 		logger.error("user.create.error", error=str(e), step="add_user_in_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
@@ -46,7 +50,7 @@ def create_user(user: UserCreate, db: Session):
 
 	return new_user
 
-def select_user(current_user: User, user_id: int, db: Session):
+def select_user(current_user: User, user_id: int, db: AsyncSession):
 	if current_user.id == user_id:
 		return current_user
 	
@@ -63,7 +67,7 @@ def select_user(current_user: User, user_id: int, db: Session):
 
 	return(user)
 
-def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Session):
+def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: AsyncSession):
 	REGISTRY = {
 		"name": func.lower(User.name),
 		"email": func.lower(User.email),
@@ -108,7 +112,7 @@ def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Sessi
 	
 	return user
 
-def delete_user(current_user: User, user_id:int, db:Session):
+def delete_user(current_user: User, user_id:int, db: AsyncSession):
 	if current_user.role != UserRole.manager:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this account")
 
@@ -125,7 +129,7 @@ def delete_user(current_user: User, user_id:int, db:Session):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")	
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]):
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(get_db)]):
 	user_id = verify_access_token(token)
 	if user_id is None:
 		raise HTTPException(

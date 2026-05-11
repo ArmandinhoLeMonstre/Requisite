@@ -47,7 +47,6 @@ def select_ticket(ticket_id: uuid.UUID, user: User, db: Session):
 	logger.info("ticket.seen", user_id=user.id, ticket_id=ticket_id)
 	
 	return ticket
-	return ticket
 
 def get_tickets(user: User, db: Session):
 	try:

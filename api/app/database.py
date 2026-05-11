@@ -1,20 +1,23 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from app.config import settings
 
 
 db_url = settings.database_url
-engine = create_engine(db_url, echo=False)
+engine = create_async_engine(db_url, echo=False)
 
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+AsyncSessionLocal = async_sessionmaker(
+	engine,
+	class_=AsyncSession,
+	expire_on_commit=False, #Video Corey Schafer
+)
 
 
 class Base(DeclarativeBase):
 	pass
 
 
-#FastApi dependecy injection calls this function for each request and handles the clean up automaticaly
-def get_db():  #dependency function that provides sessions to our routes, its a generator using the Yiel db, and using "with SessionsLocal()" it ensures a clean up even if an error occurs, it makes the session work as a context manager (kinda like opening a file)
-	with SessionLocal() as db:
+async def get_db():
+	async with AsyncSessionLocal() as db:
 		yield db

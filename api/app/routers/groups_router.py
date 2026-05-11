@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from typing import Annotated
-
-from app.init_db import get_db 
+from app.database import get_db
 from sqlalchemy.orm import Session
 
 from app.schemas.group_schemas import GroupCreate, GroupResponse

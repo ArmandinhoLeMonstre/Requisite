@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, status
 
 from typing import Annotated
 
-from app.init_db import get_db 
+from app.database import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, Token
 from app.services.user_services import create_user, select_user, patch_user, delete_user, get_current_user, CurrentUser
@@ -16,8 +17,8 @@ router = APIRouter()
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=UserPrivate)
-def post_new_user(user: UserCreate, db:Annotated[Session, Depends(get_db)]):
-    return create_user(user, db)
+async def post_new_user(user: UserCreate, db:Annotated[AsyncSession, Depends(get_db)]):
+    return await create_user(user, db)
 
 @router.post("/token", response_model=Token)
 def login_for_access_token(
