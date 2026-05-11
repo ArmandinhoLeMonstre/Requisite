@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError # Handling validation erro
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import agents_router, groups_router, tickets_router, users_router
+from app.routers import groups_router, tickets_router, users_router
 from app.logger import setup_logger
 
 @asynccontextmanager
