@@ -5,7 +5,7 @@ import { createUser } from "../api/client";
 export const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("employee");
   const [registerLock, setRegisterLock] = useState(false);
   const [errorMessage, setErrorMessage] = useState([]);
   const [errorCheck, setErrorCheck] = useState(false);
@@ -89,17 +89,14 @@ export const RegisterPage = () => {
         </div>
         <div className="flex flex-col">
           <label className="text-white text-sm">Role</label>
-          <input
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !registerLock) {
-                handleRegister();
-              }
-            }}
-            type="text"
+          <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="border border-white rounded-lg px-3 py-2 text-sm text-white"
-          />
+            className="your-existing-input-classes border border-white rounded-lg px-3 py-2 text-sm text-white"
+          >
+            <option value="employee">Employee</option>
+            <option value="manager">Manager</option>
+          </select>
         </div>
         <div className="flex flex-col">
           <label className="text-white text-sm">Password</label>
