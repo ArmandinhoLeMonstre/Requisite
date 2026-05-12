@@ -34,7 +34,7 @@ function Sidebar({ tickets }) {
         {menuOpen && (
           <div className="flex flex-col absolute bottom-17 w-62 left-2 bg-gray-500 rounded-xl overflow-hidden border border-white">
             <button
-              onClick={() => navigate("/me")}
+              onClick={() => {navigate("/me"), setMenuOpen(!menuOpen)}}
               className="w-full px-4 py-3 text-sm text-white hover:bg-gray-50 text-left"
             >
               Profile
