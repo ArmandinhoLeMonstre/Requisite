@@ -106,3 +106,30 @@ export async function getMe() {
     throw error;
   }
 }
+
+export async function joinGroup(user_id, code) {
+  const header = authHeaders();
+
+  try {
+    const response = await api.patch(`/users/${user_id}/group`, null, {
+      headers: header,
+      params: {code}
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getGroup(group_id) {
+  const header = authHeaders();
+
+  try {
+    const reponse = await api.get(`/groups/${group_id}`, { headers: header });
+    return reponse;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
