@@ -34,7 +34,7 @@ def create_group(current_user: User, db: Session):
 
 
 def select_group(group_id: int, current_user: User, db: Session):
-	if current_user.role != UserRole.manager:
+	if current_user.role != UserRole.manager and current_user.group_id != group_id:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not manager")
 
 	try:
