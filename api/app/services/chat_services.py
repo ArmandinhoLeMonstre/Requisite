@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 
 from fastapi import HTTPException, status
@@ -12,7 +12,7 @@ from app.services.user_services import CurrentUser
 
 from app.logger import logger
 
-def new_message(chat: ChatRequest, db: Session, ticket: Ticket):
+async def new_message(chat: ChatRequest, db: AsyncSession, ticket: Ticket):
 	chat = Chat(
 		ticket_id= ticket.id,
 		sender= chat.sender,
@@ -22,8 +22,8 @@ def new_message(chat: ChatRequest, db: Session, ticket: Ticket):
 	try:
 		chat.ticket = ticket
 		db.add(chat)
-		db.commit()
-		db.refresh(chat)
+		await db.commit()
+		await db.refresh(chat)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	

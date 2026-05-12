@@ -1,12 +1,16 @@
 import os
 import serpapi
 import json
-from openai import OpenAI
+from openai import AsyncOpenAI
 
-op_client = OpenAI()
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+client = AsyncOpenAI(
+  api_key=openai_api_key
+)
 serp_client = serpapi.Client(api_key = os.getenv("SERPAPI_API_KEY"))
 
-def get_product_detail(asin):
+async def get_product_detail(asin):
 	try:
 		result = serp_client.search({
 			"engine" :"amazon_product",
@@ -17,7 +21,7 @@ def get_product_detail(asin):
 		return {"result": False, "error": str(e)}
 	return result
 
-def	product_match(specification, product):
+async def product_match(specification, product):
 	input_list = [
 		{
 			"role": "system",
@@ -30,7 +34,7 @@ def	product_match(specification, product):
 	]
 	
 	try:
-		response = op_client.responses.create(
+		response = await client.responses.create(
 			model= "gpt-4o-mini",
 			instructions= """Reply using the format {"result": boolean, "reasoning": string}, give a super short reasoning.
 							reasoning is the reason why it matches or not""",
@@ -44,20 +48,21 @@ def	product_match(specification, product):
 	except json.JSONDecodeError:
 		return {"result": False, "error": "Invalid JSON returned by model"}
 	
-def get_match_list(specification: dict, product_list):
+async def get_match_list(specification: dict, product_list):
 	product_list = product_list.as_dict()
 	matches=[]
 	for item in product_list["organic_results"]:
-		details = get_product_detail(item["asin"])
+		details = await get_product_detail(item["asin"])
 		if isinstance(details, dict) and "error" in details:
 			continue
-		if product_match(specification, details)["result"]:
+		match = await product_match(specification, details)
+		if match["result"]:
 			matches.append(item)
 		if len(matches) == 3:
 			break
 	return matches
 
-def get_amz_product_list(product_info):
+async def get_amz_product_list(product_info):
 	try:
 		results = serp_client.search({
 			"engine" : "amazon",

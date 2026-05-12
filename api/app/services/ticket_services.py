@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -10,7 +10,7 @@ from app.services.chat_services import new_message, Sender
 
 from app.logger import logger
 
-def create_ticket(current_user: User,  db: Session):
+async def create_ticket(current_user: User,  db: AsyncSession):
 	if current_user.group_id is None and current_user.role != UserRole.manager:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not in a group")
 	
@@ -21,8 +21,8 @@ def create_ticket(current_user: User,  db: Session):
 	
 	try:
 		db.add(ticket_stmt)
-		db.commit()
-		db.refresh(ticket_stmt)
+		await db.commit()
+		await db.refresh(ticket_stmt)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with Database server")
 
@@ -30,9 +30,10 @@ def create_ticket(current_user: User,  db: Session):
 	return ticket_stmt
 
 
-def select_ticket(ticket_id: uuid.UUID, user: User, db: Session):
+async def select_ticket(ticket_id: uuid.UUID, user: User, db: AsyncSession):
 	try:
-		ticket = db.scalars(select(Ticket).where(Ticket.id == ticket_id)).one()
+		stmt = await db.scalars(select(Ticket).where(Ticket.id == ticket_id))
+		ticket = stmt.one()
 	except NoResultFound:
 		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
 	except SQLAlchemyError:
@@ -48,9 +49,10 @@ def select_ticket(ticket_id: uuid.UUID, user: User, db: Session):
 	
 	return ticket
 
-def get_tickets(user: User, db: Session):
+async def get_tickets(user: User, db: AsyncSession):
 	try:
-		tickets = db.scalars(select(Ticket).where(Ticket.user_id == user.id)).all()
+		stmt = await db.scalars(select(Ticket).where(Ticket.user_id == user.id))
+		tickets = stmt.all()
 	except SQLAlchemyError:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with database server")
 	

@@ -1,9 +1,10 @@
 from app.models.input_model import InputList
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 import json
 
-def save_input_list(db, ticket_id: int, new_input_list: str):
+async def save_input_list(db, ticket_id: int, new_input_list: str):
 	stmt = insert(InputList).values(
 	    id=ticket_id, data=new_input_list
 	)
@@ -14,14 +15,14 @@ def save_input_list(db, ticket_id: int, new_input_list: str):
 		}
 	)
 
-	db.execute(stmt)
-	db.commit()
+	await db.execute(stmt)
+	await db.commit()
 
 	return 0
 
-def retrieve_input_list(db, ticket_id: int):
+async def retrieve_input_list(db: AsyncSession, ticket_id: int):
 	stmt = select(InputList).where(InputList.id == ticket_id)
-	result = db.execute(stmt)
+	result = await db.execute(stmt)
 	existing_input_list = result.scalars().first()
 	if existing_input_list is None:
 		return None

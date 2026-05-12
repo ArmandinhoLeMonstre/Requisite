@@ -19,7 +19,7 @@ class Chat(Base):
 	message: Mapped['str'] = mapped_column(Text)
 	created_at: Mapped['datetime'] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
-	ticket: Mapped['Ticket'] = relationship(back_populates='chats', foreign_keys=[ticket_id])
+	ticket: Mapped['Ticket'] = relationship(back_populates='chats', foreign_keys=[ticket_id], lazy="selectin")
 
 	def __repr__(self):
 		return f"Input(id={self.id}, message={self.message}, ticket_id={self.ticket_id})"
