@@ -7,7 +7,7 @@ export function TicketPage() {
   const { ticketId } = useParams();
   const [loading, setLoading] = useState(false);
   const { state } = useLocation();
-  const hasRun = useRef(false)
+  const hasRun = useRef(false);
   const [ticketInfo, setTicketInfo] = useState(
     state?.firstMessage
       ? { chats: [{ sender: "user", message: state.firstMessage, id: 0 }] }
@@ -36,12 +36,12 @@ export function TicketPage() {
     }
   }
 
-useEffect(() => {
-  if (state?.firstMessage && !hasRun.current) {
-    hasRun.current = true
-    addMessage(state.firstMessage, false)
-  }
-}, [])
+  useEffect(() => {
+    if (state?.firstMessage && !hasRun.current) {
+      hasRun.current = true;
+      addMessage(state.firstMessage, false);
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchData() {

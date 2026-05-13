@@ -56,7 +56,7 @@ export const MePage = () => {
   if (!user) return <p>Loading...</p>;
 
   return (
-    <div className="flex-1 flex items-center justify-center border border-white">
+    <div className="flex-1 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-sm border w-full max-w-lg p-8 pb-6 flex flex-col gap-4">
         <h1 className="text-xl font-semibold text-gray-400">My profile</h1>
 
