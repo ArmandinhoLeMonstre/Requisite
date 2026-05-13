@@ -3,6 +3,9 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from fastapi import HTTPException, status
 from sqlalchemy import select
 
+from openai import AsyncOpenAI
+import os
+
 from app.models.user_model import User, UserRole
 from app.models.ticket_model import TicketStatus, Ticket, uuid
 from app.schemas.ticket_schemas import TicketCreate
@@ -10,13 +13,46 @@ from app.services.chat_services import new_message, Sender
 
 from app.logger import logger
 
-async def create_ticket(current_user: User,  db: AsyncSession):
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+client = AsyncOpenAI(
+  api_key=openai_api_key
+)
+
+async def create_title(user_message: str):
+	prompt = """You are a conversation title generator. When given a user's first message, generate a short sidebar title for the conversation — exactly like Claude does on claude.ai.
+
+	Style rules:
+	- 3 to 6 words maximum
+	- Sentence case: only capitalize the first word (and proper nouns)
+	- No punctuation at the end
+	- No quotes
+	- Noun phrase style (e.g. "LLM sidebar title generation", not "Generate LLM sidebar titles")
+	- Be specific and descriptive, not generic
+	- Capture the core topic or intent
+
+	Respond with the title only. Nothing else."""
+
+	response = await client.responses.create(
+		model="gpt-4o-mini",
+		instructions=prompt,
+		input=user_message
+	)
+
+	title = response.output_text
+
+	return title
+
+async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	if current_user.group_id is None and current_user.role != UserRole.manager:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not in a group")
+	
+	ticket_title = await create_title(user_message)
 	
 	ticket_stmt = Ticket(
 		status= TicketStatus.opened,
 		user_id= current_user.id,
+		description=ticket_title
 	)
 	
 	try:

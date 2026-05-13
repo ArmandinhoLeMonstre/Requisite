@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import uuid
 
-from app.schemas.ticket_schemas import TicketResponse, TicketChats
+from app.schemas.ticket_schemas import TicketResponse, TicketChats, TicketCreate
 from app.schemas.chat_schemas import ChatRequest
 from app.schemas.agents_requests_schemas import OrchestratorResponse
 
@@ -22,8 +22,8 @@ router = APIRouter()
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=TicketResponse)
-async def post_new_ticket(current_user: CurrentUser, db:Annotated[AsyncSession, Depends(get_db)]):
-    ticket = await create_ticket(current_user, db)
+async def post_new_ticket(body: TicketCreate, current_user: CurrentUser, db:Annotated[AsyncSession, Depends(get_db)]):
+    ticket = await create_ticket(body.user_message, current_user, db)
     return ticket
 
 @router.get("", response_model=list[TicketResponse])
@@ -45,7 +45,7 @@ async def add_chat_to_ticket(current_user: CurrentUser,
     rep = await call_agents_orchestrator(data, db, msg.message)
     ag_msg = ChatRequest(sender="agent", message= rep.orchestrator_message)
     await new_message(ag_msg, db, ticket)
-    return rep # Focus pour rajouter aussi async OpenAI
+    return rep
 
 @router.get("/{ticket_id}/chats", response_model= TicketChats)
 async def get_chats(current_user: CurrentUser,

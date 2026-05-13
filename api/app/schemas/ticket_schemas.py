@@ -10,7 +10,7 @@ class TicketBase(BaseModel):
 
 
 class TicketCreate(TicketBase):
-	pass
+	user_message: str
 
 
 class TicketResponse(TicketBase):
