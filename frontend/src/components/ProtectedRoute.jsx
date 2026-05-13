@@ -1,34 +1,14 @@
-import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
-import { getMe } from "../api/client";
+import { Navigate } from "react-router-dom"
 
-export const ProtectedRoute = ({ children }) => {
-  const [isValid, setIsValid] = useState(null);
+export const ProtectedRoute = ({ children, requiredRole }) => {
+  const token = localStorage.getItem("token")
+  const role = localStorage.getItem("role")
 
-  useEffect(() => {
-    async function checkToken() {
-      const token = localStorage.getItem("token");
+  if (!token) return <Navigate to="/login" />
+  if (requiredRole && role !== requiredRole) {
+    if (role === "manager") return <Navigate to="/manager" />
+    return <Navigate to="/new" />
+  }
 
-      if (!token) {
-        setIsValid(false);
-        return;
-      }
-
-      try {
-        await getMe();
-        setIsValid(true);
-      } catch (error) {
-        if (error.status === 401) {
-          localStorage.removeItem("token");
-          setIsValid(false);
-        }
-      }
-    }
-
-    checkToken();
-  }, []);
-
-  if (isValid === null) return <p>Loading...</p>;
-  if (!isValid) return <Navigate to="/login" />;
-  return children;
-};
+  return children
+}
