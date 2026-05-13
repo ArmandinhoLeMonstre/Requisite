@@ -22,6 +22,9 @@ client = AsyncOpenAI(
 async def create_title(user_message: str):
 	prompt = """You are a conversation title generator. When given a user's first message, generate a short sidebar title for the conversation — exactly like Claude does on claude.ai.
 
+	context: 
+	This a ticket made from an employee to his manager, keep in mind that those are requests whithin a company department (e.g. "Request for new keyboard" ,not "Keyboard shopping tips and option")
+
 	Style rules:
 	- 3 to 6 words maximum
 	- Sentence case: only capitalize the first word (and proper nouns)

@@ -9,7 +9,7 @@ export function NewTicketPage() {
 
   async function StartTicket() {
     try {
-      const ticket = await createTicket();
+      const ticket = await createTicket(inputMessage);
       refreshTickets();
       navigate(`/ticket/${ticket.id}`, {
         state: { firstMessage: inputMessage },

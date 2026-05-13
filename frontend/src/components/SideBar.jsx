@@ -24,7 +24,7 @@ function Sidebar({ tickets }) {
               onClick={() => navigate(`/ticket/${ticket.id}`)}
               className="w-full text-sm text-left text-gray-200 hover:bg-gray-700 rounded px-1 py-1"
             >
-              {ticket.id}
+              {ticket.description}
             </button>
           ))
         ) : (

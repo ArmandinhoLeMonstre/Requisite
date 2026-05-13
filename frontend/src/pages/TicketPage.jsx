@@ -1,64 +1,51 @@
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import ChatWindow from "../components/ChatWindow";
 import { getChats, sendMessage } from "../api/client";
 
 export function TicketPage() {
   const { ticketId } = useParams();
-  const [loading, setLoading] = useState(false);
-  const { state } = useLocation();
-  const hasRun = useRef(false);
-  const [ticketInfo, setTicketInfo] = useState(
-    state?.firstMessage
-      ? { chats: [{ sender: "user", message: state.firstMessage, id: 0 }] }
-      : null,
-  );
+  const [loadingMap, setLoadingMap] = useState({});
+  const [ticketsData, setTicketsData] = useState({});
 
-  async function addMessage(message, optimistic = true) {
-    if (optimistic) {
-      setTicketInfo({
-        ...ticketInfo,
-        chats: [
-          ...ticketInfo.chats,
-          { sender: "user", message, id: ticketInfo.chats.length + 1 },
-        ],
-      });
-    }
-    setLoading(true);
+  const loading = loadingMap[ticketId] ?? false;
+  const ticketInfo = ticketsData[ticketId] ?? null;
+
+  async function addMessage(message) {
+    const id = ticketId;
+    setTicketsData(prev => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        chats: [...prev[id].chats, { sender: "user", message, id: prev[id].chats.length + 1 }],
+      },
+    }));
+    setLoadingMap(prev => ({ ...prev, [id]: true }));
     try {
-      await sendMessage(ticketId, message);
-      const data = await getChats(ticketId);
-      setTicketInfo(data);
+      await sendMessage(id, message);
+      const data = await getChats(id);
+      setTicketsData(prev => ({ ...prev, [id]: data }));
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setLoadingMap(prev => ({ ...prev, [id]: false }));
     }
   }
-
-  useEffect(() => {
-    if (state?.firstMessage && !hasRun.current) {
-      hasRun.current = true;
-      addMessage(state.firstMessage, false);
-    }
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const data = await getChats(ticketId);
-        setTicketInfo(data);
+        setTicketsData(prev => ({ ...prev, [ticketId]: data }));
       } catch (error) {
         console.error("Failed to load ticket infos", error);
       }
     }
-    if (!state?.firstMessage) {
-      fetchData();
-    }
+    fetchData();
   }, [ticketId]);
 
   return (
-    <div className="flex-1 flex justify-center h-screen bg-gray-950 overflow-hidden ">
+    <div className="flex-1 flex justify-center h-screen bg-gray-950 overflow-hidden">
       <ChatWindow
         activeTicket={ticketInfo}
         addMessage={addMessage}

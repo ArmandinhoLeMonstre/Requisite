@@ -44,11 +44,12 @@ export async function sendMessage(ticketId, message) {
   }
 }
 
-export async function createTicket() {
+export async function createTicket( user_message) {
   const header = authHeaders();
+  const body = {user_message}
 
   try {
-    const response = await api.post("/tickets", null, { headers: header });
+    const response = await api.post("/tickets", body, { headers: header });
     return response.data;
   } catch (error) {
     console.error(error);
