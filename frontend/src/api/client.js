@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  // baseURL: "http://localhost:8080/api",
+  baseURL: "http://192.168.0.84:8080/api",
 });
 
 function getToken() {
@@ -133,3 +134,15 @@ export async function getGroup(group_id) {
     throw error;
   }
 }
+
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token")
+      localStorage.removeItem("role")
+      window.location.href = "/login"
+    }
+    return Promise.reject(error)
+  }
+)
