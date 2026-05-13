@@ -13,6 +13,9 @@ export const LoginPage = () => {
     try {
       const res = await createToken(email, password);
       localStorage.setItem("token", res.access_token);
+      const user = await getMe()
+      localStorage.setItem("role", user.data.role)
+      user.data.role === 'employee' ? (navigate("/new")) : (navigate("/manager"))
     } catch (error) {
       if (error.status === 401) {
         setLoginError(error.response.data.detail);
