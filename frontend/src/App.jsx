@@ -6,15 +6,20 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ChatLayout } from "./components/ChatLayout";
 import { TicketPage } from "./pages/TicketPage";
 import { NewTicketPage } from "./pages/NewTicketPage";
+import { PublicRoute } from "./components/PublicRoute";
+import { ManagerPage } from "./pages/ManagerPage";
+import { ManagerLayout } from "./components/ManagerLayout";
 
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole={"employee"}>
             <ChatLayout />
           </ProtectedRoute>
         }
@@ -23,6 +28,15 @@ function App() {
         <Route path="/ticket/:ticketId" element={<TicketPage />} />
         <Route path="/me" element={<MePage />} />
         <Route path="/" element={<Navigate to="/new" replace />} />
+      </Route>
+      <Route
+        element={
+          <ProtectedRoute requiredRole={"manager"}>
+            <ManagerLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/manager" element={<ManagerPage />} />
       </Route>
     </Routes>
   );
