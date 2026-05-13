@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createToken } from "../api/client";
+import { createToken, getMe } from "../api/client";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +13,6 @@ export const LoginPage = () => {
     try {
       const res = await createToken(email, password);
       localStorage.setItem("token", res.access_token);
-      navigate("/new");
     } catch (error) {
       if (error.status === 401) {
         setLoginError(error.response.data.detail);
