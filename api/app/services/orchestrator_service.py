@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from app.models.user_model import User
@@ -8,7 +8,7 @@ from app.schemas.agents_requests_schemas import OrchestratorData
 from app.agents_app.agents.orchestrator_agent import call_orchestrator_agent
 from app.agents_app.agents_exceptions import OrchestratorError
 from fastapi import HTTPException, status
-from openai import OpenAI
+from openai import AsyncOpenAI
 import app.services.db_service as db_service
 import app.services.formatter_service as formatter_service
 import os
@@ -16,11 +16,11 @@ import json
 from app.logger import logger
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(
+client = AsyncOpenAI(
 	api_key=openai_api_key
 )
 
-def send_request_to_orchestrator(message: str, existing_input_list: list, data: OrchestratorData):
+async def send_request_to_orchestrator(message: str, existing_input_list: list, data: OrchestratorData):
 
 	req_input_list = []
 	if existing_input_list:
@@ -29,7 +29,7 @@ def send_request_to_orchestrator(message: str, existing_input_list: list, data: 
 	req_input_list.extend([{"role": "user", "content": message}])
 
 	try:
-		orchestrator_response = call_orchestrator_agent(client, data, req_input_list)
+		orchestrator_response = await call_orchestrator_agent(client, data, req_input_list)
 	except OrchestratorError as e:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -44,9 +44,10 @@ def send_request_to_orchestrator(message: str, existing_input_list: list, data: 
 	})
 
 
-def create_data(current_user: User, db : Session, ticket: Ticket, msg: str):
+async def create_data(current_user: User, db : AsyncSession, ticket: Ticket, msg: str):
 	try:
-		manager = db.scalars(select(User).where(User.id == current_user.group.manager_id)).one()
+		stmt = await db.scalars(select(User).where(User.id == current_user.group.manager_id))
+		manager = stmt.one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="Manager not found")
 	except SQLAlchemyError:
@@ -65,12 +66,12 @@ def create_data(current_user: User, db : Session, ticket: Ticket, msg: str):
 	return data
 
 
-def call_agents_orchestrator(data: OrchestratorData, db: Session, message: str):
-	existing_input_list = db_service.retrieve_input_list(db, data.ticket_id)
+async def call_agents_orchestrator(data: OrchestratorData, db: AsyncSession, message: str):
+	existing_input_list = await db_service.retrieve_input_list(db, data.ticket_id)
 
-	result = send_request_to_orchestrator(message, existing_input_list, data)
+	result = await send_request_to_orchestrator(message, existing_input_list, data)
 	print(result.get("history"))
-	db_service.save_input_list(db, data.ticket_id, result.get("history"))
+	await db_service.save_input_list(db, data.ticket_id, result.get("history"))
 
 	response = OrchestratorResponse(
 		ticket_id=data.ticket_id,

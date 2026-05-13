@@ -1,4 +1,4 @@
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 import json
 from json import JSONDecodeError
@@ -8,11 +8,11 @@ from app.agents_app.tools.inventory_tools.definitions import TOOLS
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-client = OpenAI(
+client = AsyncOpenAI(
   api_key=openai_api_key
 )
 
-def call_inventory_agent(object_type: str, object_specs: str):
+async def call_inventory_agent(object_type: str, object_specs: str):
 	if not object_type:
 		return {
 			"success": False,
@@ -35,7 +35,7 @@ def call_inventory_agent(object_type: str, object_specs: str):
 	]
 
 	try:
-		response = client.responses.create(
+		response = await client.responses.create(
 			model="gpt-4o-mini",
 			instructions="""You are an inventory checker agent.
 
@@ -110,7 +110,7 @@ def call_inventory_agent(object_type: str, object_specs: str):
 			})
 
 			try:
-				ranked_response = client.responses.create(
+				ranked_response = await client.responses.create(
 					model="gpt-4o-mini",
 					instructions="You are an inventory ranking agent. Rank products by how well they match the user's specs. Never invent specs that are not in the item data.",
 					input=input_list
@@ -137,8 +137,3 @@ def call_inventory_agent(object_type: str, object_specs: str):
 				"success": True,
 				"data": ranked_text
 			}
-
-# object_type = "keyboard"
-# object_specs = "Wireless QWERTY"
-
-# call_inventory_agent(object_type, object_specs)

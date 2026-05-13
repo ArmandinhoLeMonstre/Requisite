@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
-from app.init_db import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.database import get_db
 
 from app.models.user_model import User
 from app.models.group_model import Group
@@ -15,9 +15,13 @@ from app.auth import hash_password, verify_access_token, oauth2_scheme
 from app.logger import logger
 
 
-def create_user(user: UserCreate, db: Session):
+async def create_user(user: UserCreate, db: AsyncSession):
 	try:
-		existing = db.scalars(select(User).where((func.lower(User.name) == user.name.lower()) | (func.lower(User.email) == user.email.lower()))).first()
+		stmt = await db.scalars(select(User).where(
+			(func.lower(User.name) == user.name.lower()) |
+			(func.lower(User.email) == user.email.lower())
+		))
+		existing = stmt.first()
 	except SQLAlchemyError as e:
 		logger.error("user.create.error", error=str(e), step="check_existing")
 		raise HTTPException(status_code=500, detail="Error with database")
@@ -36,8 +40,8 @@ def create_user(user: UserCreate, db: Session):
 
 	try:
 		db.add(new_user)
-		db.commit()
-		db.refresh(new_user)
+		await db.commit()
+		await db.refresh(new_user)
 	except SQLAlchemyError:
 		logger.error("user.create.error", error=str(e), step="add_user_in_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
@@ -46,7 +50,7 @@ def create_user(user: UserCreate, db: Session):
 
 	return new_user
 
-def select_user(current_user: User, user_id: int, db: Session):
+async def select_user(current_user: User, user_id: int, db: AsyncSession):
 	if current_user.id == user_id:
 		return current_user
 	
@@ -54,7 +58,8 @@ def select_user(current_user: User, user_id: int, db: Session):
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to see this user")
 
 	try:
-		user = db.scalars(select(User).where(User.id == user_id)).one()
+		stmt = await db.scalars(select(User).where(User.id == user_id))
+		user = stmt.one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
 	except SQLAlchemyError as e:
@@ -63,7 +68,7 @@ def select_user(current_user: User, user_id: int, db: Session):
 
 	return(user)
 
-def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Session):
+async def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: AsyncSession):
 	REGISTRY = {
 		"name": func.lower(User.name),
 		"email": func.lower(User.email),
@@ -73,7 +78,8 @@ def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Sessi
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this user")
 
 	try:
-		user = db.scalars(select(User).where(User.id == user_id)).one()
+		stmt = await db.scalars(select(User).where(User.id == user_id))
+		user = stmt.one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
 	except SQLAlchemyError:
@@ -84,14 +90,16 @@ def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Sessi
 	for key, value in update_data.items():
 		if key == "group_id":
 			try:
-				db.scalars(select(Group).where(Group.id == value)).one()
+				stmt = await db.scalars(select(Group).where(Group.code == value))
+				existing = stmt.one()
 			except NoResultFound:
 				raise HTTPException(status_code=404, detail="Group not found")
 			except SQLAlchemyError:
 				raise HTTPException(status_code=500, detail="Error with Database server")
 		elif key == "name" or key == "email":
 			try:
-				existing = db.scalars(select(User).where((REGISTRY.get(key) == value.lower()) & (User.id != user_id))).first()
+				stmt = await db.scalars(select(User).where((REGISTRY.get(key) == value.lower()) & (User.id != user_id)))
+				existing = stmt.first()
 			except SQLAlchemyError:
 				raise HTTPException(status_code=500, detail="Error with Database server")
 			if existing:
@@ -101,31 +109,32 @@ def patch_user(current_user: User, user_id: int, new_data: UserUpdate, db: Sessi
 		setattr(user, key, value)
 
 	try:
-		db.commit()
-		db.refresh(user)
+		await db.commit()
+		await db.refresh(user)
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
 	return user
 
-def delete_user(current_user: User, user_id:int, db:Session):
+async def delete_user(current_user: User, user_id:int, db: AsyncSession):
 	if current_user.role != UserRole.manager:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this account")
 
 	try:
-		user = db.scalars(select(User).where(User.id == user_id)).one()
+		stmt = await db.scalars(select(User).where(User.id == user_id))
+		user = stmt.one()
 	except NoResultFound:
 		raise HTTPException(status_code=404, detail="User not found")
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	try:
-		db.delete(user)
-		db.commit()
+		await db.delete(user)
+		await db.commit()
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")	
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(get_db)]):
 	user_id = verify_access_token(token)
 	if user_id is None:
 		raise HTTPException(
@@ -144,7 +153,8 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotate
 		)
 	
 	try:
-		user = db.scalars(select(User).where(User.id == user_id_int)).one()
+		stmt = await db.scalars(select(User).where(User.id == user_id_int))
+		user = stmt.one()
 	except NoResultFound:
 		raise HTTPException(
 			status_code=status.HTTP_401_UNAUTHORIZED,

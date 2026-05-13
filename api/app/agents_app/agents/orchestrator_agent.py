@@ -1,4 +1,4 @@
-from openai import OpenAI, OpenAIError
+from openai import AsyncOpenAI, OpenAIError
 from app.agents_app.agents_exceptions import OrchestratorError
 import json
 from json import JSONDecodeError
@@ -9,7 +9,7 @@ from app.schemas.agents_requests_schemas import OrchestratorData
 
 from app.logger import logger
 
-def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_list: list):
+async def call_orchestrator_agent(client: AsyncOpenAI, data: OrchestratorData, req_input_list: list):
 	log = logger.bind(ticket_id=data.ticket_id)
 	orchestrator_log = log.bind(agent="orchestrator")
 
@@ -35,7 +35,7 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 
 	while True:
 		try:
-			response = client.responses.create(
+			response = await client.responses.create(
 				model="gpt-4o-mini",
 				instructions = prompt,
 				tools=TOOLS,
@@ -77,7 +77,7 @@ def call_orchestrator_agent(client: OpenAI, data: OrchestratorData, req_input_li
 					)
 					raise OrchestratorError(message=f"Failed to parse tool arguments as JSON: {e}. Raw arguments: {item.arguments}")
 				try:
-					tool_result = func(**parsed)
+					tool_result = await func(**parsed)
 					
 					success = tool_result.get("success")
 					if success is False:

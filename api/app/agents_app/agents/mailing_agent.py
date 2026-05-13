@@ -1,9 +1,13 @@
 import json, smtplib, os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from openai import OpenAI
+from openai import AsyncOpenAI
 
-op_client = OpenAI()
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+client = AsyncOpenAI(
+  api_key=openai_api_key
+)
 
 SMTP_HOST = os.getenv("SMTP_HOST")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
@@ -41,7 +45,7 @@ def send_email(to_send: str, subject: str, body: str):
 	except Exception as e:
 		return str(e)
 
-def call_email_agent(data, product):
+async def call_email_agent(data, product):
 	final_data = data | product
 	input_list = [
 		{
@@ -55,7 +59,7 @@ def call_email_agent(data, product):
 	]
 
 	try:
-		response = op_client.responses.create(
+		response = await client.responses.create(
 			model="gpt-4o-mini",
 			input=input_list,
 		)

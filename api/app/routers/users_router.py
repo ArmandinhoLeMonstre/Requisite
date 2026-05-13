@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, status
 
 from typing import Annotated
 
-from app.init_db import get_db 
+from app.database import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, Token
 from app.services.user_services import create_user, select_user, patch_user, delete_user, get_current_user, CurrentUser
@@ -16,35 +17,35 @@ router = APIRouter()
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=UserPrivate)
-def post_new_user(user: UserCreate, db:Annotated[Session, Depends(get_db)]):
-    return create_user(user, db)
+async def post_new_user(user: UserCreate, db:Annotated[AsyncSession, Depends(get_db)]):
+    return await create_user(user, db)
 
 @router.post("/token", response_model=Token)
-def login_for_access_token(
+async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
 ):
-    return log_for_access_token(form_data, db)
+    return await log_for_access_token(form_data, db)
 
 @router.get("/me", response_model=UserPrivate)
-def current_user(user : CurrentUser):
+async def current_user(user : CurrentUser):
     return user
 
 @router.get("/{user_id}", response_model=UserPublic)
-def get_user(current_user: CurrentUser, user_id: int, db:Annotated[Session, Depends(get_db)]):
-    return select_user(current_user, user_id, db)
+async def get_user(current_user: CurrentUser, user_id: int, db:Annotated[AsyncSession, Depends(get_db)]):
+    return await select_user(current_user, user_id, db)
 
 @router.patch("/{user_id}", response_model=UserPrivate)
-def update_user(current_user: CurrentUser, user_id:int, new_data: UserUpdate, db: Annotated[Session, Depends(get_db)]):
-    return patch_user(current_user, user_id, new_data, db)
+async def update_user(current_user: CurrentUser, user_id:int, new_data: UserUpdate, db: Annotated[AsyncSession, Depends(get_db)]):
+    return await patch_user(current_user, user_id, new_data, db)
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def del_user(current_user: CurrentUser, user_id: int, db: Annotated[Session, Depends(get_db)]):
-    return  delete_user(current_user, user_id, db)
+async def del_user(current_user: CurrentUser, user_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
+    return await delete_user(current_user, user_id, db)
 
 @router.patch("/{user_id}/group", response_model=UserPrivate)
-def change_group(current_user: CurrentUser,
-                 db: Annotated[Session,Depends(get_db)],
+async def change_group(current_user: CurrentUser,
+                 db: Annotated[AsyncSession,Depends(get_db)],
                  code: str):
-    join_group(current_user, code, db)
+    await join_group(current_user, code, db)
     return current_user
