@@ -69,6 +69,18 @@ export async function getTickets() {
   }
 }
 
+export async function getGroupTickets() {
+  const header = authHeaders()
+
+  try {
+    const response = await api.get("/tickts/manager", {headers: header})
+    return response.data
+  } catch(error) {
+    console.error(error)
+    throw error
+  }
+}
+
 export async function createToken(email, password) {
   const formData = new FormData();
   formData.append("username", email);

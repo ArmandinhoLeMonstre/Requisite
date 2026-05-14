@@ -27,3 +27,9 @@ class TicketChats(TicketBase):
 	id: uuid.UUID
 	user_id: int
 	chats: list[ChatResponse]
+
+
+class TicketsGroup(TicketBase):
+	model_config = ConfigDict(from_attributes=True)
+
+	chats: dict[str,list[TicketResponse]]

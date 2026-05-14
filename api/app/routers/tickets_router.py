@@ -7,16 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import uuid
 
-from app.schemas.ticket_schemas import TicketResponse, TicketChats, TicketCreate
+from app.schemas.ticket_schemas import TicketResponse, TicketChats, TicketCreate, TicketsGroup
 from app.schemas.chat_schemas import ChatRequest
 from app.schemas.agents_requests_schemas import OrchestratorResponse
 
-from app.services.ticket_services import create_ticket, select_ticket, get_tickets
+from app.services.ticket_services import create_ticket, select_ticket, get_tickets, get_tickets_group
 from app.services.user_services import CurrentUser
 from app.services.chat_services import new_message
 from app.services.orchestrator_service import create_data, call_agents_orchestrator
 
-from app.models.chat_model import Sender
 
 router = APIRouter()
 
@@ -29,6 +28,11 @@ async def post_new_ticket(body: TicketCreate, current_user: CurrentUser, db:Anno
 @router.get("", response_model=list[TicketResponse])
 async def get_tickets_from_user(current_user: CurrentUser, db: Annotated[AsyncSession, Depends(get_db)]):
     return await get_tickets(current_user, db)
+
+@router.get("/manager", response_model=TicketsGroup)
+async def get_tickets_from_group(current_user: CurrentUser,
+                                 db: Annotated[AsyncSession, Depends(get_db)]):
+    return await get_tickets_group(current_user, db)
 
 @router.get("/{ticket_id}", response_model=TicketResponse)
 async def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annotated[AsyncSession, Depends(get_db)]):

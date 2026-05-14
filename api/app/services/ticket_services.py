@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -7,9 +8,9 @@ from openai import AsyncOpenAI
 import os
 
 from app.models.user_model import User, UserRole
+from app.models.group_model import Group
 from app.models.ticket_model import TicketStatus, Ticket, uuid
-from app.schemas.ticket_schemas import TicketCreate
-from app.services.chat_services import new_message, Sender
+from app.schemas.ticket_schemas import TicketsGroup
 
 from app.logger import logger
 
@@ -96,3 +97,24 @@ async def get_tickets(user: User, db: AsyncSession):
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with database server")
 	
 	return tickets
+
+async def get_tickets_group(user: User, db: AsyncSession):
+	if user.role != UserRole.manager:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User must be manager")
+
+	try:
+		stmt = await db.scalars(select(User).where(User.id == user.id).options(selectinload(User.groups).selectinload(Group.users).selectinload(User.tickets)))
+		loaded_user = stmt.one()
+
+		if (not loaded_user.groups):
+			return TicketsGroup(chats={})
+
+		result = {}
+		for group in loaded_user.groups:
+			tickets = []
+			for member in group.users:
+				tickets.extend(member.tickets)
+			result[group.code] = tickets
+		return TicketsGroup(chats=result)
+	except Exception as e:
+		raise HTTPException(status_code=500, detail=str(e))
