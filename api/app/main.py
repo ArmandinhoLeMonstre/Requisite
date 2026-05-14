@@ -5,6 +5,10 @@ from fastapi.exceptions import RequestValidationError # Handling validation erro
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.limiter import limiter
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
 from app.routers import groups_router, tickets_router, users_router
 from app.logger import setup_logger
 
@@ -14,6 +18,10 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI()
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,7 +36,7 @@ app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"
 app.include_router(groups_router.router, prefix="/api/groups", tags=["groups"])
 
 @app.get("/")
-def root():
+def root(request: Request):
     return {"Petit", "Zeub"}
 
 @app.exception_handler(StarletteHTTPException) #handling HTTP error
