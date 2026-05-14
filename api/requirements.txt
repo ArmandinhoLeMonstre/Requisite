@@ -16,3 +16,4 @@ serpapi==1.0.2
 structlog==25.5.0
 asyncpg==0.31.0
 slowapi==0.1.9
+resend==2.30.1
