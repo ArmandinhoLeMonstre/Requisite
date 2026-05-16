@@ -16,7 +16,7 @@ async def send_registration_confirmation_email(user_email: str, confirmation_tok
 		"from": "Acme <onboarding@resend.dev>",
 		"to": ["armandinho13@yahoo.com"], #ici mettre user email une fois qu'on aura un nom de domaine
 		"subject": "Requisit verification link",
-		"html": f"<strong>Here is your verification link, http://localhost:8080/api/users/verification/{confirmation_token}</strong>",
+		"html": f"<strong>Here is your verification link, http://localhost:5173/verify/{confirmation_token}</strong>",
 	}
 
 	email = resend.Emails.send(params)
