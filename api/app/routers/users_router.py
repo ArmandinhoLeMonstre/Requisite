@@ -10,6 +10,7 @@ from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPri
 from app.services.user_services import create_user, select_user, patch_user, delete_user, get_current_user, CurrentUser
 from app.services.token_services import log_for_access_token
 from app.services.group_services import join_group
+from app.services.email_service import send_registration_confirmation_email, confirm_email
 
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -18,7 +19,13 @@ router = APIRouter()
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=UserPrivate)
 async def post_new_user(user: UserCreate, db:Annotated[AsyncSession, Depends(get_db)]):
-    return await create_user(user, db)
+    new_user = await create_user(user, db)
+    await send_registration_confirmation_email(new_user.email, new_user.email_verification_token)
+    return new_user
+
+@router.get("/verification/{email_token}")
+async def verify_user_email(email_token: str, db:Annotated[AsyncSession, Depends(get_db)]):
+    return await confirm_email(email_token, db)
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(

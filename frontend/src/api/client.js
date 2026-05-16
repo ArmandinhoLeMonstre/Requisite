@@ -108,6 +108,18 @@ export async function createUser(name, email, role, password) {
   }
 }
 
+export async function verifyUser(token) {
+	const header = authHeaders();
+
+	try {
+		const response = await api.get(`/users/verification/${token}`)
+		return response;
+	} catch (error) {
+		console.error(error);
+		throw error
+	}
+}
+
 export async function getMe() {
   const header = authHeaders();
 

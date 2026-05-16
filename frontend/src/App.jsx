@@ -9,6 +9,7 @@ import { NewTicketPage } from "./pages/NewTicketPage";
 import { PublicRoute } from "./components/PublicRoute";
 import { ManagerPage } from "./pages/ManagerPage";
 import { ManagerLayout } from "./components/ManagerLayout";
+import { VerificationPage } from "./pages/VerificationPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+		<Route path="/verify/:token" element={<VerificationPage />} />
       </Route>
       <Route
         element={

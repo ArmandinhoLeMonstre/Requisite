@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 
 from typing import Annotated
 
@@ -16,6 +16,8 @@ from app.services.user_services import CurrentUser
 from app.services.chat_services import new_message
 from app.services.orchestrator_service import create_data, call_agents_orchestrator
 
+
+from app.limiter import limiter
 
 router = APIRouter()
 
@@ -39,10 +41,13 @@ async def get_ticket(current_user: CurrentUser, ticket_id: uuid.UUID, db: Annota
     return await select_ticket(ticket_id, current_user, db)
 
 @router.post("/{ticket_id}", response_model=OrchestratorResponse)
-async def add_chat_to_ticket(current_user: CurrentUser,
-               ticket_id: uuid.UUID,
-               user_chat: ChatRequest,
-               db: Annotated[AsyncSession, Depends(get_db)]):
+@limiter.limit("200/hour") #A configurer avec le chiffre exact en prod
+async def add_chat_to_ticket(
+				request: Request, # param obligatoire pour rate limit
+    			current_user: CurrentUser,
+                ticket_id: uuid.UUID,
+                user_chat: ChatRequest,
+                db: Annotated[AsyncSession, Depends(get_db)]):
     ticket = await select_ticket(ticket_id, current_user, db)
     msg = await new_message(user_chat, db, ticket)
     data = await create_data(current_user, db, ticket, msg.message)

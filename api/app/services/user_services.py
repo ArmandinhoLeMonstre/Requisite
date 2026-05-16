@@ -11,11 +11,15 @@ from fastapi import HTTPException, status, Depends
 from typing import Annotated
 
 from app.auth import hash_password, verify_access_token, oauth2_scheme
+import secrets
 
 from app.logger import logger
+from app.services.email_service import send_registration_confirmation_email
 
 
 async def create_user(user: UserCreate, db: AsyncSession):
+	email_verification_token = secrets.token_urlsafe(32)
+
 	try:
 		stmt = await db.scalars(select(User).where(
 			(func.lower(User.name) == user.name.lower()) |
@@ -35,7 +39,9 @@ async def create_user(user: UserCreate, db: AsyncSession):
 		name= user.name,
 		email= user.email.lower(),
 		role= user.role,
-		hashed_password= hash_password(user.password)
+		hashed_password= hash_password(user.password),
+		email_verified=False,
+		email_verification_token=email_verification_token
 	)
 
 	try:

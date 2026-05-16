@@ -23,10 +23,18 @@ async def log_for_access_token(form_data: OAuth2PasswordRequestForm, db: Session
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
 	if not user or not verify_password(form_data.password, user.hashed_password):
+		logger.error("token.create.user_credentials_error", step="verify password or user")
 		raise HTTPException(
 			status_code= status.HTTP_401_UNAUTHORIZED,
 			detail="Incorrect email or password",
 			headers={"WWW-Authenticate": "Bearer"},
+		)
+
+	if not user.email_verified:
+		logger.error("token.create.user_credentials_error", step="verify email")
+		raise HTTPException(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail="Email adress unverified, please check your emails"
 		)
 
 	access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
