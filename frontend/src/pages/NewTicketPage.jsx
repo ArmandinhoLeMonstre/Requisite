@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createTicket } from "../api/client";
+import { createTicket, sendMessage } from "../api/client";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 export function NewTicketPage() {
@@ -11,6 +11,7 @@ export function NewTicketPage() {
     try {
       const ticket = await createTicket(inputMessage);
       refreshTickets();
+      await sendMessage(ticket.id, inputMessage)
       navigate(`/ticket/${ticket.id}`, {
         state: { firstMessage: inputMessage },
       });

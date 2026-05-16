@@ -44,9 +44,9 @@ export async function sendMessage(ticketId, message) {
   }
 }
 
-export async function createTicket( user_message) {
+export async function createTicket(user_message) {
   const header = authHeaders();
-  const body = {user_message}
+  const body = { user_message };
 
   try {
     const response = await api.post("/tickets", body, { headers: header });
@@ -70,14 +70,14 @@ export async function getTickets() {
 }
 
 export async function getGroupTickets() {
-  const header = authHeaders()
+  const header = authHeaders();
 
   try {
-    const response = await api.get("/tickts/manager", {headers: header})
-    return response.data
-  } catch(error) {
-    console.error(error)
-    throw error
+    const response = await api.get("/tickts/manager", { headers: header });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
@@ -126,7 +126,7 @@ export async function joinGroup(user_id, code) {
   try {
     const response = await api.patch(`/users/${user_id}/group`, null, {
       headers: header,
-      params: {code}
+      params: { code },
     });
     return response;
   } catch (error) {
@@ -148,13 +148,16 @@ export async function getGroup(group_id) {
 }
 
 api.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token")
-      localStorage.removeItem("role")
-      window.location.href = "/login"
+      const publicRoutes = ["/login", "/register"];
+      if (!publicRoutes.includes(window.location.pathname)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/login";
+      }
     }
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);

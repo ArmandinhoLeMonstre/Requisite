@@ -54,7 +54,7 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	ticket_title = await create_title(user_message)
 	
 	ticket_stmt = Ticket(
-		status= TicketStatus.opened,
+		status= TicketStatus.pending,
 		user_id= current_user.id,
 		description=ticket_title
 	)

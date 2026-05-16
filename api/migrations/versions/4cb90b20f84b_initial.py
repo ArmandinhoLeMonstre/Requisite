@@ -54,7 +54,7 @@ def upgrade() -> None:
     )
     op.create_table('tickets',
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('status', sa.Enum('completed', 'opened', 'waiting_for_approval', 'approved', 'refused', name='ticketstatus'), nullable=False),
+    sa.Column('status', sa.Enum('pending', 'approved', 'rejected', name='ticketstatus'), nullable=False),
     sa.Column('description', sa.String(length=200), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),

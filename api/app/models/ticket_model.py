@@ -8,10 +8,9 @@ import enum
 import uuid
 
 class TicketStatus(enum.Enum):
-	opened= "opened"
-	waiting_for_approval= "waiting_for_approval"
+	pending= "pending"
 	approved= "approved"
-	refused= "refused"
+	rejected= "rejected"
 
 
 class Ticket(Base):
