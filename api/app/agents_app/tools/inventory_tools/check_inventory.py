@@ -7,36 +7,36 @@ def check_inventory(object_type: str):
 	inventory = {
 		"keyboard": [
 			{
-				"asin" : "B0DL6LV7Q6",
 				"title" : "Magic Keyboard - US English , Bluetooth",
 				"object_specs": "QWERTY Wireless APPLE",
-				"avalable" : 1
+				"object_type": "keyboard",
+				"available" : 1
 			},
 			{
-				"asin": "B0DL6L189W",
 				"title": "Magic Keyboard with Touch ID and Numeric Keypad for Mac Models with Apple Silicon - US English - Black Keys",
 				"object_specs": "QWERTY Wireless NUMERIC_KEYPAD APPLE",
-				"avalable" : 1
+				"object_type": "keyboard",
+				"available" : 1
 			},
 			{
-				"asin": "B003ELVLKU",
 				"title": "K120 Wired Keyboard for Windows, USB Plug-and-Play, Full-Size, Spill-Resistant, Curved Space Bar, Compatible with PC, Laptop - Black",
 				"object_specs": "QWERTY Wired LOGITECH",
-				"avalable" : 1
+				"object_type": "keyboard",
+				"available" : 1
 			}
 		],
 		"mouse" : [
 			{
-				"asin": "B0DL72PK1P",
 				"title": "Magic Mouse - White Multi-Touch Surface ​​​​​​​",
-				"price": 63.99,
-				"avalable" : 1
+				"object_specs": "Wireless bluetooth",
+				"object_type": "keyboard",
+				"available" : 1
 			},
 			{
-				"asin": "B012DT5U96",
 				"title": "Optical Mouse MS116 (275-BBCB)",
-				"price": 7.99,
-				"avalable" : 1
+				"object_specs": "Wried Logitech",
+				"object_type": "keyboard",
+				"available" : 1
 			}
 		]
 	}

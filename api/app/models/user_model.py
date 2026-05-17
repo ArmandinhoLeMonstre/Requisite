@@ -24,6 +24,7 @@ class User(Base):
 	tickets: Mapped[list["Ticket"]] = relationship(back_populates='user', lazy="selectin")
 	group: Mapped[Optional['Group']] = relationship(back_populates='users', foreign_keys=[group_id], lazy="selectin")
 	groups: Mapped[list['Group']] = relationship(back_populates='manager', foreign_keys="[Group.manager_id]", lazy="selectin")
+	stock: Mapped[list['Stock']] = relationship(back_populates='manager', foreign_keys="[Stock.manager_id]", lazy="selectin")
 
 	def __repr__(self):
 		return f"User(id={self.id}, name={self.name}, email={self.email}, role={self.role})"

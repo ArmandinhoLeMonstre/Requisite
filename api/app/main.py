@@ -9,7 +9,7 @@ from app.limiter import limiter
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.routers import groups_router, tickets_router, users_router
+from app.routers import groups_router, tickets_router, users_router, inventory_router
 from app.logger import setup_logger
 
 @asynccontextmanager
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(users_router.router, prefix="/api/users", tags=["users"])
 app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"])
 app.include_router(groups_router.router, prefix="/api/groups", tags=["groups"])
+app.include_router(inventory_router.router, prefix="/api/inventory", tags=["inventory"])
 
 @app.get("/")
 def root(request: Request):

@@ -34,10 +34,11 @@ def upgrade() -> None:
     )
     op.create_table('stock',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('category', sa.String(length=20), nullable=False),
-    sa.Column('product', sa.String(length=50), nullable=False),
+    sa.Column('title', sa.String(length=150), nullable=False),
+    sa.Column('object_type', sa.String(length=20), nullable=False),
+    sa.Column('object_specs', sa.String(length=100), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
-    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('manager_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -68,6 +69,13 @@ def upgrade() -> None:
         ["manager_id"],
         ["id"]
 	)
+    op.create_foreign_key(
+        "fk_stock_managerid",
+        "stock",
+        "users",
+        ["manager_id"],
+        ["id"]
+	)
     # ### end Alembic commands ###
 
 
@@ -79,7 +87,11 @@ def downgrade() -> None:
 		"groups",
 		type_="foreignkey"
 	)
-
+    op.drop_constraint(
+		"fk_stock_managerid",
+		"stock",
+		type_="foreignkey"
+	)
     op.drop_table('tickets')
     op.drop_table('users')
     op.drop_table('stock')
