@@ -22,7 +22,7 @@ export const VerificationPage = () => {
 	}, [token])
 
 	return (
-		<div className="bg-gray-950">
+		<div className="flex flex-1 h-screen justify-center items-center bg-gray-950 text-white">
 			{status === "success" && (
 				<div>
 					<h2>Email verified</h2>

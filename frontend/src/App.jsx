@@ -17,7 +17,7 @@ function App() {
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-		<Route path="/verify/:token" element={<VerificationPage />} />
+        <Route path="/verify/:token" element={<VerificationPage />} />
       </Route>
       <Route
         element={
