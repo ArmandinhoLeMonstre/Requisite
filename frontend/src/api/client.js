@@ -73,7 +73,7 @@ export async function getGroupTickets() {
   const header = authHeaders();
 
   try {
-    const response = await api.get("/tickts/manager", { headers: header });
+    const response = await api.get("/tickets/manager", { headers: header });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -129,6 +129,18 @@ export async function getMe() {
   } catch (error) {
     console.error(error);
     throw error;
+  }
+}
+
+export async function createGroup() {
+  const header = authHeaders()
+
+  try {
+    const response = await api.post("/groups", null, {headers: header})
+    return response
+  } catch(error) {
+    console.error(error)
+    throw error
   }
 }
 
