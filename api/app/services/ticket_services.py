@@ -10,7 +10,7 @@ import os
 from app.models.user_model import User, UserRole
 from app.models.group_model import Group
 from app.models.ticket_model import TicketStatus, Ticket, uuid
-from app.schemas.ticket_schemas import TicketsGroup
+from app.schemas.ticket_schemas import TicketsGroup, TicketResponse
 
 from app.logger import logger
 
@@ -113,7 +113,15 @@ async def get_tickets_group(user: User, db: AsyncSession):
 		for group in loaded_user.groups:
 			tickets = []
 			for member in group.users:
-				tickets.extend(member.tickets)
+				for ticket in member.tickets:
+					tickets.append(TicketResponse(
+						id= ticket.id,
+						status=ticket.status,
+						description=ticket.description,
+      					created_at=ticket.created_at,
+						user_name=member.name,
+						user_id=member.id
+					))
 			result[group.code] = tickets
 		return TicketsGroup(chats=result)
 	except Exception as e:
