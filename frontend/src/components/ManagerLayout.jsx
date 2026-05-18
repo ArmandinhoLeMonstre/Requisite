@@ -11,21 +11,30 @@ export const ManagerLayout = () => {
 
   return (
     <div className="h-screen bg-gray-950 overflow-hidden">
-      <nav className="flex flex-row fixed top-0 left-0 right-0 z-10 h-16 border border-white justify-center items-center gap-20 text-2xl">
-        <span className="text-white">Requisite</span>
-        <div className=" text-white">
-          <Link to="/manager/requests">Requests</Link>
+      <nav className="flex flex-row fixed top-0 left-0 right-0 z-10 h-16 border border-white items-center">
+        <div className="flex-1 flex justify-start pl-3">
+          <span className="text-white text-2xl">Requisite</span>
         </div>
-        <button
-          className="text-white"
-          onClick={() => handleLogout()}
-        >
-          Logout
-        </button>
+        <div className="flex flex-row gap-5 text-2xl">
+          <div className="text-white">
+            <Link to="/manager/requests">Requests</Link>
+          </div>
+          <div className="text-white">
+            <Link to="/manager/requests">Inventory</Link>
+          </div>
+        </div>
+        <div className="flex-1 flex justify-end pr-3">
+          <button
+            className="text-white text-2xl"
+            onClick={() => handleLogout()}
+          >
+            Logout
+          </button>
+        </div>
       </nav>
       <main className="pt-16">
-          <Outlet />
-        </main>
+        <Outlet />
+      </main>
     </div>
   );
 };

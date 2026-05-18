@@ -137,7 +137,7 @@ export async function createGroup() {
 
   try {
     const response = await api.post("/groups", null, {headers: header})
-    return response
+    return response.data
   } catch(error) {
     console.error(error)
     throw error
