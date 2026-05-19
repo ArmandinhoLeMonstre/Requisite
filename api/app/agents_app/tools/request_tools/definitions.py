@@ -6,6 +6,10 @@ TOOLS = [
         "parameters": {
             "type": "object",
             "properties": {
+				"manager_id": {
+                    "type": "integer",
+                    "description": "Manager's id from the initial data of the request",
+                },
                 "object_type": {
                     "type": "string",
                     "description": "The type of the actual object in one word",

@@ -54,6 +54,7 @@ async def create_data(current_user: User, db : AsyncSession, ticket: Ticket, msg
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	data = OrchestratorData(
+		manager_id= manager.id,
 		manager_name= manager.name,
 		manager_email= manager.email,
 		user_name= current_user.name,

@@ -16,3 +16,7 @@ router = APIRouter()
 async def add_object_in_inventory(object: ObjectRequest, current_user: CurrentUser, db: Annotated[AsyncSession, Depends(get_db)]):
 	await add_object(object, current_user, db)
 	return {"object" : "added"}
+
+@router.get("/get")
+async def get_inventory(current_user: CurrentUser, db: Annotated[AsyncSession, Depends(get_db)]):
+	return None

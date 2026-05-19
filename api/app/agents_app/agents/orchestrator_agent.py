@@ -50,7 +50,6 @@ async def call_orchestrator_agent(client: AsyncOpenAI, data: OrchestratorData, r
 		return_flag = True
 
 		for item in response.output:
-			print(item)
 			if item.type == "message":
 				print(f"Assistant: {item.content[0].text}")
 				return_reponse.append([item])

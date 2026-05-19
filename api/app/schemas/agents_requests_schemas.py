@@ -4,7 +4,8 @@ from app.schemas.chat_schemas import ChatRequest
 import uuid
 
 class OrchestratorData(BaseModel):
-	manager_name : str = Field(description="Manager's name", min_length=1)
+	manager_id: int = Field(description="Manager's id")
+	manager_name: str = Field(description="Manager's name", min_length=1)
 	manager_email: EmailStr = Field(description="Manager's email")
 	user_name: str = Field(description="User's name", min_length=1)
 	user_email: EmailStr = Field(description="User's email")
