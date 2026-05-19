@@ -173,3 +173,27 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export async function getCommonItems() {
+  const header = authHeaders();
+
+  try {
+    const response = await api.get("/inventory/common", { headers: header });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function getManagerItems() {
+  const header = authHeaders();
+
+  try {
+    const response = await api.get("/inventory/manager", { headers: header });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

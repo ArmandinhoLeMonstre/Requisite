@@ -10,6 +10,7 @@ import { PublicRoute } from "./components/PublicRoute";
 import { ManagerPage } from "./pages/ManagerPage";
 import { ManagerLayout } from "./components/ManagerLayout";
 import { VerificationPage } from "./pages/VerificationPage";
+import { InventoryPage } from "./pages/InventoryPage";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         }
       >
         <Route path="/manager" element={<ManagerPage />} />
+		<Route path="/inventory" element={<InventoryPage />} />
       </Route>
     </Routes>
   );
