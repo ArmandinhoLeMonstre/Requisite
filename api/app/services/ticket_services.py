@@ -79,7 +79,7 @@ async def select_ticket(ticket_id: uuid.UUID, user: User, db: AsyncSession):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with Database server")
 	
-	if user.id != ticket.user_id:
+	if user.id != ticket.user_id and user.role != UserRole.manager:
 		raise HTTPException(
 			status_code=status.HTTP_403_FORBIDDEN,
 			detail="Not authorized to see this ticket"
