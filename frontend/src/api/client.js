@@ -197,3 +197,16 @@ export async function getManagerItems() {
     throw error;
   }
 }
+
+export async function addInventoryItemns(title, objectType, objectSpecs, quantity) {
+	const header = authHeaders();
+	const body = { title, object_type: objectType, object_specs: objectSpecs, quantity };
+
+	try {
+	const response = await api.post("/inventory/add", body, { headers: header });
+	return response.data;
+	} catch (error) {
+	console.error(error);
+	throw error;
+	}
+}

@@ -1,25 +1,38 @@
 import { useEffect, useState } from "react"
-import { getCommonItems, getManagerItems } from "../api/client"
+import { getCommonItems, getManagerItems, addInventoryItemns } from "../api/client"
 
 export const InventoryPage = () => {
 
 	const [commonItems, setCommonItems] = useState([])
 	const [managerItems, setManagerItems] = useState([])
+	const [title, setTitle] = useState("")
+	const [objectType, setObjectType] = useState("")
+	const [objectSpecs, setObjectSpecs] = useState("")
+	const [quantity, setQuantity] = useState("")
+
+	async function fetchItems() {
+		try {
+			const CommonItems = await getCommonItems()
+			const ManagerItems = await getManagerItems()
+			setCommonItems(CommonItems)
+			setManagerItems(ManagerItems)
+		} catch (error) {
+			console.log(error)
+		}
+	}
 
 	useEffect(() => {
-		async function fetchItems() {
-			try {
-				const CommonItems = await getCommonItems()
-				const ManagerItems = await getManagerItems()
-				setCommonItems(CommonItems)
-				setManagerItems(ManagerItems)
-			} catch (error) {
-				console.log(error)
-			}
-		}
 		fetchItems()
 	}, [])
 
+	async function addObject() {
+		try {
+			await addInventoryItemns(title, objectType, objectSpecs, quantity);
+			await fetchItems()
+		} catch (error) {
+			console.log(error)
+		}
+	}
 	return (
 		<div className="flex flex-col p-8 min-h-screen bg-gray-950">
 
@@ -67,7 +80,42 @@ export const InventoryPage = () => {
 					</li>
 				))}
 			</ul>
-
+			<div className="flex items-center gap-3 border border-dashed border-gray-700 px-4 py-3 rounded-lg mt-6">
+				<input 
+					type="text" 
+					placeholder="Title"
+					value={title}
+					onChange={(e) => setTitle(e.target.value)}
+					className="bg-gray-800 text-white text-sm px-3 py-1.5 rounded flex-1 border border-gray-700 placeholder-gray-600 focus:outline-none"
+				/>
+				<input 
+					type="text" 
+					placeholder="Object Type"
+					value={objectType}
+					onChange={(e) => setObjectType(e.target.value)}
+					className="bg-gray-800 text-white text-sm px-3 py-1.5 rounded flex-1 border border-gray-700 placeholder-gray-600 focus:outline-none"
+				/>
+				<input 
+					type="text" 
+					placeholder="Specs"
+					value={objectSpecs}
+					onChange={(e) => setObjectSpecs(e.target.value)}
+					className="bg-gray-800 text-white text-sm px-3 py-1.5 rounded flex-1 border border-gray-700 placeholder-gray-600 focus:outline-none"
+				/>
+				<input 
+					type="number" 
+					placeholder="Quantity"
+					value={quantity}
+					onChange={(e) => setQuantity(e.target.value)}
+					className="bg-gray-800 text-white text-sm px-3 py-1.5 rounded flex-1 border border-gray-700 placeholder-gray-600 focus:outline-none"
+				/>
+				<button
+					onClick={addObject}
+					className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm disabled:bg-gray-950 disabled:border disabled:border-gray-500"
+				>
+				Submit
+				</button>
+			</div>
 		</div>
 	)
 }
