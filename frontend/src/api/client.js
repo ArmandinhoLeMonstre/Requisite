@@ -57,12 +57,41 @@ export async function createTicket(user_message) {
   }
 }
 
+export async function getTicket(ticket_id) {
+  const header = authHeaders();
+
+  try {
+    const response = await api.get(`/tickets/${ticket_id}`, {
+      headers: header,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 export async function getTickets() {
   const header = authHeaders();
 
   try {
     const response = await api.get("/tickets", { headers: header });
     return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function changeTicketStatus(ticket_id, status) {
+  const header = authHeaders();
+
+  try {
+    const response = await api.patch(`/tickets/${ticket_id}/status`, null, {
+      headers: header,
+      params: { status },
+    });
+    return response;
   } catch (error) {
     console.error(error);
     throw error;
@@ -109,15 +138,15 @@ export async function createUser(name, email, role, password) {
 }
 
 export async function verifyUser(token) {
-	const header = authHeaders();
+  const header = authHeaders();
 
-	try {
-		const response = await api.get(`/users/verification/${token}`)
-		return response;
-	} catch (error) {
-		console.error(error);
-		throw error
-	}
+  try {
+    const response = await api.get(`/users/verification/${token}`);
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function getMe() {
@@ -133,14 +162,14 @@ export async function getMe() {
 }
 
 export async function createGroup() {
-  const header = authHeaders()
+  const header = authHeaders();
 
   try {
-    const response = await api.post("/groups", null, {headers: header})
-    return response.data
-  } catch(error) {
-    console.error(error)
-    throw error
+    const response = await api.post("/groups", null, { headers: header });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
