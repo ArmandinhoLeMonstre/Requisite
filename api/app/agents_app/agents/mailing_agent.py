@@ -2,6 +2,11 @@ import json, smtplib, os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from openai import AsyncOpenAI
+from app.database import AsyncSessionLocal
+
+from sqlalchemy import update
+from sqlalchemy.exc import SQLAlchemyError
+from app.models.ticket_model import TicketStatus, Ticket, uuid
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -29,6 +34,23 @@ SYSTEM_PROMPT = """You are an email composition agent.
                     "body": string
                 }"""
 
+async def update_ticket_status(ticket_id: str):
+	print(ticket_id)
+	async with AsyncSessionLocal() as db:
+			try:
+
+				stmt = await db.execute(
+					update(Ticket)
+					.where(Ticket.id == ticket_id)
+					.values(status=TicketStatus.pending)
+				)
+
+				await db.commit()
+
+			except SQLAlchemyError as e:
+				await db.rollback()
+				print(e) # gerer les erreurs ici
+
 def send_email(to_send: str, subject: str, body: str):
 	msg = MIMEMultipart()
 	msg["From"] = SMTP_USER
@@ -44,6 +66,7 @@ def send_email(to_send: str, subject: str, body: str):
 		return True
 	except Exception as e:
 		return str(e)
+	
 
 async def call_email_agent(data, product):
 	final_data = data | product
@@ -76,6 +99,7 @@ async def call_email_agent(data, product):
 					 email_content["body"])
 	
 	if result is True:
+		await update_ticket_status(data['ticket']['id'])
 		return {"sent": True, "to": data['manager']["email"],}
 	else:
 		return {"sent": False, "error": result}

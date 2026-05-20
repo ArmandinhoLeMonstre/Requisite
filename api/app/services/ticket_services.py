@@ -54,7 +54,6 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	ticket_title = await create_title(user_message)
 	
 	ticket_stmt = Ticket(
-		status= TicketStatus.pending,
 		user_id= current_user.id,
 		description=ticket_title
 	)
@@ -83,6 +82,12 @@ async def select_ticket(ticket_id: uuid.UUID, user: User, db: AsyncSession):
 		raise HTTPException(
 			status_code=status.HTTP_403_FORBIDDEN,
 			detail="Not authorized to see this ticket"
+		)
+	
+	if ticket.status:
+		raise HTTPException(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail="Ticket is closed, no further messages can be sent"
 		)
 	
 	logger.info("ticket.seen", user_id=user.id, ticket_id=ticket_id)
