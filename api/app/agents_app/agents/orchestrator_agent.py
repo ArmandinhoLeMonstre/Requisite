@@ -51,7 +51,7 @@ async def call_orchestrator_agent(client: AsyncOpenAI, data: OrchestratorData, r
 
 		for item in response.output:
 			if item.type == "message":
-				print(f"Assistant: {item.content[0].text}")
+				# print(f"Assistant: {item.content[0].text}")
 				return_reponse.append([item])
 
 			elif item.type == "function_call":
@@ -80,18 +80,17 @@ async def call_orchestrator_agent(client: AsyncOpenAI, data: OrchestratorData, r
 					
 					success = tool_result.get("success")
 					if success is False:
-						print("false")
-						# ici, je veux log ppurquoi  success false, donc refractor tous les retuns d'agents
-						# pour log l'erreur exacte. Donc avoir msg + action
+						logger.warning("success.false")
+
 				except Exception as e:
-					#Ici, il y a un pb, faudra regler et revisiter les json d'erreur des agents etc...
-					print(f"Error in tool : {e}")
-					# log -> print({"error": f"tool {item.name} has raised an error : {e}"})
-					# return {
-					# 	"success": False,
-					# 	"message": "An error has been raised during a tool_call",
-					# 	"action": "Retry once. If the error persists, do not proceed automatically. Present the following options to the user and wait for their choice: (1) Try again later, (2) Skip this step and continue, (3) Cancel the request."
-					# }
+					logger.error(f"{e.agent}.error", error=str(e), step=e.step)
+					tool_result = {
+						"success": False,
+						"message": str(e),
+						"agent": e.agent,
+						"action": e.action
+					}
+
 				return_reponse.append([{
 					"type": "function_call_output",
 					"call_id": item.call_id,

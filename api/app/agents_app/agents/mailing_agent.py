@@ -8,6 +8,8 @@ from sqlalchemy import update
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.ticket_model import TicketStatus, Ticket, uuid
 
+from app.agents_app.agents_exceptions import SubAgentError
+
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 client = AsyncOpenAI(
@@ -35,21 +37,19 @@ SYSTEM_PROMPT = """You are an email composition agent.
                 }"""
 
 async def update_ticket_status(ticket_id: str):
-	print(ticket_id)
 	async with AsyncSessionLocal() as db:
 			try:
-
 				stmt = await db.execute(
 					update(Ticket)
 					.where(Ticket.id == ticket_id)
-					.values(status=TicketStatus.pending)
+					.values()
 				)
 
 				await db.commit()
 
 			except SQLAlchemyError as e:
 				await db.rollback()
-				print(e) # gerer les erreurs ici
+				raise
 
 def send_email(to_send: str, subject: str, body: str):
 	msg = MIMEMultipart()
@@ -65,7 +65,12 @@ def send_email(to_send: str, subject: str, body: str):
 			server.sendmail(SMTP_USER, to_send, msg.as_string())
 		return True
 	except Exception as e:
-		return str(e)
+		raise SubAgentError(
+			message=str(e),
+			agent= "mail_agent",
+			action= "Inform the user that there is a problem with the notifier agent, he can retry later",
+			step="Email send"
+		)
 	
 
 async def call_email_agent(data, product):
@@ -87,19 +92,37 @@ async def call_email_agent(data, product):
 			input=input_list,
 		)
 	except Exception as e:
-		return {"sent": False, "error": str(e)}
+		raise SubAgentError(
+				message=str(e),
+				agent= "mail_agent",
+				action= "Inform the user that there is a problem with the notifier agent, he can retry later",
+				step="OpenAI call"
+			)
 	
 	try:
 		email_content = json.loads(response.output_text)
 	except json.JSONDecodeError:
-		return {"sent": False, "error": "Invalid JSON returned by model"}
+		raise SubAgentError(
+			message="Invalid JSON returned by model",
+			agent="mail_agent",
+			action="your_action",
+			step="json_parsing"
+		)
 
 	result = send_email(data["manager"]["email"],
 					 email_content["subject"],
 					 email_content["body"])
 	
 	if result is True:
-		await update_ticket_status(data['ticket']['id'])
-		return {"sent": True, "to": data['manager']["email"],}
+		try:
+			await update_ticket_status(data['ticket']["id"])
+			return {"success": True, "to": data['manager']["email"]}
+		except Exception as e:
+			raise SubAgentError(
+				message=str(e),
+				agent= "mail_agent",
+				action= "Inform the user that there is a problem with the notifier agent, he can retry later",
+				step="update_ticket_status"
+			)
 	else:
-		return {"sent": False, "error": result}
+		return {"success": False, "error": result}

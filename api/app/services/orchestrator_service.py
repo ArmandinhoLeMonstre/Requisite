@@ -32,6 +32,7 @@ async def send_request_to_orchestrator(message: str, existing_input_list: list, 
 	try:
 		orchestrator_response = await call_orchestrator_agent(client, data, req_input_list)
 	except OrchestratorError as e:
+		logger.error("send_request_to_orchestrator.error", error=str(e), step="call_orchestrator")
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 	new_input = formatter_service.format_orchestrator_message(orchestrator_response.get("input_list"))
@@ -72,7 +73,7 @@ async def call_agents_orchestrator(data: OrchestratorData, db: AsyncSession, mes
 	existing_input_list = await db_service.retrieve_input_list(db, data.ticket_id)
 
 	result = await send_request_to_orchestrator(message, existing_input_list, data)
-	print(result.get("history"))
+
 	await db_service.save_input_list(db, data.ticket_id, result.get("history"))
 
 	response = OrchestratorResponse(

@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.stock_model import Stock
 
 from app.inventory_in_memory import inventory
+from app.agents_app.agents_exceptions import SubAgentError
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -41,7 +42,7 @@ async def get_manager_items(manager_id: int):
 
 			return items
 		except SQLAlchemyError as e:
-			print(e) # gerer les erreurs ici
+			raise
 
 async def call_inventory_agent(manager_id: int, object_type: str, object_specs: str):
 	if not object_type:
@@ -69,7 +70,17 @@ async def call_inventory_agent(manager_id: int, object_type: str, object_specs: 
 			"action": "Tell the user and internal error has occurred"
 		}
 
-	items = await get_manager_items(manager_id)
+	try:
+		items = await get_manager_items(manager_id)
+	except Exception as e:
+		raise SubAgentError(
+			message=str(e),
+			agent= "inventory_agent",
+			action= """Inform the user that there is a problem with the inventory agent. 
+			Do not proceed automatically. 
+			Present the following options and wait for their choice: (1) Try again later, (2) Contact the Amazon agent""",
+			step="get_manager_items"
+		)
 	if items:
 		inventory.extend(items)
 	
@@ -94,20 +105,26 @@ async def call_inventory_agent(manager_id: int, object_type: str, object_specs: 
 			input=input_list
 		)
 	except Exception as e:
-		return {
-			"success": False,
-			"error_code": "API_ERROR",
-			"message": "API call to OpenAI failed"
-		}
+		raise SubAgentError(
+			message=str(e),
+			agent= "inventory_agent",
+			action= """Inform the user that there is a problem with the inventory agent. 
+			Do not proceed automatically. 
+			Present the following options and wait for their choice: (1) Try again later, (2) Contact the Amazon agent""",
+			step="OpenAI call"
+		)
 
 	try:
 		ranked_text = ranked_response.output[0].content[0].text
 	except (IndexError, AttributeError):
-		return {
-			"success": False,
-			"message": "Unexpected response structure",
-			"action": "Retry once. If the error persists, do not proceed automatically. Present the following options to the user and wait for their choice: (1) Try again later, (2) Skip this step and continue, (3) Cancel the request."
-		}
+		raise SubAgentError(
+			message="Unexpected response structure",
+			agent="inventory_agent",
+			action= """Inform the user that there is a problem with the inventory agent. 
+			Do not proceed automatically. 
+			Present the following options and wait for their choice: (1) Try again later, (2) Contact the Amazon agent""",
+			step="parsing OpenAI response"
+		)
 
 	return {
 		"success": True,
