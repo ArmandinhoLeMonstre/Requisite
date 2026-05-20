@@ -56,7 +56,8 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	ticket_stmt = Ticket(
 		status= TicketStatus.pending,
 		user_id= current_user.id,
-		description=ticket_title
+		description=ticket_title,
+		user_name=current_user.name
 	)
 	
 	try:
