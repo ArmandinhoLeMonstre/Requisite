@@ -126,3 +126,24 @@ async def get_tickets_group(user: User, db: AsyncSession):
 		return TicketsGroup(chats=result)
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
+
+async def change_status(current_user: User,ticket_id: uuid.UUID, new_status: TicketStatus, db:AsyncSession):
+	if current_user.role != UserRole.manager:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not manager")
+
+	try:
+		stmt = await db.scalars(select(Ticket).where(Ticket.id == ticket_id))
+		ticket = stmt.one()
+	except NoResultFound:
+		raise HTTPException(status_code=404, detail="Ticket not found")
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+     
+	ticket.status = new_status
+	try:
+		await db.commit()
+		await db.refresh(ticket)
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	return ticket

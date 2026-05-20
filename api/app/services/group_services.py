@@ -35,7 +35,7 @@ async def create_group(current_user: User, db: AsyncSession):
 	return (group_stmt)
 
 
-async def select_group(group_id: int, current_user: User, db: Session):
+async def select_group(group_id: int, current_user: User, db: AsyncSession):
 	if current_user.role != UserRole.manager and current_user.group_id != group_id:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not manager")
 
@@ -50,7 +50,7 @@ async def select_group(group_id: int, current_user: User, db: Session):
 	return group
 
 
-async def join_group(current_user: User, code: str, db: Session):
+async def join_group(current_user: User, code: str, db: AsyncSession):
 	try:
 		stmt = await db.scalars(select(Group).where(func.lower(Group.code) == code.lower()))
 		group = stmt.one()
