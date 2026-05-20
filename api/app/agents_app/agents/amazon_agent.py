@@ -33,11 +33,9 @@ client = AsyncOpenAI(
 )
 
 async def call_amazon_agent(object_type: str, object_specs: str):
-	budget = 140
 	data = {
 		"object_type": object_type,
 		"object_specs": object_specs,
-		"budget": budget
 	}
 	input_list = [
 		{

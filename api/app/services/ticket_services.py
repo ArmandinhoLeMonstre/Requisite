@@ -10,7 +10,7 @@ import os
 from app.models.user_model import User, UserRole
 from app.models.group_model import Group
 from app.models.ticket_model import TicketStatus, Ticket, uuid
-from app.schemas.ticket_schemas import TicketsGroup
+from app.schemas.ticket_schemas import TicketsGroup, TicketResponse
 
 from app.logger import logger
 
@@ -56,7 +56,8 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	ticket_stmt = Ticket(
 		status= TicketStatus.pending,
 		user_id= current_user.id,
-		description=ticket_title
+		description=ticket_title,
+		user_name=current_user.name
 	)
 	
 	try:
@@ -79,7 +80,7 @@ async def select_ticket(ticket_id: uuid.UUID, user: User, db: AsyncSession):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with Database server")
 	
-	if user.id != ticket.user_id:
+	if user.id != ticket.user_id and user.role != UserRole.manager:
 		raise HTTPException(
 			status_code=status.HTTP_403_FORBIDDEN,
 			detail="Not authorized to see this ticket"
@@ -113,8 +114,37 @@ async def get_tickets_group(user: User, db: AsyncSession):
 		for group in loaded_user.groups:
 			tickets = []
 			for member in group.users:
-				tickets.extend(member.tickets)
+				for ticket in member.tickets:
+					tickets.append(TicketResponse(
+						id= ticket.id,
+						status=ticket.status,
+						description=ticket.description,
+      					created_at=ticket.created_at,
+						user_name=member.name,
+						user_id=member.id
+					))
 			result[group.code] = tickets
 		return TicketsGroup(chats=result)
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
+
+async def change_status(current_user: User,ticket_id: uuid.UUID, new_status: TicketStatus, db:AsyncSession):
+	if current_user.role != UserRole.manager:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not manager")
+
+	try:
+		stmt = await db.scalars(select(Ticket).where(Ticket.id == ticket_id))
+		ticket = stmt.one()
+	except NoResultFound:
+		raise HTTPException(status_code=404, detail="Ticket not found")
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+     
+	ticket.status = new_status
+	try:
+		await db.commit()
+		await db.refresh(ticket)
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	return ticket

@@ -7,10 +7,14 @@ import { ChatLayout } from "./components/ChatLayout";
 import { TicketPage } from "./pages/TicketPage";
 import { NewTicketPage } from "./pages/NewTicketPage";
 import { PublicRoute } from "./components/PublicRoute";
-import { ManagerPage } from "./pages/ManagerPage";
 import { ManagerLayout } from "./components/ManagerLayout";
 import { VerificationPage } from "./pages/VerificationPage";
+<<<<<<< HEAD
 import { InventoryPage } from "./pages/InventoryPage";
+=======
+import { RequestPage } from "./pages/RequestPage";
+import { ManagerTicketPage } from "./pages/ManagerTicketPage";
+>>>>>>> dev/frontend
 
 function App() {
   return (
@@ -40,7 +44,9 @@ function App() {
         }
       >
         <Route path="/manager" element={<ManagerPage />} />
-		<Route path="/inventory" element={<InventoryPage />} />
+		    <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/requests" element={<RequestPage />} />
+        <Route path="/requests/:ticketId" element={<ManagerTicketPage />} />
       </Route>
     </Routes>
   );

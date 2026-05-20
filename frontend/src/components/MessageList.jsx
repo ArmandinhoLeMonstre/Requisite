@@ -26,9 +26,6 @@ function MessageList({ listMessage }) {
               <div className="text-gray-300 w-full break-words prose prose-invert prose-sm max-w-none">
                 <ReactMarkdown>{message.message}</ReactMarkdown>
               </div>
-              // <p className="text-gray-300 w-full break-words">
-              //   {message.message}
-              // </p>
             )}
           </div>
         ))
