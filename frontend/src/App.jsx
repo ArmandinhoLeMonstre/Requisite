@@ -9,12 +9,9 @@ import { NewTicketPage } from "./pages/NewTicketPage";
 import { PublicRoute } from "./components/PublicRoute";
 import { ManagerLayout } from "./components/ManagerLayout";
 import { VerificationPage } from "./pages/VerificationPage";
-<<<<<<< HEAD
 import { InventoryPage } from "./pages/InventoryPage";
-=======
 import { RequestPage } from "./pages/RequestPage";
 import { ManagerTicketPage } from "./pages/ManagerTicketPage";
->>>>>>> dev/frontend
 
 function App() {
   return (
