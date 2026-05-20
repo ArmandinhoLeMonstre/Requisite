@@ -40,7 +40,6 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/manager" element={<ManagerPage />} />
 		    <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/requests" element={<RequestPage />} />
         <Route path="/requests/:ticketId" element={<ManagerTicketPage />} />

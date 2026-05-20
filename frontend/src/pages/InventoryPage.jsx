@@ -29,6 +29,10 @@ export const InventoryPage = () => {
 		try {
 			await addInventoryItemns(title, objectType, objectSpecs, quantity);
 			await fetchItems()
+			setObjectSpecs('')
+			setObjectType('')
+			setQuantity('')
+			setTitle('')
 		} catch (error) {
 			console.log(error)
 		}

@@ -56,8 +56,7 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	ticket_stmt = Ticket(
 		status= TicketStatus.pending,
 		user_id= current_user.id,
-		description=ticket_title,
-		user_name=current_user.name
+		description=ticket_title
 	)
 	
 	try:
@@ -72,6 +71,30 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 
 
 async def select_ticket(ticket_id: uuid.UUID, user: User, db: AsyncSession):
+	try:
+		stmt = await db.scalars(select(Ticket).where(Ticket.id == ticket_id))
+		ticket = stmt.one()
+	except NoResultFound:
+		raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ticket not found")
+	except SQLAlchemyError:
+		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with Database server")
+	
+	if user.id != ticket.user_id and user.role != UserRole.manager:
+		raise HTTPException(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail="Not authorized to see this ticket"
+		)
+	
+	logger.info("ticket.seen", user_id=user.id, ticket_id=ticket_id)
+	
+	return TicketResponse(status= ticket.status,
+                       description=ticket.description,
+                       user_id=ticket.user_id,
+                       id=ticket.id,
+                       user_name=user.name,
+                       created_at=ticket.created_at)
+ 
+async def select_chats(ticket_id: uuid.UUID, user: User, db: AsyncSession):
 	try:
 		stmt = await db.scalars(select(Ticket).where(Ticket.id == ticket_id))
 		ticket = stmt.one()

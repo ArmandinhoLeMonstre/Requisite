@@ -11,7 +11,7 @@ from app.schemas.ticket_schemas import TicketResponse, TicketChats, TicketCreate
 from app.schemas.chat_schemas import ChatRequest
 from app.schemas.agents_requests_schemas import OrchestratorResponse
 
-from app.services.ticket_services import create_ticket, select_ticket, get_tickets, get_tickets_group, change_status
+from app.services.ticket_services import create_ticket, select_ticket, get_tickets, get_tickets_group, change_status, select_chats
 from app.services.user_services import CurrentUser
 from app.services.chat_services import new_message
 from app.services.orchestrator_service import create_data, call_agents_orchestrator
@@ -61,7 +61,7 @@ async def add_chat_to_ticket(
 async def get_chats(current_user: CurrentUser,
               ticket_id: uuid.UUID,
               db: Annotated[AsyncSession, Depends(get_db)]):
-    return await select_ticket(ticket_id, current_user, db)
+    return await select_chats(ticket_id, current_user, db)
 
 @router.patch("/{ticket_id}/status", response_model=TicketResponse)
 async def change_ticket_status(current_user: CurrentUser,

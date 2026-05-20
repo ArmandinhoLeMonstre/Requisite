@@ -5,6 +5,7 @@ from app.models.user_model import User
 from app.models.ticket_model import Ticket
 from app.schemas.agents_requests_schemas import OrchestratorResponse
 from app.schemas.agents_requests_schemas import OrchestratorData
+from app.schemas.ticket_schemas import TicketResponse
 from app.agents_app.agents.orchestrator_agent import call_orchestrator_agent
 from app.agents_app.agents_exceptions import OrchestratorError
 from fastapi import HTTPException, status
@@ -44,7 +45,7 @@ async def send_request_to_orchestrator(message: str, existing_input_list: list, 
 	})
 
 
-async def create_data(current_user: User, db : AsyncSession, ticket: Ticket, msg: str):
+async def create_data(current_user: User, db : AsyncSession, ticket: TicketResponse, msg: str):
 	try:
 		stmt = await db.scalars(select(User).where(User.id == current_user.group.manager_id))
 		manager = stmt.one()

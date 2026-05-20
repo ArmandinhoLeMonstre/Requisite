@@ -8,11 +8,12 @@ from app.models.chat_model import Chat, Sender
 from app.models.ticket_model import Ticket
 from app.models.user_model import User
 from app.schemas.chat_schemas import ChatResponse, ChatRequest
+from app.schemas.ticket_schemas import TicketResponse
 from app.services.user_services import CurrentUser
 
 from app.logger import logger
 
-async def new_message(chat: ChatRequest, db: AsyncSession, ticket: Ticket):
+async def new_message(chat: ChatRequest, db: AsyncSession, ticket: TicketResponse):
 	chat = Chat(
 		ticket_id= ticket.id,
 		sender= chat.sender,
@@ -20,7 +21,6 @@ async def new_message(chat: ChatRequest, db: AsyncSession, ticket: Ticket):
 	)
 
 	try:
-		chat.ticket = ticket
 		db.add(chat)
 		await db.commit()
 		await db.refresh(chat)

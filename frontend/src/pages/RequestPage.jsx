@@ -50,7 +50,14 @@ export const RequestPage = () => {
   }, []);
 
   if (!tickets || !activeGroup)
-    return <p className="text-gray-400 p-8">Loading...</p>;
+    return (
+      <button
+        onClick={newGroup}
+        className="py-1 px-4 rounded-full text-sm text-gray-400 border border-dashed border-gray-600 hover:text-white hover:border-gray-400 transition-colors"
+      >
+        + New group
+      </button>
+    );
 
   const filtered = tickets.chats[activeGroup].filter(
     (ticket) => filter === "all" || ticket.status === filter,
@@ -69,7 +76,7 @@ export const RequestPage = () => {
               {code}
             </button>
           ))}
-          {Object.keys(tickets.chats).length < 4 && (
+          {Object.keys(tickets.chats).length < 3 && (
             <button
               onClick={newGroup}
               className="py-1 px-4 rounded-full text-sm text-gray-400 border border-dashed border-gray-600 hover:text-white hover:border-gray-400 transition-colors"

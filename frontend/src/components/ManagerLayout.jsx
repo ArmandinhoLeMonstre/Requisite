@@ -42,7 +42,7 @@ export const ManagerLayout = () => {
           </Link>
           <Link
             to="/inventory"
-            className="text-gray-500 hover:text-white transition-colors"
+            className="text-white hover:text-gray-300 transition-colors"
           >
             Inventory
           </Link>
