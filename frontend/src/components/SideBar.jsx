@@ -1,65 +1,83 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Sidebar({ tickets }) {
+function Sidebar({ tickets, user }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   function handleLogout() {
     localStorage.removeItem("token");
-    localStorage.removeItem('role')
+    localStorage.removeItem("role");
     navigate("/login");
   }
 
+  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U";
+
   return (
-    <div className="w-64 bg-gray-900 flex flex-col border-r border-r-gray-400">
-      <div className="p-4 border-b border-gray-400">
-        <h1 className="text-lg font-semibold text-white">My Tickets</h1>
+    <div className="w-56 bg-gray-900 flex flex-col border-r border-gray-700">
+
+      <div className="p-4 border-b border-gray-700 flex items-center gap-2">
+        <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+          R
+        </div>
+        <span className="text-white text-sm font-medium">Requisite</span>
       </div>
-      <div className="flex-1 overflow-y-auto p-2">
+
+      <div className="px-3 pt-4 pb-2 flex items-center justify-between">
+        <span className="text-xs text-gray-500 uppercase tracking-widest">My Tickets</span>
+        <button
+          onClick={() => navigate("/new")}
+          className="text-xs text-gray-400 hover:text-white border border-gray-600 hover:border-gray-400 rounded-md px-2 py-0.5 transition-colors"
+        >
+          + New
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-2 flex flex-col gap-0.5">
         {tickets.length > 0 ? (
           tickets.map((ticket) => (
             <button
               key={ticket.id}
               onClick={() => navigate(`/ticket/${ticket.id}`)}
-              className="w-full text-sm text-left text-gray-200 hover:bg-gray-700 rounded px-1 py-1"
+              className="w-full text-left text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-md px-3 py-2 truncate transition-colors"
             >
               {ticket.description}
             </button>
           ))
         ) : (
-          <p className="text-gray-500 text-md p-2">No tickets yet</p>
+          <p className="text-gray-600 text-sm px-3 py-2">No tickets yet</p>
         )}
       </div>
-      <div className="mx-3 mb-2">
+
+      <div className="relative p-2 border-t border-gray-700">
         {menuOpen && (
-          <div className="flex flex-col absolute bottom-17 w-62 left-2 bg-gray-500 rounded-xl overflow-hidden border border-white">
+          <div className="absolute bottom-full left-2 right-2 mb-1 bg-gray-800 border border-gray-600 rounded-xl overflow-hidden shadow-lg">
             <button
-              onClick={() => {navigate("/me"), setMenuOpen(!menuOpen)}}
-              className="w-full px-4 py-3 text-sm text-white hover:bg-gray-50 text-left"
+              onClick={() => { navigate("/me"); setMenuOpen(false); }}
+              className="w-full px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white text-left transition-colors"
             >
               Profile
             </button>
-            <hr />
+            <hr className="border-gray-600" />
             <button
               onClick={handleLogout}
-              className="w-full px-4 py-3 text-sm text-white hover:bg-gray-50 text-left"
+              className="w-full px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white text-left transition-colors"
             >
               Logout
             </button>
           </div>
         )}
-          <hr className="text-gray-500 pb-1"/>
         <div
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex items-center gap-3 cursor-pointer hover:bg-gray-700 rounded-lg p-2 "
+          className="flex items-center gap-3 cursor-pointer hover:bg-gray-800 rounded-lg p-2 transition-colors"
         >
-          <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-medium">
-            U
+          <div className="w-7 h-7 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+            {initials}
           </div>
-          <span className="text-white text-sm">User</span>
+          <span className="text-white text-sm truncate">{user?.name || "User"}</span>
         </div>
       </div>
+
     </div>
   );
 }

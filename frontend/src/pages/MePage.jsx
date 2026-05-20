@@ -35,10 +35,9 @@ export const MePage = () => {
 
       try {
         const res = await getMe();
-        const data = await res.data;
-        setUser(data);
-        if (data.group_id) {
-          const group = await getGroup(data.group_id);
+        setUser(res.data);
+        if (res.data.group_id) {
+          const group = await getGroup(res.data.group_id);
           setGroup(group.data);
         }
       } catch (error) {
@@ -51,74 +50,69 @@ export const MePage = () => {
     loadUser();
   }, []);
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <p className="text-gray-400 p-8">Loading...</p>;
 
   return (
-    <div className="flex-1 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-sm border w-full max-w-lg p-8 pb-6 flex flex-col gap-4">
-        <h1 className="text-xl font-semibold text-gray-400">My profile</h1>
-
-        <hr />
-
-        <div className="flex justify-between items-center">
-          <span className="text-gray-500 text-sm">Name</span>
-          <span className="text-gray-900 text-sm">{user.name}</span>
+    <div className="flex-1 flex items-center justify-center pb-10">
+      <div className="w-full max-w-md flex flex-col gap-1">
+        <div className="flex items-center gap-3 px-2 pb-4">
+          <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-medium">
+            {user.name.slice(0, 2).toUpperCase()}
+          </div>
+          <div>
+            <p className="text-white font-medium text-sm">{user.name}</p>
+            <p className="text-gray-500 text-xs">{user.email}</p>
+          </div>
         </div>
 
-        <hr />
-
-        <div className="flex justify-between items-center">
-          <span className="text-gray-500 text-sm">Email</span>
-          <span className="text-gray-900 text-sm">{user.email}</span>
-        </div>
-
-        <hr />
-
-        <div className="flex justify-between items-center">
-          <span className="text-gray-500 text-sm">Role</span>
-          <span className="text-gray-900 text-sm">{user.role}</span>
-        </div>
-
-        <hr />
-
-        <div className="flex justify-between ">
-          <span className="text-gray-500 text-sm flex flex-1 ">Group</span>
-          {group ? (
-            <span className="text-gray-900 text-sm">{group.code}</span>
-          ) : (
-            <div className="flex flex-col">
-              <div className="overflow-hidden flex">
-                <input
-                  type="text"
-                  className="w-17 pl-2 border rounded-2xl mr-2"
-                  maxLength={5}
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="4F3DY"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && code && code.trim() !== "" ) {
-                      submitCode();
-                    }
-                  }}
-                />
-                <button
-                  className=" rounded-4xl p-3 bg-green-500 border"
-                  onClick={() => {
-                    if (code) {
-                      submitCode();
-                    }
-                  }}
-                ></button>
-              </div>
-              {errorMessage ? (
-                <div className=" pl-4">
-                  <p className="text-red-700 text-sm">{errorMessage}</p>
+        <div className="bg-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+          <div className="flex justify-between items-center px-4 py-3 border-b border-gray-700">
+            <span className="text-gray-500 text-sm">Name</span>
+            <span className="text-white text-sm">{user.name}</span>
+          </div>
+          <div className="flex justify-between items-center px-4 py-3 border-b border-gray-700">
+            <span className="text-gray-500 text-sm">Email</span>
+            <span className="text-white text-sm">{user.email}</span>
+          </div>
+          <div className="flex justify-between items-center px-4 py-3 border-b border-gray-700">
+            <span className="text-gray-500 text-sm">Role</span>
+            <span className="text-white text-sm capitalize">{user.role}</span>
+          </div>
+          <div className="flex justify-between items-center px-4 py-3">
+            <span className="text-gray-500 text-sm">Group</span>
+            {group ? (
+              <span className="text-white text-sm font-mono tracking-widest">
+                {group.code}
+              </span>
+            ) : (
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className="bg-gray-800 border border-gray-600 text-white text-sm rounded-lg px-3 py-1 w-28 tracking-widest placeholder-gray-600 outline-none focus:border-gray-400"
+                    maxLength={5}
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.toUpperCase())}
+                    placeholder="4F3DY"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && code.trim()) submitCode();
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (code) submitCode();
+                    }}
+                    className="bg-green-700 hover:bg-green-600 text-white text-sm rounded-lg px-3 py-1 transition-colors"
+                  >
+                    Join
+                  </button>
                 </div>
-              ) : (
-                <p />
-              )}
-            </div>
-          )}
+                {errorMessage && (
+                  <p className="text-red-400 text-xs">{errorMessage}</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
