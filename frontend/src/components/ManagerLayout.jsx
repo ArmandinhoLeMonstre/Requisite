@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { getMe } from "../api/client";
 
 export const ManagerLayout = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -9,30 +12,54 @@ export const ManagerLayout = () => {
     navigate("/login");
   }
 
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await getMe();
+        setUser(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchUser()
+  }, []);
+
   return (
     <div className="h-screen bg-gray-950 overflow-hidden">
-      <nav className="flex flex-row fixed top-0 left-0 right-0 z-10 h-16 border border-white items-center">
-        <div className="flex-1 flex justify-start pl-3">
-          <span className="text-white text-2xl">Requisite</span>
-        </div>
-        <div className="flex flex-row gap-5 text-2xl">
-          <div className="text-white">
-            <Link to="/manager/requests">Requests</Link>
+      <nav className="flex flex-row fixed top-0 left-0 right-0 z-10 h-14 bg-gray-950 border-b border-gray-800 items-center px-6">
+        <div className="flex-1 flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-xs font-bold text-white">
+            R
           </div>
-          <div className="text-white">
-            <Link to="/manager/requests">Inventory</Link>
-          </div>
+          <span className="text-white text-sm font-medium">Requisite</span>
         </div>
-        <div className="flex-1 flex justify-end pr-3">
+        <div className="flex gap-6 text-sm">
+          <Link
+            to="/requests"
+            className="text-white hover:text-gray-300 transition-colors"
+          >
+            Requests
+          </Link>
+          <Link
+            to="/inventory"
+            className="text-gray-500 hover:text-white transition-colors"
+          >
+            Inventory
+          </Link>
+        </div>
+        <div className="flex-1 flex justify-end items-center gap-3">
+          <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-xs font-medium text-slate-300">
+            {user ? user.name.slice(0, 2).toUpperCase() : ""}
+          </div>
           <button
-            className="text-white text-2xl"
-            onClick={() => handleLogout()}
+            onClick={handleLogout}
+            className="text-sm text-gray-500 hover:text-white transition-colors"
           >
             Logout
           </button>
         </div>
       </nav>
-      <main className="pt-16">
+      <main className="pt-16 h-full">
         <Outlet />
       </main>
     </div>

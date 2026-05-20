@@ -13,22 +13,25 @@ export function TicketPage() {
 
   async function addMessage(message) {
     const id = ticketId;
-    setTicketsData(prev => ({
+    setTicketsData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        chats: [...prev[id].chats, { sender: "user", message, id: prev[id].chats.length + 1 }],
+        chats: [
+          ...prev[id].chats,
+          { sender: "user", message, id: prev[id].chats.length + 1 },
+        ],
       },
     }));
-    setLoadingMap(prev => ({ ...prev, [id]: true }));
+    setLoadingMap((prev) => ({ ...prev, [id]: true }));
     try {
       await sendMessage(id, message);
       const data = await getChats(id);
-      setTicketsData(prev => ({ ...prev, [id]: data }));
+      setTicketsData((prev) => ({ ...prev, [id]: data }));
     } catch (error) {
       console.error(error);
     } finally {
-      setLoadingMap(prev => ({ ...prev, [id]: false }));
+      setLoadingMap((prev) => ({ ...prev, [id]: false }));
     }
   }
 
@@ -36,7 +39,7 @@ export function TicketPage() {
     async function fetchData() {
       try {
         const data = await getChats(ticketId);
-        setTicketsData(prev => ({ ...prev, [ticketId]: data }));
+        setTicketsData((prev) => ({ ...prev, [ticketId]: data }));
       } catch (error) {
         console.error("Failed to load ticket infos", error);
       }

@@ -6,7 +6,7 @@ export const ProtectedRoute = ({ children, requiredRole }) => {
 
   if (!token) return <Navigate to="/login" />
   if (requiredRole && role !== requiredRole) {
-    if (role === "manager") return <Navigate to="/manager" />
+    if (role === "manager") return <Navigate to="/requests" />
     return <Navigate to="/new" />
   }
 

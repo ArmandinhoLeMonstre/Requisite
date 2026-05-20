@@ -7,9 +7,10 @@ import { ChatLayout } from "./components/ChatLayout";
 import { TicketPage } from "./pages/TicketPage";
 import { NewTicketPage } from "./pages/NewTicketPage";
 import { PublicRoute } from "./components/PublicRoute";
-import { ManagerPage } from "./pages/ManagerPage";
 import { ManagerLayout } from "./components/ManagerLayout";
 import { VerificationPage } from "./pages/VerificationPage";
+import { RequestPage } from "./pages/RequestPage";
+import { ManagerTicketPage } from "./pages/ManagerTicketPage";
 
 function App() {
   return (
@@ -38,7 +39,8 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/manager" element={<ManagerPage />} />
+        <Route path="/requests" element={<RequestPage />} />
+        <Route path="/requests/:ticketId" element={<ManagerTicketPage />} />
       </Route>
     </Routes>
   );

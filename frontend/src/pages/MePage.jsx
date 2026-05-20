@@ -10,7 +10,6 @@ export const MePage = () => {
   const navigate = useNavigate();
 
   async function submitCode() {
-    console.log(user.id);
     try {
       const response = await joinGroup(user.id, code);
       const data = response.data;
@@ -22,7 +21,6 @@ export const MePage = () => {
       if (error.status === 404) {
         setErrorMessage("Invalid Code");
       }
-      console.log(error);
     }
   }
 
