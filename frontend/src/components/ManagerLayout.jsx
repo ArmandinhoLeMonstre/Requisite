@@ -8,7 +8,7 @@ export const ManagerLayout = () => {
     <div className="h-screen bg-gray-950 overflow-hidden">
       <nav className="flex flex-row fixed top-0 left-0 right-0 z-10 h-14 bg-gray-950 border-b border-gray-800 items-center px-6">
         <div className="flex-1 flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-xs font-bold text-white">
+          <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-sm font-bold text-white">
             R
           </div>
           <span className="text-white text-sm font-medium">Requisite</span>

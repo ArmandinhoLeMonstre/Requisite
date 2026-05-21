@@ -13,7 +13,7 @@ function Sidebar({ tickets, user }) {
     <div className="w-56 bg-gray-900 flex flex-col border-r border-gray-700">
 
       <div className="p-4 border-b border-gray-700 flex items-center gap-2">
-        <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+        <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
           R
         </div>
         <span className="text-white text-sm font-medium">Requisite</span>
