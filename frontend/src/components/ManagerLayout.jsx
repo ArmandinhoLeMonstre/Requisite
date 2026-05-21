@@ -1,16 +1,8 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export const ManagerLayout = () => {
-  const navigate = useNavigate();
-  const {user, setUser} = useAuth()
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    setUser(null)
-    navigate("/login");
-  }
+  const {user, handleLogout} = useAuth()
 
   return (
     <div className="h-screen bg-gray-950 overflow-hidden">

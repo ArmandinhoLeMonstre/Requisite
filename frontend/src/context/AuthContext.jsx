@@ -1,10 +1,19 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getMe } from "../api/client";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  setUser(null);
+  navigate("/login");
+}
 
   useEffect(() => {
 	const token = localStorage.getItem("token");
@@ -21,7 +30,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );

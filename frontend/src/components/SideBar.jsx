@@ -4,15 +4,8 @@ import { useAuth } from "../context/AuthContext";
 
 function Sidebar({ tickets, user }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const {setUser} = useAuth()
+  const {handleLogout} = useAuth()
   const navigate = useNavigate();
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    setUser(null)
-    navigate("/login");
-  }
 
   const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U";
 
