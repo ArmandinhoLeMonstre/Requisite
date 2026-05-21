@@ -18,6 +18,19 @@ async def create_group(current_user: User, db: AsyncSession):
 	if current_user.role != UserRole.manager:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not a manager")
 	
+	try:
+		stmt = await db.execute(
+			select(func.count())
+			.select_from(Group)
+			.where(Group.manager_id == current_user.id)
+		)
+		total_objects = stmt.scalar()
+		if total_objects >= 3:
+			logger.error("group.create.error", error="Manager has already 3 groups", step="check_current_groups")
+			raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Manager has already 3 groups, can't add more.")
+	except SQLAlchemyError as e:
+		logger.error("group.create.error", error=str(e), step="check_current_groups")
+	
 	group_stmt = Group(
 		code= ''.join(random.choices(string.ascii_uppercase + string.digits, k=5)),
 		manager_id= current_user.id
