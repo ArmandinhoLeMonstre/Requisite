@@ -19,7 +19,7 @@ export function TicketPage() {
         ...prev[id],
         chats: [
           ...prev[id].chats,
-          { sender: "user", message, id: prev[id].chats.length + 1 },
+          { sender: "user", message, id: Date.now() },
         ],
       },
     }));

@@ -21,18 +21,22 @@ function MessageInput({ inputMessage, setInputMessage, addMessage, loading }) {
           }}
           className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none "
         />
-        <button
-          onClick={() => {
-            if (inputMessage && inputMessage.trim() !== "") {
-              addMessage(inputMessage);
-              setInputMessage("");
-            }
-          }}
-          disabled={loading}
-          className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-4 py-1 text-sm disabled:hover:bg-gray-600 disabled:cursor-not-allowed"
-        >
-          {loading ? "..." : "Send"}
-        </button>
+        {loading ? (
+          <div className="w-6 h-6 rounded-full border-3 border-gray-100 border-t-green-600 animate-spin" />
+        ) : (
+          <button
+            onClick={() => {
+              if (inputMessage && inputMessage.trim() !== "") {
+                addMessage(inputMessage);
+                setInputMessage("");
+              }
+            }}
+            disabled={loading}
+            className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-4 py-1 text-sm disabled:hover:bg-gray-600 disabled:cursor-not-allowed"
+          >
+            Send
+          </button>
+        )}
       </div>
     </div>
   );

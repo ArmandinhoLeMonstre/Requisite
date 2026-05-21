@@ -34,7 +34,7 @@ export const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center ">
-      <div className="flex-col-reverse  border border-white mb-40">
+      <div className="flex-col-reverse mb-40">
         <h1 className="text-white text-6xl">REQUISITE</h1>
       </div>
       <div className="bg-gray-950 pb-18 pt-10 px-5 flex flex-col rounded-2xl gap-3 w-80 shadow-md border border-gray-500">
