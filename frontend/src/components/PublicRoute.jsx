@@ -5,6 +5,6 @@ export const PublicRoute = () => {
   const role = localStorage.getItem("role")
 
   if (!token) return <Outlet />
-  if (role === "manager") return <Navigate to="/manager" />
+  if (role === "manager") return <Navigate to="/requests" />
   return <Navigate to="/new" />
 }
