@@ -4,15 +4,17 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export function NewTicketPage() {
-  const [inputMessage, setInputMessage] = useState("");
-  const {user, setUser} = useAuth();
-  const [code, setCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
   const { refreshTickets } = useOutletContext();
+  const [inputMessage, setInputMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loadingTicket, setLoadingTicket] = useState(false);
+  const [code, setCode] = useState("");
+  const { user, setUser } = useAuth();
 
   async function startTicket() {
     try {
+      setLoadingTicket(true);
       const ticket = await createTicket(inputMessage);
       refreshTickets();
       await sendMessage(ticket.id, inputMessage);
@@ -21,6 +23,7 @@ export function NewTicketPage() {
       });
     } catch (error) {
       console.error(error);
+      setLoadingTicket(false);
     }
   }
 
@@ -86,6 +89,7 @@ export function NewTicketPage() {
         <div className="flex flex-col bg-gray-800 rounded-3xl px-5 py-4 gap-4">
           <input
             type="text"
+            disabled={loadingTicket}
             autoFocus
             placeholder="I need a new keyboard, a monitor stand..."
             value={inputMessage}
@@ -103,13 +107,17 @@ export function NewTicketPage() {
             className="bg-transparent text-white placeholder-gray-500 outline-none text-base w-full"
           />
           <div className="flex justify-end">
-            <button
-              disabled={!inputMessage}
-              onClick={startTicket}
-              className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-5 py-1.5 text-sm disabled:hover:bg-gray-600"
-            >
-              Send
-            </button>
+            {loadingTicket ? (
+              <div className="w-6 h-6 rounded-full border-3 border-gray-100 border-t-green-600 animate-spin" />
+            ) : (
+              <button
+                disabled={!inputMessage}
+                onClick={startTicket}
+                className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-5 py-1.5 text-sm disabled:hover:bg-gray-600"
+              >
+                Send
+              </button>
+            )}
           </div>
         </div>
       </div>
