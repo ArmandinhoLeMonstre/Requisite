@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createToken, getMe } from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -7,18 +7,18 @@ export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState(false);
-  const [LoginLock, setLoginLock] = useState(false);
-  const {setUser} = useAuth()
+  const loginLock = email.trim() === "" || password.trim() === "";
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   async function handleLogin() {
     try {
       const res = await createToken(email, password);
       localStorage.setItem("token", res.access_token);
-      const user = await getMe()
-      localStorage.setItem("role", user.data.role)
-      setUser(user.data)
-      user.data.role === 'employee' ? (navigate("/new")) : (navigate("/requests"))
+      const user = await getMe();
+      localStorage.setItem("role", user.data.role);
+      setUser(user.data);
+      user.data.role === "employee" ? navigate("/new") : navigate("/requests");
     } catch (error) {
       if (error.status === 401) {
         setLoginError(error.response.data.detail);
@@ -27,13 +27,6 @@ export const LoginPage = () => {
       return;
     }
   }
-
-  useEffect(() => {
-    async function setLock() {
-      setLoginLock(email.trim() === "" || password.trim() === "");
-    }
-    setLock();
-  }, [email, password]);
 
   function handleRegisterNav() {
     navigate("/register");
@@ -50,16 +43,14 @@ export const LoginPage = () => {
         </div>
         {loginError && (
           <div>
-            <p className="text-red-500 text-center text-sm">
-              {loginError}
-            </p>
+            <p className="text-red-500 text-center text-sm">{loginError}</p>
           </div>
         )}
         <div className="flex flex-col text-white">
           <label className=" text-sm">Email</label>
           <input
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !LoginLock) {
+              if (e.key === "Enter" && !loginLock) {
                 handleLogin();
               }
             }}
@@ -75,7 +66,7 @@ export const LoginPage = () => {
           <label className="text-sm">Password</label>
           <input
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !LoginLock) {
+              if (e.key === "Enter" && !loginLock) {
                 handleLogin();
               }
             }}
@@ -87,7 +78,7 @@ export const LoginPage = () => {
         </div>
         <div className="flex min-w-full">
           <button
-            disabled={LoginLock}
+            disabled={loginLock}
             onClick={handleLogin}
             className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm w-full disabled:bg-gray-950 disabled:border disabled:border-gray-500"
           >

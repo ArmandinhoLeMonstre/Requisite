@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../api/client";
 
@@ -6,11 +6,14 @@ export const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("employee");
-  const [registerLock, setRegisterLock] = useState(false);
-  const [errorMessage, setErrorMessage] = useState([]);
-  const [errorCheck, setErrorCheck] = useState(false);
   const [password, setPassword] = useState("");
-
+  const [errorMessage, setErrorMessage] = useState([]);
+  const errorCheck = errorMessage.length === 0;
+  const registerLock =
+    name.trim() === "" ||
+    email.trim() === "" ||
+    password.trim() === "" ||
+    role.trim() === "";
   const navigate = useNavigate();
 
   async function handleRegister() {
@@ -30,25 +33,6 @@ export const RegisterPage = () => {
   function handleLoginNav() {
     navigate("/login");
   }
-
-  useEffect(() => {
-    async function setError() {
-      errorMessage.length === 0 ? setErrorCheck(false) : setErrorCheck(true);
-    }
-    setError();
-  }, [errorMessage]);
-
-  useEffect(() => {
-    async function setLock() {
-      setRegisterLock(
-        name.trim() === "" ||
-          email.trim() === "" ||
-          password.trim() === "" ||
-          role.trim() === "",
-      );
-    }
-    setLock();
-  }, [name, email, role, password]);
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
