@@ -6,8 +6,6 @@ from app.models.stock_model import Stock
 from app.models.stock_common_model import StockCommon
 from app.schemas.inventory_schemas import ObjectRequest
 
-from app.inventory_in_memory import inventory
-
 from fastapi import HTTPException, status
 
 from app.logger import logger

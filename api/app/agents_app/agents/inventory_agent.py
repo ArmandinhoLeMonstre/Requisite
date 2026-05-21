@@ -8,8 +8,8 @@ from app.database import AsyncSessionLocal
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.stock_model import Stock
+from app.models.stock_common_model import StockCommon
 
-from app.inventory_in_memory import inventory
 from app.agents_app.agents_exceptions import SubAgentError
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -24,21 +24,36 @@ async def get_manager_items(manager_id: int):
 			items = None
 
 			stmt = await db.execute(
+				select(StockCommon)
+			)
+			total_common_items = stmt.scalars().all()
+			items = [
+				{
+					"item": item.title,
+					"object_type": item.object_type,
+					"object_specs": item.object_specs,
+					"quantity": item.quantity
+				}
+				for item in total_common_items
+			]
+
+			stmt = await db.execute(
 				select(Stock)
 				.where(Stock.manager_id == manager_id)
 			)
-			total_objects = stmt.scalars().all()
+			total_manager_items = stmt.scalars().all()
 
-			if total_objects:
-				items = [
+			if total_manager_items:
+				items_manager = [
 					{
 						"item": item.title,
 						"object_type": item.object_type,
 						"object_specs": item.object_specs,
 						"quantity": item.quantity
 					}
-					for item in total_objects
+					for item in total_manager_items
 				]
+				items.extend(items_manager)
 
 			return items
 		except SQLAlchemyError as e:
@@ -81,10 +96,8 @@ async def call_inventory_agent(manager_id: int, object_type: str, object_specs: 
 			Present the following options and wait for their choice: (1) Try again later, (2) Contact the Amazon agent""",
 			step="get_manager_items"
 		)
-	if items:
-		inventory.extend(items)
 	
-	inventory_json = json.dumps(inventory) #Si jenleve ca, ca crash, a tester pour apres la gestion d'erreur
+	inventory_json = json.dumps(items) #Si jenleve ca, ca crash, a tester pour apres la gestion d'erreur
 
 	input_list = [
 		{
