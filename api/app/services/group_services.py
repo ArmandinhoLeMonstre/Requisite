@@ -41,6 +41,7 @@ async def create_group(current_user: User, db: AsyncSession):
 		await db.commit()
 		await db.refresh(group_stmt)
 	except SQLAlchemyError:
+		logger.error("group.create.error", error=str(e), step="commit_in_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	logger.info("group.created", user_id=current_user.id, name=current_user.name, role=current_user.role)
