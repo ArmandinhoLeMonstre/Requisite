@@ -16,6 +16,7 @@ class TicketCreate(TicketBase):
 class TicketResponse(TicketBase):
 	model_config = ConfigDict(from_attributes=True)
 	
+	status: TicketStatus | None = None
 	description: str | None = Field(min_length=1, max_length=200)
 	user_id: int
 	id: uuid.UUID
