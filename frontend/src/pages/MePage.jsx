@@ -3,7 +3,7 @@ import { getGroup, joinGroup } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
 export const MePage = () => {
-  const {user, setUser} = useAuth()
+  const { user, setUser } = useAuth();
   const [group, setGroup] = useState(null);
   const [code, setCode] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
@@ -32,8 +32,8 @@ export const MePage = () => {
           setGroup(group.data);
         }
       } catch (error) {
-        console.error(error)
-        }
+        console.error(error);
+      }
     }
     loadUser();
   }, [user]);
