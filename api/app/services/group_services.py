@@ -73,6 +73,23 @@ async def join_group(current_user: User, code: str, db: AsyncSession):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
+	if current_user.group_id == group.id:
+		logger.error("group.join.error", error="User is already member of the group", step="check_user_already_in_group")
+		raise HTTPException(status_code=400, detail="You are already a member of this group")
+
+	try:
+		stmt = await db.execute(
+			select(func.count())
+			.select_from(User)
+			.where(User.group_id == group.id)
+		)
+		total_users_in_group = stmt.scalar()
+		if total_users_in_group >= 5:
+			logger.error("group.join.error", error="Group contains already 5 users", step="check_group_size")
+			raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Group is full, cannot add new users.")
+	except SQLAlchemyError as e:
+		logger.error("group.join.error", error=str(e), step="check_group_size")
+
 	current_user.group_id = group.id
 
 	try:
