@@ -21,7 +21,7 @@ export const RegisterPage = () => {
       if (error.status === 400) {
         setErrorMessage([error.response.data.detail]);
       } else if (error.status === 422) {
-        setErrorMessage(error.response.data.detail[0].msg);
+        setErrorMessage([error.response.data.detail[0].msg]);
       }
       console.error(error);
     }
