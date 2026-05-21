@@ -20,6 +20,7 @@ export const RequestPage = () => {
   const [tickets, setTickets] = useState(null);
   const [activeGroup, setActiveGroup] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   async function refreshGroups() {
@@ -30,12 +31,14 @@ export const RequestPage = () => {
       setActiveGroup(keys[0]);
     } catch (error) {
       console.error("Failed to load tickets: ", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function newGroup() {
     try {
-      const res = await createGroup();
+      await createGroup();
       const updated = await getGroupTickets();
       const keys = Object.keys(updated.chats);
       setTickets(updated);
@@ -49,14 +52,22 @@ export const RequestPage = () => {
     refreshGroups();
   }, []);
 
+  if (isLoading)
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-950">
+        <div className="w-6 h-6 rounded-full border-2 border-gray-600 border-t-white animate-spin" />
+      </div>
+    );
   if (!tickets || !activeGroup)
     return (
-      <button
-        onClick={newGroup}
-        className="py-1 px-4 rounded-full text-sm text-gray-400 border border-dashed border-gray-600 hover:text-white hover:border-gray-400 transition-colors"
-      >
-        + New group
-      </button>
+      <div className="flex h-screen items-center justify-center bg-gray-950">
+        <button
+          onClick={newGroup}
+          className="py-1 px-4 rounded-full text-xl text-gray-400 border border-dashed border-gray-600 hover:text-white hover:border-gray-400 transition-colors"
+        >
+          + New group
+        </button>
+      </div>
     );
 
   const filtered = tickets.chats[activeGroup].filter(

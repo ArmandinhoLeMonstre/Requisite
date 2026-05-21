@@ -1,27 +1,38 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
-function getToken() {
-  return localStorage.getItem("token");
-}
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
 
-function authHeaders() {
-  return {
-    "Content-type": "application/json",
-    Authorization: `Bearer ${getToken()}`,
-  };
-}
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const publicRoutes = ["/login", "/register", "/verify"];
+      if (!publicRoutes.includes(window.location.pathname)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export async function getChats(ticketId) {
-  const header = authHeaders();
-
   try {
-    const response = await api.get(`/tickets/${ticketId}/chats`, {
-      headers: header,
-    });
+    const response = await api.get(`/tickets/${ticketId}/chats`);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -30,13 +41,10 @@ export async function getChats(ticketId) {
 }
 
 export async function sendMessage(ticketId, message) {
-  const header = authHeaders();
   const body = { sender: "user", message };
 
   try {
-    const response = await api.post(`/tickets/${ticketId}`, body, {
-      headers: header,
-    });
+    const response = await api.post(`/tickets/${ticketId}`, body);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -45,11 +53,10 @@ export async function sendMessage(ticketId, message) {
 }
 
 export async function createTicket(user_message) {
-  const header = authHeaders();
   const body = { user_message };
 
   try {
-    const response = await api.post("/tickets", body, { headers: header });
+    const response = await api.post("/tickets", body);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -58,12 +65,8 @@ export async function createTicket(user_message) {
 }
 
 export async function getTicket(ticket_id) {
-  const header = authHeaders();
-
   try {
-    const response = await api.get(`/tickets/${ticket_id}`, {
-      headers: header,
-    });
+    const response = await api.get(`/tickets/${ticket_id}`);
     return response;
   } catch (error) {
     console.error(error);
@@ -72,10 +75,8 @@ export async function getTicket(ticket_id) {
 }
 
 export async function getTickets() {
-  const header = authHeaders();
-
   try {
-    const response = await api.get("/tickets", { headers: header });
+    const response = await api.get("/tickets");
     return response.data;
   } catch (error) {
     console.error(error);
@@ -84,11 +85,8 @@ export async function getTickets() {
 }
 
 export async function changeTicketStatus(ticket_id, status) {
-  const header = authHeaders();
-
   try {
     const response = await api.patch(`/tickets/${ticket_id}/status`, null, {
-      headers: header,
       params: { status },
     });
     return response;
@@ -99,10 +97,8 @@ export async function changeTicketStatus(ticket_id, status) {
 }
 
 export async function getGroupTickets() {
-  const header = authHeaders();
-
   try {
-    const response = await api.get("/tickets/manager", { headers: header });
+    const response = await api.get("/tickets/manager");
     return response.data;
   } catch (error) {
     console.error(error);
@@ -125,11 +121,10 @@ export async function createToken(email, password) {
 }
 
 export async function createUser(name, email, role, password) {
-  const header = authHeaders();
   const body = { name, email, role, password };
 
   try {
-    const response = await api.post("/users", body, { headers: header });
+    const response = await api.post("/users", body);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -138,8 +133,6 @@ export async function createUser(name, email, role, password) {
 }
 
 export async function verifyUser(token) {
-  const header = authHeaders();
-
   try {
     const response = await api.get(`/users/verification/${token}`);
     return response;
@@ -150,10 +143,8 @@ export async function verifyUser(token) {
 }
 
 export async function getMe() {
-  const header = authHeaders();
-
   try {
-    const response = await api.get("/users/me", { headers: header });
+    const response = await api.get("/users/me");
     return response;
   } catch (error) {
     console.error(error);
@@ -162,10 +153,8 @@ export async function getMe() {
 }
 
 export async function createGroup() {
-  const header = authHeaders();
-
   try {
-    const response = await api.post("/groups", null, { headers: header });
+    const response = await api.post("/groups", null);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -174,11 +163,8 @@ export async function createGroup() {
 }
 
 export async function joinGroup(user_id, code) {
-  const header = authHeaders();
-
   try {
     const response = await api.patch(`/users/${user_id}/group`, null, {
-      headers: header,
       params: { code },
     });
     return response;
@@ -189,10 +175,8 @@ export async function joinGroup(user_id, code) {
 }
 
 export async function getGroup(group_id) {
-  const header = authHeaders();
-
   try {
-    const reponse = await api.get(`/groups/${group_id}`, { headers: header });
+    const reponse = await api.get(`/groups/${group_id}`);
     return reponse;
   } catch (error) {
     console.error(error);
@@ -200,26 +184,9 @@ export async function getGroup(group_id) {
   }
 }
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const publicRoutes = ["/login", "/register"];
-      if (!publicRoutes.includes(window.location.pathname)) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  },
-);
-
 export async function getCommonItems() {
-  const header = authHeaders();
-
   try {
-    const response = await api.get("/inventory/common", { headers: header });
+    const response = await api.get("/inventory/common");
     return response.data;
   } catch (error) {
     console.error(error);
@@ -228,10 +195,8 @@ export async function getCommonItems() {
 }
 
 export async function getManagerItems() {
-  const header = authHeaders();
-
   try {
-    const response = await api.get("/inventory/manager", { headers: header });
+    const response = await api.get("/inventory/manager");
     return response.data;
   } catch (error) {
     console.error(error);
@@ -239,15 +204,24 @@ export async function getManagerItems() {
   }
 }
 
-export async function addInventoryItemns(title, objectType, objectSpecs, quantity) {
-	const header = authHeaders();
-	const body = { title, object_type: objectType, object_specs: objectSpecs, quantity };
+export async function addInventoryItems(
+  title,
+  objectType,
+  objectSpecs,
+  quantity,
+) {
+  const body = {
+    title,
+    object_type: objectType,
+    object_specs: objectSpecs,
+    quantity,
+  };
 
-	try {
-	const response = await api.post("/inventory/add", body, { headers: header });
-	return response.data;
-	} catch (error) {
-	console.error(error);
-	throw error;
-	}
+  try {
+    const response = await api.post("/inventory/add", body);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }

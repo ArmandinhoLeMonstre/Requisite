@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser } from "../api/client";
 
@@ -6,11 +6,13 @@ export const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("employee");
-  const [registerLock, setRegisterLock] = useState(false);
-  const [errorMessage, setErrorMessage] = useState([]);
-  const [errorCheck, setErrorCheck] = useState(false);
   const [password, setPassword] = useState("");
-
+  const [errorMessage, setErrorMessage] = useState([]);
+  const registerLock =
+    name.trim() === "" ||
+    email.trim() === "" ||
+    password.trim() === "" ||
+    role.trim() === "";
   const navigate = useNavigate();
 
   async function handleRegister() {
@@ -21,112 +23,102 @@ export const RegisterPage = () => {
       if (error.status === 400) {
         setErrorMessage([error.response.data.detail]);
       } else if (error.status === 422) {
-        setErrorMessage(error.response.data.detail[0].msg);
+        setErrorMessage([error.response.data.detail[0].msg]);
       }
       console.error(error);
     }
   }
 
-  function handleLoginNav() {
-    navigate("/login");
-  }
-
-  useEffect(() => {
-    async function setError() {
-      errorMessage.length === 0 ? setErrorCheck(false) : setErrorCheck(true);
-    }
-    setError();
-  }, [errorMessage]);
-
-  useEffect(() => {
-    async function setLock() {
-      setRegisterLock(
-        name.trim() === "" ||
-          email.trim() === "" ||
-          password.trim() === "" ||
-          role.trim() === "",
-      );
-    }
-    setLock();
-  }, [name, email, role, password]);
+  const inputClass = "bg-gray-900 border border-gray-700 focus:border-gray-500 text-white placeholder-gray-600 rounded-lg px-3 py-2.5 text-sm outline-none transition-colors";
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="bg-gray-950 py-20 px-5 flex flex-col rounded-2xl gap-3 w-80 shadow-md border border-gray-500">
-        {errorCheck && (
-          <div>
-            <p className="text-red-500 text-center text-sm">{errorMessage}</p>
-          </div>
+    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-10">
+
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center text-sm font-bold text-white">
+          R
+        </div>
+        <h1 className="text-white text-2xl font-medium tracking-tight">Requisite</h1>
+      </div>
+
+      <div className="w-full max-w-sm flex flex-col gap-5">
+        <div className="text-center">
+          <h2 className="text-white text-xl font-medium">Create an account</h2>
+          <p className="text-gray-500 text-sm mt-1">Fill in your details to get started</p>
+        </div>
+
+        {errorMessage.length > 0 && (
+          <p className="text-red-400 text-sm text-center bg-red-950 border border-red-800 rounded-lg px-4 py-2">
+            {errorMessage[0]}
+          </p>
         )}
-        <div className="flex flex-col">
-          <label className="text-white text-sm">Name</label>
-          <input
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !registerLock) {
-                handleRegister();
-              }
-            }}
-            autoFocus
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="border border-white rounded-lg px-3 py-2 text-sm text-white"
-          />
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-gray-400 text-xs">Name</label>
+            <input
+              autoFocus
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !registerLock) handleRegister(); }}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-gray-400 text-xs">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !registerLock) handleRegister(); }}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-gray-400 text-xs">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className={inputClass}
+            >
+              <option value="employee">Employee</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-gray-400 text-xs">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !registerLock) handleRegister(); }}
+              className={inputClass}
+            />
+          </div>
         </div>
-        <div className="flex flex-col">
-          <label className="text-white text-sm">Email</label>
-          <input
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !registerLock) {
-                handleRegister();
-              }
-            }}
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border border-white rounded-lg px-3 py-2 text-sm text-white"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-white text-sm">Role</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="your-existing-input-classes border border-white rounded-lg px-3 py-2 text-sm text-white"
-          >
-            <option value="employee">Employee</option>
-            <option value="manager">Manager</option>
-          </select>
-        </div>
-        <div className="flex flex-col">
-          <label className="text-white text-sm">Password</label>
-          <input
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !registerLock) {
-                handleRegister();
-              }
-            }}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-white rounded-lg px-3 py-2 text-sm text-white"
-          />
-        </div>
+
         <button
           disabled={registerLock}
           onClick={handleRegister}
-          className="bg-gray-600 hover:bg-gray-500 text-white rounded-lg py-2 text-sm disabled:bg-gray-950 disabled:border disabled:border-gray-500"
+          className="w-full bg-green-700 hover:bg-green-600 disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
         >
-          Submit
+          Create account
         </button>
-        <div className="flex justify-end">
+
+        <p className="text-center text-sm text-gray-500">
+          Already have an account?{" "}
           <button
-            onClick={handleLoginNav}
-            className="text-gray-500 hover:text-gray-400 underline text-sm px-2"
+            onClick={() => navigate("/login")}
+            className="text-gray-300 hover:text-white transition-colors"
           >
-            Login
+            Sign in
           </button>
-        </div>
+        </p>
+
       </div>
     </div>
   );

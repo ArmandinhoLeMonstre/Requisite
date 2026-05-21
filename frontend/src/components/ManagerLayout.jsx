@@ -1,34 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { getMe } from "../api/client";
+import { Link, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export const ManagerLayout = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/login");
-  }
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await getMe();
-        setUser(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchUser()
-  }, []);
+  const {user, handleLogout} = useAuth()
 
   return (
     <div className="h-screen bg-gray-950 overflow-hidden">
       <nav className="flex flex-row fixed top-0 left-0 right-0 z-10 h-14 bg-gray-950 border-b border-gray-800 items-center px-6">
         <div className="flex-1 flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-xs font-bold text-white">
+          <div className="w-6 h-6 rounded-md bg-green-600 flex items-center justify-center text-sm font-bold text-white">
             R
           </div>
           <span className="text-white text-sm font-medium">Requisite</span>

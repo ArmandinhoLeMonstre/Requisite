@@ -12,39 +12,42 @@ import { VerificationPage } from "./pages/VerificationPage";
 import { InventoryPage } from "./pages/InventoryPage";
 import { RequestPage } from "./pages/RequestPage";
 import { ManagerTicketPage } from "./pages/ManagerTicketPage";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <Routes>
-      <Route element={<PublicRoute />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/verify/:token" element={<VerificationPage />} />
-      </Route>
-      <Route
-        element={
-          <ProtectedRoute requiredRole={"employee"}>
-            <ChatLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/new" element={<NewTicketPage />} />
-        <Route path="/ticket/:ticketId" element={<TicketPage />} />
-        <Route path="/me" element={<MePage />} />
-        <Route path="/" element={<Navigate to="/new" replace />} />
-      </Route>
-      <Route
-        element={
-          <ProtectedRoute requiredRole={"manager"}>
-            <ManagerLayout />
-          </ProtectedRoute>
-        }
-      >
-		    <Route path="/inventory" element={<InventoryPage />} />
-        <Route path="/requests" element={<RequestPage />} />
-        <Route path="/requests/:ticketId" element={<ManagerTicketPage />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify/:token" element={<VerificationPage />} />
+        </Route>
+        <Route
+          element={
+            <ProtectedRoute requiredRole={"employee"}>
+              <ChatLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/new" element={<NewTicketPage />} />
+          <Route path="/ticket/:ticketId" element={<TicketPage />} />
+          <Route path="/me" element={<MePage />} />
+          <Route path="/" element={<Navigate to="/new" replace />} />
+        </Route>
+        <Route
+          element={
+            <ProtectedRoute requiredRole={"manager"}>
+              <ManagerLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/inventory" element={<InventoryPage />} />
+          <Route path="/requests" element={<RequestPage />} />
+          <Route path="/requests/:ticketId" element={<ManagerTicketPage />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
