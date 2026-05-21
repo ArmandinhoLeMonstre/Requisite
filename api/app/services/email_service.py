@@ -24,14 +24,14 @@ async def send_registration_confirmation_email(user_email: str, confirmation_tok
 						<p style="font-size:14px; color:#6b7280; margin:0 0 2.5rem; line-height:1.8;">
 							Welcome to Requisite. Click the button below to verify your email address and activate your account.
 						</p>
-						<a href="http://localhost:5173/verification/{confirmation_token}"
+						<a href="http://localhost:5173/verify/{confirmation_token}"
 						style="display:inline-block; background:#4F46E5; color:white; padding:14px 32px; border-radius:8px; text-decoration:none; font-size:14px; font-weight:500;">
 							Verify my email
 						</a>
 						<div style="margin-top:3rem; padding-top:2rem; border-top:1px solid #e5e7eb;">
 							<p style="font-size:12px; color:#9ca3af; margin:0 0 1rem; line-height:1.8;">
 								If the button doesn't work, copy and paste this link into your browser:<br>
-								<span style="color:#4F46E5; word-break:break-all;">http://localhost:5173/verification/{confirmation_token}</span>
+								<span style="color:#4F46E5; word-break:break-all;">http://localhost:5173/verify/{confirmation_token}</span>
 							</p>
 							<p style="font-size:12px; color:#9ca3af; margin:0;">
 								<em>If you did not create an account, you can safely ignore this email.</em>
