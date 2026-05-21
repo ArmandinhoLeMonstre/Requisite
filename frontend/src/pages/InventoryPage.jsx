@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getCommonItems, getManagerItems, addInventoryItemns } from "../api/client"
+import { getCommonItems, getManagerItems, addInventoryItems } from "../api/client"
 
 export const InventoryPage = () => {
 
@@ -27,7 +27,7 @@ export const InventoryPage = () => {
 
 	async function addObject() {
 		try {
-			await addInventoryItemns(title, objectType, objectSpecs, quantity);
+			await addInventoryItems(title, objectType, objectSpecs, quantity);
 			await fetchItems()
 			setObjectSpecs('')
 			setObjectType('')
