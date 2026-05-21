@@ -135,8 +135,8 @@ export const RequestPage = () => {
                     {ticket.user_name}
                   </p>
                   <span className={statusClass(ticket.status)}>
-                    {ticket.status.charAt(0).toUpperCase() +
-                      ticket.status.slice(1)}
+                    {ticket.status?.charAt(0).toUpperCase() +
+                      ticket.status?.slice(1)}
                   </span>
                 </div>
                 <p className="text-gray-400 text-sm leading-snug">
