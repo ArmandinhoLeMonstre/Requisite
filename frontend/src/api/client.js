@@ -4,6 +4,21 @@ const api = axios.create({
   baseURL: "http://localhost:8080/api",
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const publicRoutes = ["/login", "/register"];
+      if (!publicRoutes.includes(window.location.pathname)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+
 function getToken() {
   return localStorage.getItem("token");
 }
@@ -199,21 +214,6 @@ export async function getGroup(group_id) {
     throw error;
   }
 }
-
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const publicRoutes = ["/login", "/register"];
-      if (!publicRoutes.includes(window.location.pathname)) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  },
-);
 
 export async function getCommonItems() {
   const header = authHeaders();
