@@ -12,9 +12,9 @@ export const InventoryPage = () => {
 
 	async function fetchItems() {
 		try {
-			const CommonItems = await getCommonItems()
+			const comItems = await getCommonItems()
 			const ManagerItems = await getManagerItems()
-			setCommonItems(CommonItems)
+			setCommonItems(comItems)
 			setManagerItems(ManagerItems)
 		} catch (error) {
 			console.error(error)

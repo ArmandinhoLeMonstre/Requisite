@@ -11,7 +11,7 @@ export function NewTicketPage() {
   const navigate = useNavigate();
   const { refreshTickets } = useOutletContext();
 
-  async function StartTicket() {
+  async function startTicket() {
     try {
       const ticket = await createTicket(inputMessage);
       refreshTickets();
@@ -96,7 +96,7 @@ export function NewTicketPage() {
                 inputMessage &&
                 inputMessage.trim() !== ""
               ) {
-                StartTicket();
+                startTicket();
                 setInputMessage("");
               }
             }}
@@ -105,7 +105,7 @@ export function NewTicketPage() {
           <div className="flex justify-end">
             <button
               disabled={!inputMessage}
-              onClick={StartTicket}
+              onClick={startTicket}
               className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-5 py-1.5 text-sm disabled:hover:bg-gray-600"
             >
               Send
