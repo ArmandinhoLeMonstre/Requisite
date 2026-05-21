@@ -7,4 +7,6 @@ class ObjectRequest(BaseModel):
 	quantity: int = Field(ge=0)
 
 class InventoryItem(ObjectRequest):
+	id : int
+	
 	model_config = {"from_attributes": True}
