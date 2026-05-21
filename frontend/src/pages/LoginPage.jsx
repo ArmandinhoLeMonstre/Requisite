@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createToken, getMe } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState(false);
   const [LoginLock, setLoginLock] = useState(false);
+  const {setUser} = useAuth()
   const navigate = useNavigate();
 
   async function handleLogin() {
@@ -15,6 +17,7 @@ export const LoginPage = () => {
       localStorage.setItem("token", res.access_token);
       const user = await getMe()
       localStorage.setItem("role", user.data.role)
+      setUser(user.data)
       user.data.role === 'employee' ? (navigate("/new")) : (navigate("/requests"))
     } catch (error) {
       if (error.status === 401) {

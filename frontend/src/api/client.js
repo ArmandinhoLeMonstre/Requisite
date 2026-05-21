@@ -19,7 +19,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      const publicRoutes = ["/login", "/register"];
+      const publicRoutes = ["/login", "/register", "/verify"];
       if (!publicRoutes.includes(window.location.pathname)) {
         localStorage.removeItem("token");
         localStorage.removeItem("role");

@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { getGroup, getMe, joinGroup } from "../api/client";
+import { getGroup, joinGroup } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 export const MePage = () => {
-  const [user, setUser] = useState(null);
+  const {user, setUser} = useAuth()
   const [group, setGroup] = useState(null);
   const [code, setCode] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
-  const navigate = useNavigate();
 
   async function submitCode() {
     try {
@@ -16,6 +15,7 @@ export const MePage = () => {
       if (data.group_id) {
         const group = await getGroup(data.group_id);
         setGroup(group.data);
+        setUser({ ...user, group_id: data.group_id });
       }
     } catch (error) {
       if (error.status === 404) {
@@ -26,29 +26,17 @@ export const MePage = () => {
 
   useEffect(() => {
     async function loadUser() {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
       try {
-        const res = await getMe();
-        setUser(res.data);
-        if (res.data.group_id) {
-          const group = await getGroup(res.data.group_id);
+        if (user?.group_id) {
+          const group = await getGroup(user.group_id);
           setGroup(group.data);
         }
       } catch (error) {
-        if (error.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/login");
+        console.error(error)
         }
-      }
     }
     loadUser();
-  }, []);
+  }, [user]);
 
   if (!user) return <p className="text-gray-400 p-8">Loading...</p>;
 
@@ -80,9 +68,9 @@ export const MePage = () => {
           </div>
           <div className="flex justify-between items-center px-4 py-3">
             <span className="text-gray-500 text-sm">Group</span>
-            {group ? (
+            {user.group_id ? (
               <span className="text-white text-sm font-mono tracking-widest">
-                {group.code}
+                {group?.code}
               </span>
             ) : (
               <div className="flex flex-col items-end gap-1">

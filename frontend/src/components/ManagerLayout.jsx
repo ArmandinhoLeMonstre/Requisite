@@ -1,28 +1,16 @@
-import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { getMe } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 
 export const ManagerLayout = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const {user, setUser} = useAuth()
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    setUser(null)
     navigate("/login");
   }
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await getMe();
-        setUser(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchUser()
-  }, []);
 
   return (
     <div className="h-screen bg-gray-950 overflow-hidden">

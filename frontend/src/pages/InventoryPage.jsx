@@ -17,7 +17,7 @@ export const InventoryPage = () => {
 			setCommonItems(CommonItems)
 			setManagerItems(ManagerItems)
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 		}
 	}
 
@@ -34,7 +34,7 @@ export const InventoryPage = () => {
 			setQuantity('')
 			setTitle('')
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 		}
 	}
 	return (

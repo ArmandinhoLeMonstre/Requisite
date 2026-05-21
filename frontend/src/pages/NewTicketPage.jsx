@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { createTicket, getMe, joinGroup, sendMessage } from "../api/client";
+import { useState } from "react";
+import { createTicket, joinGroup, sendMessage } from "../api/client";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export function NewTicketPage() {
   const [inputMessage, setInputMessage] = useState("");
-  const [user, setUser] = useState(null);
+  const {user, setUser} = useAuth();
   const [code, setCode] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
@@ -28,24 +29,12 @@ export function NewTicketPage() {
       const res = await joinGroup(user.id, code);
       setUser(res.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error.status === 404) {
         setErrorMessage("Invalid Code");
       }
     }
   }
-
-  useEffect(() => {
-    async function getUser() {
-      try {
-        const res = await getMe();
-        setUser(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getUser();
-  }, []);
 
   if (!user?.group_id) {
     return (

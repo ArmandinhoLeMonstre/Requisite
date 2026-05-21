@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Sidebar({ tickets, user }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const {setUser} = useAuth()
   const navigate = useNavigate();
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    setUser(null)
     navigate("/login");
   }
 
