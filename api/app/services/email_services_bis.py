@@ -37,7 +37,7 @@ async def send_email_bis(to_send: str, confirmation_token: str):
                     </div>
                 </div>
                 """
-    msg.attach(MIMEText(body, "plain"))
+    msg.attach(MIMEText(body, "html"))
 
     try:
         await aiosmtplib.send(
