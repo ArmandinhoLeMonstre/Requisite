@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function Sidebar({ tickets, user }) {
+function Sidebar({ tickets }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const {handleLogout} = useAuth()
+  const {user, handleLogout} = useAuth()
   const navigate = useNavigate();
 
   const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "U";

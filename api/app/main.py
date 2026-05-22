@@ -36,9 +36,6 @@ app.include_router(tickets_router.router, prefix="/api/tickets", tags=["tickets"
 app.include_router(groups_router.router, prefix="/api/groups", tags=["groups"])
 app.include_router(inventory_router.router, prefix="/api/inventory", tags=["inventory"])
 
-@app.get("/")
-def root(request: Request):
-    return {"Petit", "Zeub"}
 
 @app.exception_handler(StarletteHTTPException) #handling HTTP error
 def general_http_exception_handler(request: Request, exception: StarletteHTTPException):

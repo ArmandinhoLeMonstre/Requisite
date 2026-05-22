@@ -45,7 +45,6 @@ export const ManagerTicketPage = () => {
     fetchData();
   }, [ticketId]);
 
-  // 05c695db-13cb-46bc-b0f6-fe2108ffe045
   if (!activeTicket || !currentTicket)
     return <p className="text-gray-400">Loading ticket...</p>;
   return (

@@ -29,7 +29,7 @@ export const ManagerLayout = () => {
         </div>
         <div className="flex-1 flex justify-end items-center gap-3">
           <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-xs font-medium text-slate-300">
-            {user ? user.name.slice(0, 2).toUpperCase() : ""}
+            {user ? user?.name.slice(0, 2).toUpperCase() : ""}
           </div>
           <button
             onClick={handleLogout}

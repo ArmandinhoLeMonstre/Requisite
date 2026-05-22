@@ -84,6 +84,9 @@ export function NewTicketPage() {
           Submit an equipment request and our AI will check inventory, find the
           best options, and handle the rest — so you can focus on your work.
         </p>
+        <p className="text-gray-400 text-sm text-center max-w-md underline">
+          For this demo version, you can send only 10 messages per chat
+        </p>
       </div>
       <div className="w-full max-w-xl">
         <div className="flex bg-gray-800 rounded-3xl px-5 py-4 gap-4">
@@ -105,17 +108,17 @@ export function NewTicketPage() {
             }}
             className="bg-transparent text-white placeholder-gray-500 outline-none text-base w-full"
           />
-            {loadingTicket ? (
-              <div className="w-6 h-6 rounded-full border-3 border-gray-100 border-t-green-600 animate-spin" />
-            ) : (
-              <button
-                disabled={!inputMessage}
-                onClick={startTicket}
-                className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-5 py-1.5 text-sm disabled:hover:bg-gray-600"
-              >
-                Send
-              </button>
-            )}
+          {loadingTicket ? (
+            <div className="w-6 h-6 rounded-full border-3 border-gray-100 border-t-green-600 animate-spin" />
+          ) : (
+            <button
+              disabled={!inputMessage}
+              onClick={startTicket}
+              className="text-white bg-gray-600 hover:bg-gray-500 rounded-full px-5 py-1.5 text-sm disabled:hover:bg-gray-600"
+            >
+              Send
+            </button>
+          )}
         </div>
       </div>
     </div>

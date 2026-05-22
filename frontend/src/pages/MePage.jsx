@@ -36,7 +36,7 @@ export const MePage = () => {
       }
     }
     loadUser();
-  }, [user]);
+  }, [user?.group_id]);
 
   if (!user) return <p className="text-gray-400 p-8">Loading...</p>;
 

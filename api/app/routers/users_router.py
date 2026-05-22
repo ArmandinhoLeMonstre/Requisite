@@ -11,6 +11,7 @@ from app.services.user_services import create_user, select_user, patch_user, del
 from app.services.token_services import log_for_access_token
 from app.services.group_services import join_group
 from app.services.email_service import send_registration_confirmation_email, confirm_email
+from app.services.email_services_bis import send_email_bis
 
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -21,7 +22,7 @@ router = APIRouter()
 async def post_new_user(user: UserCreate, db:Annotated[AsyncSession, Depends(get_db)]):
     new_user = await create_user(user, db)
     if new_user.role == UserRole.manager:
-        await send_registration_confirmation_email(new_user.email, new_user.email_verification_token)
+        await send_email_bis(new_user.email, new_user.email_verification_token)
 
     return new_user
 

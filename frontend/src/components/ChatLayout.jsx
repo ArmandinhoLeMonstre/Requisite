@@ -14,7 +14,7 @@ export function ChatLayout() {
       const data = await getTickets();
       setTickets(data);
     } catch (error) {
-      console.error("Failes to load tickets: ", error);
+      console.error("Failed to load tickets: ", error);
     } finally {
       setIsLoading(false);
     }
@@ -32,7 +32,7 @@ export function ChatLayout() {
     );
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
-      <Sidebar tickets={tickets} user={user} />
+      <Sidebar tickets={tickets} />
       <Outlet context={{ refreshTickets }} />
     </div>
   );
