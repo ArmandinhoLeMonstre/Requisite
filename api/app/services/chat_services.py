@@ -24,7 +24,8 @@ async def new_message(chat: ChatRequest, db: AsyncSession, ticket: TicketRespons
 		db.add(chat)
 		await db.commit()
 		await db.refresh(chat)
-	except SQLAlchemyError:
+	except SQLAlchemyError as e:
+		logger.error("chat.add.error", error=str(e), step="commit_in_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
 	logger.info("chat.added", ticket_id=ticket.id)

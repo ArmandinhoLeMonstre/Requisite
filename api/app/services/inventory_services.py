@@ -50,7 +50,7 @@ async def add_object(object: ObjectRequest, current_user: User, db: AsyncSession
 
 async def get_user_inventory(current_user: User, db: AsyncSession):
 	if current_user.role != UserRole.manager:
-		logger.error("inventory.get.error", error="user is not manager", step="check_role")
+		logger.error("inventory.manager.get.error", error="user is not manager", step="check_role")
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not Manager")
 
 	try:
@@ -61,14 +61,16 @@ async def get_user_inventory(current_user: User, db: AsyncSession):
 		total_objects = stmt.scalars().all()
 
 	except SQLAlchemyError as e:
-		logger.error("inventory.get.error", error=str(e), step="check_current_manager_objects")
+		logger.error("inventory.manager.get.error", error=str(e), step="check_current_manager_objects")
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	logger.info("inventory.manager.get", manager_id=current_user.id)
 
 	return total_objects
 
 async def get_common_inventory(current_user: User, db: AsyncSession):
 	if current_user.role != UserRole.manager:
-		logger.error("inventory.get.error", error="user is not manager", step="check_role")
+		logger.error("inventory.common.get.error", error="user is not manager", step="check_role")
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not Manager")
 
 	try:
@@ -78,7 +80,9 @@ async def get_common_inventory(current_user: User, db: AsyncSession):
 		total_objects = stmt.scalars().all()
 
 	except SQLAlchemyError as e:
-		logger.error("inventory.get.error", error=str(e), step="check_current_manager_objects")
+		logger.error("inventory.common.get.error", error=str(e), step="check_current_manager_objects")
 		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	logger.info("inventory.common.get", manager_id=current_user.id)
 
 	return total_objects

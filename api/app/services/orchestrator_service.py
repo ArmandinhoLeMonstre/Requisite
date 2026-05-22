@@ -66,6 +66,8 @@ async def create_data(current_user: User, db : AsyncSession, ticket: TicketRespo
 		user_message= msg
 	)
 
+	logger.info("orchestrator_data.created", user_id=current_user.id, ticket_id=ticket.id)
+
 	return data
 
 

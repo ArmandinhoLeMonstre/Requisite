@@ -65,7 +65,8 @@ async def create_ticket(user_message, current_user: User,  db: AsyncSession):
 	except SQLAlchemyError:
 		raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with Database server")
 
-	logger.info("ticket.created", user_id=current_user.id, ticket_id=ticket_stmt.id)
+	logger.info("ticket.created", user_id=current_user.id, ticket_id=ticket_stmt.id, ticket_title=ticket_title)
+
 	return ticket_stmt
 
 

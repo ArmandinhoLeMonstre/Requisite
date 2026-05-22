@@ -16,6 +16,7 @@ from app.logger import logger
 
 async def create_group(current_user: User, db: AsyncSession):
 	if current_user.role != UserRole.manager:
+		logger.error("group.create.error", error="User is not manager", step="check_user_role")
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not a manager")
 	
 	try:
@@ -51,6 +52,7 @@ async def create_group(current_user: User, db: AsyncSession):
 
 async def select_group(group_id: int, current_user: User, db: AsyncSession):
 	if current_user.role != UserRole.manager and current_user.group_id != group_id:
+		logger.error("group.select.error", error="User is not manager", step="check_user_role")
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is not manager")
 
 	try:
@@ -58,9 +60,12 @@ async def select_group(group_id: int, current_user: User, db: AsyncSession):
 		group = stmt.one()
 	except NoResultFound:
 		raise HTTPException(status_code= 404, detail="Group not found")
-	except SQLAlchemyError:
+	except SQLAlchemyError as e:
+		logger.error("group.select.error", error=str(e), step="retrieve_from_db")
 		raise HTTPException(status_code=500, detail="Error with Database server")
 	
+	logger.info("group.selected", user_id=current_user.id, name=current_user.name, role=current_user.role)
+
 	return group
 
 
@@ -89,6 +94,7 @@ async def join_group(current_user: User, code: str, db: AsyncSession):
 			raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Group is full, cannot add new users.")
 	except SQLAlchemyError as e:
 		logger.error("group.join.error", error=str(e), step="check_group_size")
+		raise HTTPException(status_code=500, detail="Error with Database server")
 
 	current_user.group_id = group.id
 
