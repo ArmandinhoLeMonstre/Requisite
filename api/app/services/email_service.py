@@ -41,8 +41,11 @@ async def send_registration_confirmation_email(user_email: str, confirmation_tok
 				</div>
 				""",
 	}
-
-	email = resend.Emails.send(params)
+	try:
+		email = resend.Emails.send(params)
+	except Exception as e:
+		logger.error("email.confirm.send.error", error=str(e), step="send_confirmation_email_to_user")
+		raise HTTPException(status_code=e.code, detail=str(e))
 
 async def confirm_email(token: str, db: AsyncSession):
 

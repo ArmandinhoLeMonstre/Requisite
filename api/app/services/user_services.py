@@ -14,11 +14,9 @@ from app.auth import hash_password, verify_access_token, oauth2_scheme
 import secrets
 
 from app.logger import logger
-from app.services.email_service import send_registration_confirmation_email
 
 
 async def create_user(user: UserCreate, db: AsyncSession):
-	email_verification_token = secrets.token_urlsafe(32)
 
 	try:
 		stmt = await db.scalars(select(User).where(
@@ -35,12 +33,19 @@ async def create_user(user: UserCreate, db: AsyncSession):
 			raise HTTPException(status_code=400, detail="Name already exists")
 		raise HTTPException(status_code=400, detail="Email already exists")
 	
+	if user.role == UserRole.manager:
+		email_verified=False
+		email_verification_token = secrets.token_urlsafe(32)
+	else:
+		email_verified=True
+		email_verification_token = None
+
 	new_user = User(
 		name= user.name,
 		email= user.email.lower(),
 		role= user.role,
 		hashed_password= hash_password(user.password),
-		email_verified=False,
+		email_verified=email_verified,
 		email_verification_token=email_verification_token
 	)
 

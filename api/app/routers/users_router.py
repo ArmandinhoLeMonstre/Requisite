@@ -6,7 +6,7 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, Token
+from app.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, Token, UserRole
 from app.services.user_services import create_user, select_user, patch_user, delete_user, get_current_user, CurrentUser
 from app.services.token_services import log_for_access_token
 from app.services.group_services import join_group
@@ -20,7 +20,9 @@ router = APIRouter()
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=UserPrivate)
 async def post_new_user(user: UserCreate, db:Annotated[AsyncSession, Depends(get_db)]):
     new_user = await create_user(user, db)
-    await send_registration_confirmation_email(new_user.email, new_user.email_verification_token)
+    if new_user.role == UserRole.manager:
+        await send_registration_confirmation_email(new_user.email, new_user.email_verification_token)
+
     return new_user
 
 @router.get("/verification/{email_token}")
