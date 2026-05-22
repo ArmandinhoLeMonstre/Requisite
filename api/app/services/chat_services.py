@@ -14,6 +14,13 @@ from app.services.user_services import CurrentUser
 from app.logger import logger
 
 async def new_message(chat: ChatRequest, db: AsyncSession, ticket: TicketResponse):
+    
+	if ticket.status:
+		raise HTTPException(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail="Ticket is closed, no further messages can be sent"
+		)
+  
 	chat = Chat(
 		ticket_id= ticket.id,
 		sender= chat.sender,

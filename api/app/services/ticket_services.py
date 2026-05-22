@@ -84,12 +84,6 @@ async def select_ticket(ticket_id: uuid.UUID, user: User, db: AsyncSession):
 			detail="Not authorized to see this ticket"
 		)
 	
-	if ticket.status:
-		raise HTTPException(
-			status_code=status.HTTP_403_FORBIDDEN,
-			detail="Ticket is closed, no further messages can be sent"
-		)
-	
 	logger.info("ticket.seen", user_id=user.id, ticket_id=ticket_id)
 	
 	return TicketResponse(status= ticket.status,
