@@ -71,7 +71,8 @@ export const RequestPage = () => {
     );
 
   const filtered = tickets.chats[activeGroup].filter(
-    (ticket) => filter === "all" || ticket.status === filter,
+    (ticket) =>
+      (ticket.status !== null && filter === "all") || ticket.status === filter,
   );
 
   return (
@@ -95,6 +96,14 @@ export const RequestPage = () => {
               + New group
             </button>
           )}
+          <div className="ml-auto">
+            <button
+              onClick={refreshGroups}
+              className="text-xs text-gray-400 hover:text-white border border-gray-600 hover:border-gray-400 rounded-md px-2 py-1 transition-colors"
+            >
+              ↻ Refresh
+            </button>
+          </div>
         </div>
 
         <div className="flex gap-2">

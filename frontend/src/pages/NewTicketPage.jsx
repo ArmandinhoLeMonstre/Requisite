@@ -86,7 +86,7 @@ export function NewTicketPage() {
         </p>
       </div>
       <div className="w-full max-w-xl">
-        <div className="flex flex-col bg-gray-800 rounded-3xl px-5 py-4 gap-4">
+        <div className="flex bg-gray-800 rounded-3xl px-5 py-4 gap-4">
           <input
             type="text"
             disabled={loadingTicket}
@@ -101,12 +101,10 @@ export function NewTicketPage() {
                 inputMessage.trim() !== ""
               ) {
                 startTicket();
-                setInputMessage("");
               }
             }}
             className="bg-transparent text-white placeholder-gray-500 outline-none text-base w-full"
           />
-          <div className="flex justify-end">
             {loadingTicket ? (
               <div className="w-6 h-6 rounded-full border-3 border-gray-100 border-t-green-600 animate-spin" />
             ) : (
@@ -118,7 +116,6 @@ export function NewTicketPage() {
                 Send
               </button>
             )}
-          </div>
         </div>
       </div>
     </div>
