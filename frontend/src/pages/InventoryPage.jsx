@@ -3,6 +3,7 @@ import {
   getCommonItems,
   getManagerItems,
   addInventoryItems,
+  deleteInventoryItems,
 } from "../api/client";
 
 export const InventoryPage = () => {
@@ -39,6 +40,16 @@ export const InventoryPage = () => {
       setObjectType("");
       setQuantity("");
       setTitle("");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function deleteObject(item_id) {
+	try {
+      await deleteInventoryItems(item_id);
+      await fetchItems();
+
     } catch (error) {
       console.error(error);
     }
@@ -84,7 +95,7 @@ export const InventoryPage = () => {
               {item.object_specs}
             </span>
             <span className="text-gray-500 text-xs w-8 text-right">
-              x{item.available}
+              x{item.quantity}
             </span>
           </li>
         ))}
@@ -110,9 +121,22 @@ export const InventoryPage = () => {
               {item.object_specs}
             </span>
             <span className="text-gray-500 text-xs w-8 text-right">
-              x{item.available}
+              x{item.quantity}
             </span>
+			<button
+				onClick={() => deleteObject(item.id)}
+				className="text-gray-500 hover:text-red-500 transition-colors ml-2"
+				aria-label="Delete item"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+				<polyline points="3 6 5 6 21 6" />
+				<path d="M19 6l-1 14H6L5 6" />
+				<path d="M10 11v6M14 11v6" />
+				<path d="M9 6V4h6v2" />
+				</svg>
+			</button>
           </li>
+		  
         ))}
       </ul>
       <div className="flex items-center gap-3 border border-dashed border-gray-700 px-4 py-3 rounded-lg mt-6">

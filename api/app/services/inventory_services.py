@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy import func, select
 from app.models.user_model import User, UserRole
 from app.models.stock_model import Stock
@@ -86,3 +86,28 @@ async def get_common_inventory(current_user: User, db: AsyncSession):
 	logger.info("inventory.common.get", manager_id=current_user.id)
 
 	return total_objects
+
+async def delete_user_item(current_user: User, item_id:int, db: AsyncSession):
+	if current_user.role != UserRole.manager:
+		logger.error("inventory.user.delete.error", error="User is not manager", step="check_current_user_role")
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this item")
+
+	try:
+		stmt = await db.scalars(select(Stock).where(Stock.id == item_id))
+		item = stmt.one()
+	except NoResultFound:
+		logger.error("inventory.user.delete.error", error="Item is not in stock", step="check_item_existence")
+		raise HTTPException(status_code=404, detail="Item not found")
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+
+	if item.manager_id != current_user.id:
+		logger.error("inventory.user.delete.error", error="Item is not from current manager", step="check_item_owner")
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this item")
+	try:
+		await db.delete(item)
+		await db.commit()
+	except SQLAlchemyError:
+		raise HTTPException(status_code=500, detail="Error with Database server")
+	
+	logger.info("inventory.user.delete", manager_id=current_user.id, item_id=item_id)

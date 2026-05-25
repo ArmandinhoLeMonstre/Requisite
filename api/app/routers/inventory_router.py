@@ -8,7 +8,7 @@ from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.services.user_services import CurrentUser
-from app.services.inventory_services import add_object, get_user_inventory, get_common_inventory
+from app.services.inventory_services import add_object, get_user_inventory, get_common_inventory, delete_user_item
 
 router = APIRouter()
 
@@ -28,3 +28,7 @@ async def get_common_items(current_user: CurrentUser, db: Annotated[AsyncSession
 	res = await get_common_inventory(current_user, db)
 
 	return res
+
+@router.delete("/delete/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def del_user_item(current_user: CurrentUser, item_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
+    return await delete_user_item(current_user, item_id, db)

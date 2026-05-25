@@ -225,3 +225,16 @@ export async function addInventoryItems(
     throw error;
   }
 }
+
+export async function deleteInventoryItems(
+  item_id,
+) {
+
+  try {
+    const response = await api.delete(`/inventory/delete/${item_id}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
