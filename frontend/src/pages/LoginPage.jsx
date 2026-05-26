@@ -16,7 +16,6 @@ export const LoginPage = () => {
       const res = await createToken(email, password);
       localStorage.setItem("token", res.access_token);
       const user = await getMe();
-      localStorage.setItem("role", user.data.role);
       setUser(user.data);
       user.data.role === "employee" ? navigate("/new") : navigate("/requests");
     } catch (error) {
