@@ -10,7 +10,7 @@ export const VerificationPage = () => {
   useEffect(() => {
     async function verify(token) {
       try {
-        const res = await verifyUser(token);
+        await verifyUser(token);
         setStatus("success");
         setTimeout(() => navigate("/login"), 3000);
       } catch {
