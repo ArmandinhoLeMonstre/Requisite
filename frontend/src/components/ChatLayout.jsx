@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { getTickets } from "../api/client";
 import Sidebar from "./SideBar";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 export function ChatLayout() {
   const [tickets, setTickets] = useState([]);
-  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   async function refreshTickets() {
