@@ -1,8 +1,8 @@
-"""adding common stock
+"""Adding common stock
 
-Revision ID: 9b0eecfb12d1
-Revises: d5ea64bf9045
-Create Date: 2026-05-19 17:17:02.875850
+Revision ID: 9f521c705dc8
+Revises: 27d5b968aea4
+Create Date: 2026-05-26 20:31:51.704370
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9b0eecfb12d1'
-down_revision: Union[str, Sequence[str], None] = 'd5ea64bf9045'
+revision: str = '9f521c705dc8'
+down_revision: Union[str, Sequence[str], None] = '27d5b968aea4'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -26,7 +26,8 @@ def upgrade() -> None:
     sa.Column('object_type', sa.String(length=20), nullable=False),
     sa.Column('object_specs', sa.String(length=100), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
-    )    
+    sa.PrimaryKeyConstraint('id')
+    )
     op.execute("""
         INSERT INTO stock_common (id, title, object_type, object_specs, quantity)
         VALUES
@@ -36,12 +37,11 @@ def upgrade() -> None:
             (4, 'Magic Mouse - White Multi-Touch Surface', 'mouse', 'Wireless Bluetooth', 1),
             (5, 'Optical Mouse MS116 (275-BBCB)', 'mouse', 'Wired Logitech', 1)
     """)
+    op.execute("SELECT setval('stock_common_id_seq', 5)")
     pass
-    # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     op.drop_table('stock_common')
     pass
-    # ### end Alembic commands ###
