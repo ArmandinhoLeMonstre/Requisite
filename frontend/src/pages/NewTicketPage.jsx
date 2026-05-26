@@ -30,7 +30,7 @@ export function NewTicketPage() {
   async function submitCode() {
     try {
       const res = await joinGroup(user.id, code);
-      setUser(res.data);
+      setUser({ ...user, group_id: res.data.group_id });
     } catch (error) {
       console.error(error);
       if (error.status === 404) {
