@@ -18,9 +18,7 @@ export function NewTicketPage() {
       const ticket = await createTicket(inputMessage);
       refreshTickets();
       await sendMessage(ticket.id, inputMessage);
-      navigate(`/ticket/${ticket.id}`, {
-        state: { firstMessage: inputMessage },
-      });
+      navigate(`/ticket/${ticket.id}`);
     } catch (error) {
       console.error(error);
       setLoadingTicket(false);
