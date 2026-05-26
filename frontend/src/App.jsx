@@ -46,6 +46,7 @@ function App() {
           <Route path="/requests" element={<RequestPage />} />
           <Route path="/requests/:ticketId" element={<ManagerTicketPage />} />
         </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
   );
