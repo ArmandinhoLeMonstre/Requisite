@@ -9,17 +9,11 @@ from app.schemas.ticket_schemas import TicketResponse
 from app.agents_app.agents.orchestrator_agent import call_orchestrator_agent
 from app.agents_app.agents_exceptions import OrchestratorError
 from fastapi import HTTPException, status
-from openai import AsyncOpenAI
 import app.services.db_service as db_service
 import app.services.formatter_service as formatter_service
-import os
 import json
 from app.logger import logger
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-client = AsyncOpenAI(
-	api_key=openai_api_key
-)
+from app.agents_app.openai_client import client
 
 async def send_request_to_orchestrator(message: str, existing_input_list: list, data: OrchestratorData):
 

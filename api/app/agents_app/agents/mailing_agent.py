@@ -2,7 +2,7 @@ import json, os
 import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from openai import AsyncOpenAI
+from app.agents_app.openai_client import client
 from app.database import AsyncSessionLocal
 
 from sqlalchemy import update
@@ -10,12 +10,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models.ticket_model import TicketStatus, Ticket, uuid
 
 from app.agents_app.agents_exceptions import SubAgentError
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-client = AsyncOpenAI(
-  api_key=openai_api_key
-)
 
 SMTP_HOST = os.getenv("SMTP_HOST")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))

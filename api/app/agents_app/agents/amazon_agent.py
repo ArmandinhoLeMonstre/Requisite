@@ -1,5 +1,4 @@
-from openai import AsyncOpenAI
-import os
+from app.agents_app.openai_client import client
 import json
 from app.agents_app.tools.purchase_tools.definitions import tools
 from app.agents_app.tools.purchase_tools.registry import TOOL_REGISTRY, PARAM_REGISTRY
@@ -26,12 +25,6 @@ SYSTEM_PROMPT = """You are an Amazon product search agent.
 					Return maximum 3 results
 					If no product with the exact specifications is found, return found : false and results : null in the structure
 					if you receive an error send it back with the format 'error: explanation'."""
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-client = AsyncOpenAI(
-  api_key=openai_api_key
-)
 
 async def call_amazon_agent(object_type: str, object_specs: str):
 	data = {

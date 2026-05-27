@@ -1,4 +1,4 @@
-from openai import AsyncOpenAI
+from app.agents_app.openai_client import client
 import os
 import json
 from json import JSONDecodeError
@@ -11,12 +11,6 @@ from app.models.stock_model import Stock
 from app.models.stock_common_model import StockCommon
 
 from app.agents_app.agents_exceptions import SubAgentError
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-client = AsyncOpenAI(
-  api_key=openai_api_key
-)
 
 async def get_manager_items(manager_id: int):
 	async with AsyncSessionLocal() as db:

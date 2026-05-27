@@ -11,13 +11,15 @@ from slowapi.errors import RateLimitExceeded
 
 from app.routers import groups_router, tickets_router, users_router, inventory_router
 from app.logger import setup_logger
+from app.checks import check_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logger()
+    await check_db()
     yield
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
