@@ -13,6 +13,7 @@ export function NewTicketPage() {
   const { user, setUser } = useAuth();
 
   async function startTicket() {
+    setErrorMessage(null);
     try {
       setLoadingTicket(true);
       const ticket = await createTicket(inputMessage);
@@ -21,6 +22,7 @@ export function NewTicketPage() {
       navigate(`/ticket/${ticket.id}`);
     } catch (error) {
       console.error(error);
+      setErrorMessage("Failed to create ticket. Please try again.");
       setLoadingTicket(false);
     }
   }
@@ -118,6 +120,11 @@ export function NewTicketPage() {
             </button>
           )}
         </div>
+        {errorMessage && (
+          <p className="text-red-400 text-xs text-center mt-2">
+            {errorMessage}
+          </p>
+        )}
       </div>
     </div>
   );
