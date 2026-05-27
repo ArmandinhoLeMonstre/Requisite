@@ -52,7 +52,6 @@ async def count_chats(ticket: TicketResponse, db: AsyncSession):
 		raise(HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with database"))
 
 	if chats >= 20 :
-		print("OUIIIII")
 		try:
 			stmt = await db.execute(
 				update(Ticket)
