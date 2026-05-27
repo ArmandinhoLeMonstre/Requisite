@@ -3,7 +3,7 @@ services:
     plan: free
     name: RequisiteAPI
     runtime: docker
-    dockerfilePath: ./Dockerfile.prod
+    dockerfilePath: ./api/Dockerfile.prod
     dockerContext: ./api
     envVars:
       - key: DATABASE_URL
