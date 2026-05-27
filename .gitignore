@@ -7,3 +7,4 @@ test.py
 test.db
 sqlite.db
 .ruff_cache
+.env.prod

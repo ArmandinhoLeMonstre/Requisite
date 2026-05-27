@@ -31,11 +31,11 @@ def upgrade() -> None:
     op.execute("""
         INSERT INTO stock_common (id, title, object_type, object_specs, quantity)
         VALUES
-			(1, 'Magic Keyboard - US English, Bluetooth', 'keyboard', 'QWERTY Wireless APPLE', 1),
-            (2, 'Magic Keyboard with Touch ID and Numeric Keypad for Mac Models with Apple Silicon - US English - Black Keys', 'keyboard', 'QWERTY Wireless NUMERIC_KEYPAD APPLE', 1),
-            (3, 'K120 Wired Keyboard for Windows, USB Plug-and-Play, Full-Size, Spill-Resistant, Curved Space Bar, Compatible with PC, Laptop - Black', 'keyboard', 'QWERTY Wired LOGITECH', 1),
-            (4, 'Magic Mouse - White Multi-Touch Surface', 'mouse', 'Wireless Bluetooth', 1),
-            (5, 'Optical Mouse MS116 (275-BBCB)', 'mouse', 'Wired Logitech', 1)
+			(1, 'Magic Keyboard - US English, Bluetooth', 'keyboard', 'QWERTY Wireless APPLE BLUETOOTH', 1),
+            (2, 'Magic Keyboard with Touch ID and Numeric Keypad for Mac Models with Apple Silicon - US English - Black Keys', 'keyboard', 'QWERTY Wireless NUMERIC_KEYPAD APPLE BLUETOOTH', 1),
+            (3, 'LOGITECH K120 Wired Keyboard for Windows, Curved Space Bar, Compatible with PC, Laptop - Black', 'keyboard', 'QWERTY Wired LOGITECH black', 1),
+            (4, 'Magic Mouse - White Multi-Touch Surface', 'mouse', 'Wireless Bluetooth APPLE', 1),
+            (5, 'Logitech Optical Mouse MS116', 'mouse', 'Wired Logitech', 1)
     """)
     op.execute("SELECT setval('stock_common_id_seq', 5)")
     pass
