@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: {
-    allowedHosts: ["leeds-breed-tea-cheapest.trycloudflare.com"]
-  }
+  // server: {
+  //   allowedHosts: ["http://localhost:5173/"]
+  // }
 })

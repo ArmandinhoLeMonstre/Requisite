@@ -5,7 +5,6 @@ import MessageList from "./MessageList";
 function ChatWindow({ activeTicket, addMessage, loading }) {
   const [inputMessage, setInputMessage] = useState("");
 
-  console.log("active: ", activeTicket);
   return (
     <div className="flex-1 flex flex-col bg-gray-950 overflow-hidden">
       {activeTicket ? (

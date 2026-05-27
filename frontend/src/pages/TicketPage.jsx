@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ChatWindow from "../components/ChatWindow";
 import { getChats, sendMessage } from "../api/client";
+import toast from "react-hot-toast";
 
 export function TicketPage() {
+  const navigate = useNavigate()
   const { ticketId } = useParams();
   const [loadingMap, setLoadingMap] = useState({});
   const [ticketsData, setTicketsData] = useState({});
@@ -41,7 +43,13 @@ export function TicketPage() {
         const data = await getChats(ticketId);
         setTicketsData((prev) => ({ ...prev, [ticketId]: data }));
       } catch (error) {
+        if (error.status === 422 || error.status === 404){
+          toast.error("Ticket not found");
+          navigate("/new")
+          return ;
+        }
         console.error("Failed to load ticket infos", error);
+
       }
     }
     fetchData();
