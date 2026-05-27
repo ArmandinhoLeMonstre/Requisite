@@ -3,8 +3,8 @@ services:
     plan: free
     name: RequisiteAPI
     runtime: docker
-    dockerfilePath: ./api/Dockerfile.prod
-    dockerContext: .
+    dockerfilePath: ./Dockerfile.prod
+    dockerContext: ./api
     envVars:
       - key: DATABASE_URL
         sync: false
