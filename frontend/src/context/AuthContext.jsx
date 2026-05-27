@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
 
   function handleLogout() {
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
     setUser(null);
     navigate("/login");
   }
