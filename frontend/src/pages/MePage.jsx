@@ -38,7 +38,13 @@ export const MePage = () => {
     loadUser();
   }, [user?.group_id]);
 
-  if (!user) return <p className="text-gray-400 p-8">Loading...</p>;
+  if (!user)
+    return (
+      <div className="flex flex-col h-screen w-screen items-center justify-center bg-gray-950">
+        <div className="text-xl pb-3 text-white">Loading...</div>
+        <div className="w-6 h-6 rounded-full border-2 border-gray-600 border-t-white animate-spin" />
+      </div>
+    );
 
   return (
     <div className="flex-1 flex items-center justify-center pb-10">

@@ -13,7 +13,7 @@ from app.schemas.agents_requests_schemas import OrchestratorResponse
 
 from app.services.ticket_services import create_ticket, select_ticket, get_tickets, get_tickets_group, change_status, select_chats
 from app.services.user_services import CurrentUser
-from app.services.chat_services import new_message
+from app.services.chat_services import new_message, count_chats
 from app.services.orchestrator_service import create_data, call_agents_orchestrator
 
 from app.models.ticket_model import TicketStatus
@@ -55,6 +55,7 @@ async def add_chat_to_ticket(
     rep = await call_agents_orchestrator(data, db, msg.message)
     ag_msg = ChatRequest(sender="agent", message= rep.orchestrator_message)
     await new_message(ag_msg, db, ticket)
+    await count_chats(ticket, db)
     return rep
 
 @router.get("/{ticket_id}/chats", response_model= TicketChats)

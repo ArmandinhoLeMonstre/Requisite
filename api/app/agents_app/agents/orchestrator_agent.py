@@ -83,12 +83,12 @@ async def call_orchestrator_agent(client: AsyncOpenAI, data: OrchestratorData, r
 						logger.warning("success.false")
 
 				except Exception as e:
-					logger.error(f"{e.agent}.error", error=str(e), step=e.step)
+					# logger.error(f"{e.agent}.error", error=str(e), step=e.step)
 					tool_result = {
 						"success": False,
 						"message": str(e),
-						"agent": e.agent,
-						"action": e.action
+						"agent": getattr(e, 'agent', None),
+						"action": getattr(e, 'action', None),
 					}
 
 				return_reponse.append([{

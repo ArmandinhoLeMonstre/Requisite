@@ -27,6 +27,7 @@ class TicketResponse(TicketBase):
 class TicketChats(TicketBase):
 	id: uuid.UUID
 	user_id: int
+	status: TicketStatus | None = None
 	chats: list[ChatResponse]
 
 

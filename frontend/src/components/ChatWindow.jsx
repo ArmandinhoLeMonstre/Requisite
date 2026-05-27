@@ -1,24 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
-import { getTicket } from "../api/client";
 
 function ChatWindow({ activeTicket, addMessage, loading }) {
   const [inputMessage, setInputMessage] = useState("");
-  const [ticket, setTicket] = useState(null);
-
-  useEffect(() => {
-    async function fetchTicket() {
-      if (!activeTicket) return;
-      try {
-        const ticket = await getTicket(activeTicket.id);
-        setTicket(ticket.data);
-      } catch (error) {
-        console.error("error: ", error);
-      }
-    }
-    fetchTicket();
-  }, [activeTicket]);
 
   return (
     <div className="flex-1 flex flex-col bg-gray-950 overflow-hidden">
@@ -26,7 +11,7 @@ function ChatWindow({ activeTicket, addMessage, loading }) {
         <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto overflow-hidden">
           <MessageList listMessage={activeTicket.chats} />
           <MessageInput
-            ticketData={ticket}
+            ticketData={activeTicket}
             inputMessage={inputMessage}
             setInputMessage={setInputMessage}
             addMessage={addMessage}

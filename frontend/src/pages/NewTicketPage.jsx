@@ -13,16 +13,16 @@ export function NewTicketPage() {
   const { user, setUser } = useAuth();
 
   async function startTicket() {
+    setErrorMessage(null);
     try {
       setLoadingTicket(true);
       const ticket = await createTicket(inputMessage);
       refreshTickets();
       await sendMessage(ticket.id, inputMessage);
-      navigate(`/ticket/${ticket.id}`, {
-        state: { firstMessage: inputMessage },
-      });
+      navigate(`/ticket/${ticket.id}`);
     } catch (error) {
       console.error(error);
+      setErrorMessage("Failed to create ticket. Please try again.");
       setLoadingTicket(false);
     }
   }
@@ -30,7 +30,7 @@ export function NewTicketPage() {
   async function submitCode() {
     try {
       const res = await joinGroup(user.id, code);
-      setUser(res.data);
+      setUser({ ...user, group_id: res.data.group_id });
     } catch (error) {
       console.error(error);
       if (error.status === 404) {
@@ -120,6 +120,11 @@ export function NewTicketPage() {
             </button>
           )}
         </div>
+        {errorMessage && (
+          <p className="text-red-400 text-xs text-center mt-2">
+            {errorMessage}
+          </p>
+        )}
       </div>
     </div>
   );

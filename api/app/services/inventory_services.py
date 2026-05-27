@@ -27,6 +27,7 @@ async def add_object(object: ObjectRequest, current_user: User, db: AsyncSession
 			raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inventory is full, cannot add new items.")
 	except SQLAlchemyError as e:
 		logger.error("object.create.error", error=str(e), step="check_current_manager_objects")
+		raise(HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error with database"))
 
 	new_object = Stock(
 		title=object.title,

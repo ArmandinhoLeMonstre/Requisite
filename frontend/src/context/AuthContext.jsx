@@ -9,14 +9,13 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   function handleLogout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  setUser(null);
-  navigate("/login");
-}
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/login");
+  }
 
   useEffect(() => {
-	const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (!token) return;
     async function fetchUser() {
       try {

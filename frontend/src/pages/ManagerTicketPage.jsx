@@ -46,7 +46,11 @@ export const ManagerTicketPage = () => {
   }, [ticketId]);
 
   if (!activeTicket || !currentTicket)
-    return <p className="text-gray-400">Loading ticket...</p>;
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="w-6 h-6 rounded-full border-2 border-gray-600 border-t-white animate-spin" />
+    </div>
+  );
   return (
     <div className="flex flex-col h-full max-w-3xl w-full mx-auto">
         <div className="flex-1 flex flex-col overflow-hidden">
