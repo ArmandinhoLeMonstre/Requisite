@@ -36,9 +36,12 @@ export const VerificationPage = () => {
       {status === "error" && (
         <div className="flex flex-col items-center gap-2">
           <p className="text-white font-medium">Invalid or expired link</p>
-          <p className="text-gray-400 text-sm">
-            Please request a new verification email.
-          </p>
+          <button
+            onClick={() => navigate("/register")}
+            className="text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            Back to register
+          </button>
         </div>
       )}
     </div>
