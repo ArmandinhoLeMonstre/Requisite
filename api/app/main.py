@@ -4,6 +4,7 @@ from fastapi.responses import  JSONResponse # Manually return JSONresponse from 
 from fastapi.exceptions import RequestValidationError # Handling validation error ex: someone passes a 'hello' when a int is expected (I think fastapi handles it by itself, thanks to this we can do i manually)
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from app.limiter import limiter
 from slowapi import _rate_limit_exceeded_handler
@@ -27,7 +28,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://leeds-breed-tea-cheapest.trycloudflare.com"],
+    allow_origins=["http://localhost:5173", os.getenv("FRONTEND_URL")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
