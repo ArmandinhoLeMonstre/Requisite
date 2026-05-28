@@ -42,10 +42,10 @@ SYSTEM_PROMPT = f"""You are an email composition agent.
 				- Do not add pleasantries or filler sentences
 				- You must return ONLY a valid JSON object, no explanation, no markdown, no backticks
 				- The JSON must follow this exact structure:
-				{
+				{{
 					'subject': 'string',
-					"body": 'string'
-				}"""
+					"body": "string"
+				}}"""
 
 async def update_ticket_status(ticket_id: str):
 	async with AsyncSessionLocal() as db:
