@@ -62,7 +62,8 @@ async def batch_match(specification: dict, products: list) -> list:
 
 
 async def get_match_list(specification: dict, product_list: dict):
-    organic = product_list.get("organic_results", [])
+    MAX_PRODUCTS = 5
+    organic = product_list.get("organic_results", [])[:MAX_PRODUCTS]
     logger.info("get_match_list.started", organic_count=len(organic))
 
     tasks = [get_product_detail(item["asin"]) for item in organic]
